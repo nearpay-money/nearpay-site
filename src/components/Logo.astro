@@ -1,0 +1,25 @@
+---
+/** NearPay mark + wordmark (kit `NearPayMark`, `.np-logo`). */
+interface Props {
+  href: string;
+  label?: string;
+}
+const { href, label = "NearPay home" } = Astro.props;
+---
+<a class="np-logo site-logo" href={href} aria-label={label}>
+  <svg
+    class="np-icon np-logo__mark"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width="24"
+    height="24"
+    fill="currentColor"
+    focusable="false"
+    aria-hidden="true"
+  >
+    <path
+      d="M3 4.5A1.5 1.5 0 014.5 3h2.2c.5 0 1 .26 1.27.7L15 15.2V4.5A1.5 1.5 0 0116.5 3h3A1.5 1.5 0 0121 4.5v15a1.5 1.5 0 01-1.5 1.5h-2.2c-.5 0-1-.26-1.27-.7L9 8.8v10.7A1.5 1.5 0 017.5 21h-3A1.5 1.5 0 013 19.5v-15z"
+    ></path>
+  </svg>
+  <span class="np-logo__word">NearPay</span>
+</a>

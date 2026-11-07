@@ -1,0 +1,86 @@
+---
+/** Marketing page shell: header (nav + "Get started"), main, footer — Figma marketing frames. */
+import Icon from "../components/Icon.astro";
+import Logo from "../components/Logo.astro";
+import { links, urls } from "../config/site";
+import Base from "./Base.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Marks the matching nav item as the current page. */
+  current?: "payments" | "billing" | "pricing";
+  noindex?: boolean;
+}
+const { title, description, current, noindex } = Astro.props;
+const nav = [
+  { id: "payments", label: "Payments", href: "/payments" },
+  { id: "billing", label: "Billing", href: "/billing" },
+  { id: "developers", label: "For developers", href: urls.docs },
+  { id: "pricing", label: "Pricing", href: "/pricing" },
+];
+const footer = [
+  { label: "Docs", href: links.docsHome },
+  { label: "Support", href: "/support" },
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
+];
+const year = 2026;
+---
+<Base title={title} description={description} bodyClass="web" noindex={noindex}>
+  <header class="web-header">
+    <div class="site-container web-header__bar">
+      <Logo href="/" />
+      <nav class="web-nav only-desktop" aria-label="Main">
+        <ul class="web-nav__list">
+          {
+            nav.map((item) => (
+              <li>
+                <a class="web-nav__link" href={item.href} aria-current={item.id === current ? "page" : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <a class="np-button web-header__cta only-desktop" href={links.signup}>Get started</a>
+      <details class="web-menu only-mobile">
+        <summary aria-label="Menu">
+          <span class="web-menu__open"><Icon name="menu" size={24} /></span>
+          <span class="web-menu__close"><Icon name="close" size={24} /></span>
+        </summary>
+        <nav class="web-menu__panel" aria-label="Main">
+          <ul class="web-menu__list">
+            {
+              nav.map((item) => (
+                <li>
+                  <a href={item.href} aria-current={item.id === current ? "page" : undefined}>
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+            <li><a class="np-button np-button--full" href={links.signup}>Get started</a></li>
+          </ul>
+        </nav>
+      </details>
+    </div>
+  </header>
+  <main id="main" class="web-main" tabindex="-1">
+    <slot />
+  </main>
+  <footer class="web-footer">
+    <div class="site-container web-footer__inner">
+      <div class="web-footer__brand">
+        <Logo href="/" />
+        <p class="web-footer__legal">© {year} NearPay · Non-custodial payments on NEAR Intents</p>
+      </div>
+      <nav aria-label="Footer">
+        <ul class="footer-links">
+          {footer.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </nav>
+    </div>
+  </footer>
+</Base>

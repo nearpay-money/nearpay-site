@@ -1,0 +1,45 @@
+---
+/**
+ * Document shell for both sites: design tokens, DM Sans (self-hosted) and kit component CSS from
+ * @nearpay-internal/ui, the site stylesheet, and a CSP meta tag mirroring the served header.
+ */
+import "@nearpay-internal/ui/fonts.css";
+import "@nearpay-internal/ui/tokens.css";
+import "@nearpay-internal/ui/styles.css";
+import "../styles/site.css";
+import { CSP } from "../config/site";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Extra class on <body> (e.g. `web`, `docs`). */
+  bodyClass?: string;
+  noindex?: boolean;
+}
+const { title, description, bodyClass, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content={CSP} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content="#f7f9f8" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <slot name="head" />
+  </head>
+  <body class:list={["np-root", bodyClass]} data-theme="light">
+    <a class="np-skip-link" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>

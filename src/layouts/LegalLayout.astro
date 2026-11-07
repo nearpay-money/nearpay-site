@@ -1,0 +1,29 @@
+---
+/** Legal pages: marketing shell + readable prose column, with an explicit draft status. */
+import WebLayout from "./WebLayout.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  heading: string;
+  updated: string;
+}
+const { title, description, heading, updated } = Astro.props;
+---
+<WebLayout title={title} description={description}>
+  <section class="page-hero" aria-labelledby="legal-title">
+    <div class="site-container">
+      <p class="eyebrow">Legal</p>
+      <h1 id="legal-title" class="heading-section">{heading}</h1>
+      <p class="lede">Last updated <time datetime={updated}>{new Date(`${updated}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })}</time></p>
+      <span class="np-badge np-badge--warning">Draft · pending legal review · not yet in force</span>
+    </div>
+  </section>
+  <section class="band band--white">
+    <div class="site-container">
+      <div class="prose legal">
+        <slot />
+      </div>
+    </div>
+  </section>
+</WebLayout>

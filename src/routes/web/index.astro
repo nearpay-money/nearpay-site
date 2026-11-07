@@ -1,0 +1,146 @@
+---
+/** Marketing home — Figma marketing frames (desktop 1440, mobile 390). */
+import CheckoutCard from "../../components/web/CheckoutCard.astro";
+import { links } from "../../config/site";
+import WebLayout from "../../layouts/WebLayout.astro";
+
+const features = [
+  { title: "Meet customers where they are", body: "Supported wallets, tokens and networks." },
+  { title: "Receive what works for you", body: "Choose your settlement currency and destination." },
+  { title: "Know when you’re paid", body: "Clear confirmation backed by settlement evidence." },
+];
+const steps = [
+  {
+    title: "Choose your destination",
+    body: "Pick the currency, network and wallet where payments should arrive.",
+    mobile: "Pick the currency, network and wallet where payments arrive.",
+  },
+  {
+    title: "Add your checkout",
+    body: "Share a payment link or add checkout to your product.",
+    mobile: "Share a link or add checkout to your product.",
+  },
+  {
+    title: "Receive with confidence",
+    body: "Track confirmed payments, handle refunds and reconcile your activity.",
+    mobile: "Confirm payments, manage refunds and reconcile.",
+  },
+];
+const platform = [
+  { title: "Payments", body: "Checkout, payment links, refunds and clear settlement records." },
+  {
+    title: "Billing · coming next",
+    body: "Invoices and recurring billing, with payment approval in the customer’s wallet.",
+  },
+  { title: "Agent payments", body: "Charge agents for access to your services with verified payment outcomes." },
+];
+---
+<WebLayout
+  title="NearPay — Their wallet. Your currency. One simple checkout."
+  description="Accept crypto without asking customers to bridge or swap first. Receive your chosen currency, directly in your wallet. Non-custodial payments on NEAR Intents."
+>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="site-container hero__grid">
+      <div class="hero__copy">
+        <p class="eyebrow">
+          <span class="only-desktop">Crypto payments. Familiar experience.</span>
+          <span class="only-mobile">Crypto payments, simplified</span>
+        </p>
+        <h1 id="hero-title" class="heading-display"><span class="line">Their wallet.</span> <span class="line">Your currency.</span> <span class="line">One simple checkout.</span></h1>
+        <p class="lede">
+          Accept crypto without asking customers to bridge or swap first. Receive your chosen currency, directly in your
+          wallet.
+        </p>
+        <div class="hero__actions">
+          <a class="np-button np-button--primary-wide" href={links.signup}>Start accepting payments</a>
+          <a class="np-button np-button--secondary" href="/payments#checkout">Explore checkout</a>
+        </div>
+        <p class="hero__note">Wallet-only checkout · No NearPay-held balances</p>
+      </div>
+      <div class="hero__card">
+        <CheckoutCard />
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--white only-desktop" aria-label="Why NearPay">
+    <div class="site-container">
+      <ul class="columns">
+        {
+          features.map((f) => (
+            <li>
+              <h2 class="column__title">{f.title}</h2>
+              <p class="column__body">{f.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band band--steps" aria-labelledby="steps-title">
+    <div class="site-container">
+      <hr class="np-divider only-mobile-rule" />
+      <div class="section-head">
+        <h2 id="steps-title" class="heading-section"><span class="line-mobile">A better way</span> to get paid.</h2>
+      </div>
+      <ol class="columns steps">
+        {
+          steps.map((s, i) => (
+            <li>
+              <h3 class="column__title column__title--lg">
+                <span class="column__index">{String(i + 1).padStart(2, "0")}</span>
+                {s.title}
+              </h3>
+              <p class="column__body column__body--narrow">
+                <span class="only-desktop">{s.body}</span>
+                <span class="only-mobile">{s.mobile}</span>
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="band band--ink band--platform" aria-labelledby="platform-title">
+    <div class="site-container">
+      <div class="platform">
+        <h2 id="platform-title" class="heading-section">
+          <span class="only-desktop">Built for the business behind the payment.</span>
+          <span class="only-mobile"><span class="line">One platform.</span> More ways to get paid.</span>
+        </h2>
+        <ul class="columns">
+          {
+            platform.map((p) => (
+              <li>
+                <h3 class="column__title column__title--lg">{p.title}</h3>
+                <p class="column__body column__body--narrow">{p.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+        <a class="np-button np-button--mint platform__cta" href="/payments">
+          <span class="only-desktop">Explore the platform</span>
+          <span class="only-mobile">Explore NearPay</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="band cta" aria-labelledby="cta-title">
+    <div class="site-container">
+      <h2 id="cta-title" class="heading-section">
+        <span class="only-desktop">Your next customer is ready to pay.</span>
+        <span class="only-mobile">Ready for your next payment?</span>
+      </h2>
+      <p class="lede only-desktop">Make their preferred currency work for your business.</p>
+      <div class="cta__actions">
+        <a class="np-button" href={links.signup}>
+          <span class="only-desktop">Start accepting payments</span>
+          <span class="only-mobile">Get started</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</WebLayout>

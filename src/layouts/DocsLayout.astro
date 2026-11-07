@@ -1,0 +1,133 @@
+---
+import SidebarNav from "../components/docs/SidebarNav.astro";
+/**
+ * Docs shell: sticky header with search, sidebar (a native disclosure below 960 px), article, optional
+ * "On this page" list, previous/next links. The only script is docs.ts (copy buttons, search page),
+ * loaded as an external module so the strict CSP holds.
+ */
+import Icon from "../components/Icon.astro";
+import Logo from "../components/Logo.astro";
+import { links, urls } from "../config/site";
+import { neighbours } from "../lib/nav";
+import Base from "./Base.astro";
+
+export interface TocItem {
+  depth: number;
+  slug: string;
+  text: string;
+}
+interface Props {
+  title: string;
+  description: string;
+  eyebrow?: string;
+  toc?: TocItem[];
+  wide?: boolean;
+  noindex?: boolean;
+  /** Hide the H1 block (pages that render their own header). */
+  bare?: boolean;
+}
+const { title, description, eyebrow, toc = [], wide = false, noindex, bare = false } = Astro.props;
+const path = Astro.url.pathname.replace(/\.html$/, "").replace(/\/index$/, "") || "/";
+const { prev, next } = neighbours(path);
+const tocItems = toc.filter((t) => t.depth === 2 || t.depth === 3);
+---
+<Base title={path === "/" ? "NearPay Docs" : `${title} — NearPay Docs`} description={description} bodyClass="docs" noindex={noindex}>
+  <header class="docs-header">
+    <div class="docs-header__bar">
+      <div class="docs-header__brand">
+        <Logo href="/" label="NearPay Docs home" />
+        <span class="docs-header__label">Docs</span>
+      </div>
+      <form class="docs-search" action="/search" method="get" role="search">
+        <label class="np-sr-only" for="docs-search-input">Search the docs</label>
+        <div class="np-input np-input--trailing docs-search__box">
+          <input
+            id="docs-search-input"
+            class="np-input__control"
+            type="search"
+            name="q"
+            placeholder="Search docs"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <span class="np-input__adornment np-input__adornment--trailing"><Icon name="search" size={18} /></span>
+        </div>
+      </form>
+      <ul class="docs-header__links">
+        <li><a href="/api">API reference</a></li>
+        <li><a href={urls.web}>nearpay.money</a></li>
+        <li><a class="np-button np-button--secondary np-button--sm" href={links.dashboard}>Dashboard</a></li>
+      </ul>
+    </div>
+  </header>
+  <details class="docs-mobile-nav">
+    <summary>
+      Menu
+      <Icon name="chevron-down" size={18} />
+    </summary>
+    <div class="docs-mobile-nav__panel">
+      <SidebarNav path={path} label="Docs (menu)" />
+    </div>
+  </details>
+  <div class:list={["docs-layout", { "docs-layout--toc": tocItems.length > 1 }]}>
+    <aside class="docs-sidebar">
+      <SidebarNav path={path} label="Docs" />
+    </aside>
+    <main id="main" class="docs-main" tabindex="-1">
+      <article class:list={["docs-article", { "docs-article--wide": wide }]}>
+        {
+          !bare && (
+            <header class="docs-article__head">
+              {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+              <h1 class="docs-article__title">{title}</h1>
+              <p class="docs-article__lede">{description}</p>
+              <slot name="meta" />
+            </header>
+          )
+        }
+        <slot />
+        {
+          (prev || next) && (
+            <nav class="docs-pager" aria-label="Previous and next pages">
+              {prev && (
+                <a href={prev.href} rel="prev">
+                  <small>Previous</small>
+                  <span>{prev.label}</span>
+                </a>
+              )}
+              {next && (
+                <a class="docs-pager__next" href={next.href} rel="next">
+                  <small>Next</small>
+                  <span>{next.label}</span>
+                </a>
+              )}
+            </nav>
+          )
+        }
+        <footer class="docs-footer">
+          <ul class="footer-links">
+            <li><a href={urls.web}>NearPay</a></li>
+            <li><a href={links.support}>Support</a></li>
+            <li><a href={links.privacy}>Privacy</a></li>
+            <li><a href={links.terms}>Terms</a></li>
+          </ul>
+        </footer>
+      </article>
+    </main>
+    {
+      tocItems.length > 1 && (
+        <nav class="docs-toc" aria-label="On this page">
+          <p class="docs-toc__title">On this page</p>
+          <ol>
+            {tocItems.map((t) => (
+              <li class:list={{ "docs-toc__sub": t.depth === 3 }}>
+                <a href={`#${t.slug}`}>{t.text}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+  </div>
+  <script src="../scripts/docs.ts"></script>
+</Base>

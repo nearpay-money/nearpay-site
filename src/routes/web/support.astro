@@ -1,0 +1,48 @@
+---
+import Icon from "../../components/Icon.astro";
+import { links, urls } from "../../config/site";
+import WebLayout from "../../layouts/WebLayout.astro";
+---
+<WebLayout title="Support — NearPay" description="Get help with NearPay: documentation, error references and support from your dashboard.">
+  <section class="page-hero" aria-labelledby="support-title">
+    <div class="site-container">
+      <p class="eyebrow">Support</p>
+      <h1 id="support-title" class="heading-section">How can we help?</h1>
+      <p class="lede">Most answers are in the docs. Signed-in merchants can reach us from the dashboard.</p>
+    </div>
+  </section>
+  <section class="band band--white" aria-label="Support options">
+    <div class="site-container">
+      <ul class="card-grid card-grid--3">
+        <li>
+          <a class="link-card" href={links.docsHome}>
+            <span class="link-card__icon"><Icon name="card" /></span>
+            <span class="link-card__title">Documentation</span>
+            <span class="link-card__body">Guides for checkout, refunds, webhooks, test mode and agent payments.</span>
+          </a>
+        </li>
+        <li>
+          <a class="link-card" href={`${urls.docs}/errors`}>
+            <span class="link-card__icon"><Icon name="info" /></span>
+            <span class="link-card__title">Error reference</span>
+            <span class="link-card__body">Every API error code, what it means and what to do next.</span>
+          </a>
+        </li>
+        <li>
+          <a class="link-card" href={links.dashboard}>
+            <span class="link-card__icon"><Icon name="bell" /></span>
+            <span class="link-card__title">Help & support in the dashboard</span>
+            <span class="link-card__body">Questions about a payment or your account? Open Help & support in your dashboard.</span>
+          </a>
+        </li>
+      </ul>
+      <div class="np-callout np-callout--neutral np-callout--icon support-note">
+        <Icon name="info" class="np-callout__icon" />
+        <div class="np-callout__content">
+          <p class="np-callout__title">NearPay never asks for your seed phrase or private keys.</p>
+          <p class="np-callout__body">We can’t move, freeze or reverse funds in your wallet. Refunds are always signed by you.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</WebLayout>

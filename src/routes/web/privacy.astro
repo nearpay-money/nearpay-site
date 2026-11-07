@@ -1,0 +1,35 @@
+---
+import { urls } from "../../config/site";
+import LegalLayout from "../../layouts/LegalLayout.astro";
+---
+<LegalLayout
+  title="Privacy — NearPay"
+  description="How NearPay handles personal data. Draft pending legal review."
+  heading="Privacy"
+  updated="2026-11-07"
+>
+  <p>
+    This draft describes how NearPay handles personal data while the service is in preview. It will be replaced by a
+    reviewed privacy notice before NearPay is generally available; the launch jurisdiction is still being decided.
+  </p>
+  <h2>What NearPay is</h2>
+  <p>
+    NearPay is a non-custodial payment service. Payments move from the customer’s wallet to the merchant’s chosen
+    destination through NEAR Intents. NearPay does not hold customer or merchant funds.
+  </p>
+  <h2>Data we process</h2>
+  <ul>
+    <li><strong>Merchant accounts:</strong> email address, passkey public keys, team members and roles, API key metadata and an audit log of account changes.</li>
+    <li><strong>Business details:</strong> the details a merchant declares to go live (legal name, country, registration number, business type, website, address, representative and expected volume). NearPay reviews them; they are not verified by a third party.</li>
+    <li><strong>Payments:</strong> amounts, assets, networks, wallet addresses, refund addresses and transaction hashes. Blockchain transactions are public by nature.</li>
+    <li><strong>Customers of merchants:</strong> an email address when a merchant collects one, and any customer records the merchant creates.</li>
+    <li><strong>Security signals:</strong> IP address and a bot check on checkout, used for rate limits, abuse prevention and regional restrictions. Wallet and refund addresses are screened against sanctions lists.</li>
+  </ul>
+  <h2>How we protect it</h2>
+  <p>
+    Personal data is encrypted at the field level and stored in the EU by default. Erasure requests are handled by
+    pseudonymisation that keeps the records anti-money-laundering rules require.
+  </p>
+  <h2>Contact</h2>
+  <p>Signed-in merchants can reach us from Help & support in the <a href={urls.dashboard}>dashboard</a>.</p>
+</LegalLayout>
