@@ -1,0 +1,84 @@
+---
+/**
+ * One page per error code, rendered from the @nearpay/spec error catalogue (the `doc_url` of every
+ * error points here). Facts come from the catalogue and OpenAPI; "What to do" from error-notes.ts.
+ */
+import CodeBlock from "../../../components/docs/CodeBlock.astro";
+import Markdown from "../../../components/docs/Markdown.astro";
+import DocsLayout from "../../../layouts/DocsLayout.astro";
+import { errorNote, SURFACE_TEXT } from "../../../lib/error-notes";
+import { CATALOGUE_VERSION, ERRORS, GROUPS, operationsReturning } from "../../../lib/spec";
+
+export function getStaticPaths() {
+  return ERRORS.map((e) => ({ params: { code: e.code } }));
+}
+const error = ERRORS.find((e) => e.code === Astro.params.code);
+if (!error) throw new Error(`unknown error ${Astro.params.code}`);
+const note = errorNote(error);
+const routes = operationsReturning(error.code);
+const body = JSON.stringify(
+  {
+    error: {
+      type: error.type,
+      code: error.code,
+      message: error.example,
+      doc_url: error.doc_url,
+      request_id: "req_…",
+    },
+  },
+  null,
+  2,
+);
+const groupTitle = (slug: string) => GROUPS.find((g) => g.slug === slug)?.title ?? slug;
+---
+<DocsLayout title={error.code} description={error.example} eyebrow={`Error · HTTP ${error.status}`}>
+  <Fragment slot="meta">
+    <div class="docs-article__meta">
+      <span class:list={["np-badge", error.retryable ? "np-badge--warning" : "np-badge--neutral"]}>
+        {error.retryable ? "Retryable" : "Not retryable"}
+      </span>
+      {error.generic && <span class="np-badge np-badge--info">Any route</span>}
+    </div>
+  </Fragment>
+  <dl class="facts">
+    <dt>HTTP status</dt>
+    <dd>{error.status}</dd>
+    <dt>Type</dt>
+    <dd><code>{error.type}</code></dd>
+    <dt>Message</dt>
+    <dd>{error.message}</dd>
+    <dt>Since</dt>
+    <dd>API {error.since}</dd>
+  </dl>
+  <div class="prose">
+    <h2 id="what-to-do">What to do</h2>
+    {note.fix.map((f) => <p><Markdown text={f} /></p>)}
+    {note.surface && <blockquote><p>{SURFACE_TEXT[note.surface]}</p></blockquote>}
+    <h2 id="example">Example response</h2>
+  </div>
+  <CodeBlock lang="json" label={`HTTP ${error.status}`} code={body} />
+  <div class="prose">
+    <h2 id="routes">Returned by</h2>
+    {
+      error.generic ? (
+        <p>Any route can return this error.</p>
+      ) : routes.length > 0 ? (
+        <ul>
+          {routes.map((o) => (
+            <li>
+              <a href={`/api/${o.group}#${o.id}`}>
+                <code>
+                  {o.method.toUpperCase()} {o.path}
+                </code>
+              </a>{" "}
+              — {o.summary} ({groupTitle(o.group)})
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No public API route documents this error; it comes from the dashboard, checkout or an internal surface.</p>
+      )
+    }
+  </div>
+  <p class="generated-note">Generated from the <code>@nearpay/spec</code> error catalogue {CATALOGUE_VERSION}.</p>
+</DocsLayout>

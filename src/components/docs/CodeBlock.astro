@@ -1,0 +1,25 @@
+---
+/** Highlighted code block (Prism token classes — no inline styles) with a language bar; docs.ts adds Copy. */
+import { runHighlighterWithAstro } from "@astrojs/prism/dist/highlighter";
+
+interface Props {
+  code: string;
+  lang: "bash" | "json" | "ts" | "js" | "html" | "http" | "text";
+  label?: string;
+}
+const { code, lang, label } = Astro.props;
+const { classLanguage, html } = runHighlighterWithAstro(lang === "text" ? "plaintext" : lang, code);
+const names: Record<string, string> = {
+  bash: "Shell",
+  json: "JSON",
+  ts: "TypeScript",
+  js: "JavaScript",
+  html: "HTML",
+  http: "HTTP",
+  text: "Text",
+};
+---
+<div class="code-block">
+  <div class="code-block__bar"><span>{label ?? names[lang]}</span></div>
+  <pre class={classLanguage} tabindex="0"><code class={classLanguage} set:html={html} /></pre>
+</div>

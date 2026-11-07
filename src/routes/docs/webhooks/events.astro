@@ -1,0 +1,87 @@
+---
+/** Webhook event types, rendered from @nearpay/spec (WEBHOOK_TYPES + the Event schema). */
+import { WEBHOOK_TYPE_NAMES } from "@nearpay/spec";
+import FieldList from "../../../components/docs/FieldList.astro";
+import DocsLayout from "../../../layouts/DocsLayout.astro";
+import { SPEC_PACKAGE_VERSION, schemaFields } from "../../../lib/spec";
+
+/** When each event is sent (presentation; the type list itself comes from the spec). */
+const WHEN: Record<string, string> = {
+  "checkout.session.completed": "The session’s payment succeeded (settlement evidence verified).",
+  "checkout.session.expired": "The session expired without a payment.",
+  "payment_intent.created": "A payment intent was created (checkout session, payment link or API).",
+  "payment_intent.processing": "A deposit was detected and the payment is being routed and verified.",
+  "payment_intent.succeeded": "Settlement evidence was verified at your destination. Fulfil the order now.",
+  "payment_intent.payment_failed": "The current attempt failed or a review was rejected; the payer may try again.",
+  "payment_intent.requires_review":
+    "The payment settled short or is held for verification; decide with the review route.",
+  "payment_intent.overpaid": "An extra settlement arrived (duplicate, after cancel or after expiry). Refund it.",
+  "payment_intent.canceled": "You canceled the intent.",
+  "agent_payment.settled": "An agent’s x402 or checkout payment settled.",
+  "agent_payment.failed": "An agent payment failed to settle.",
+  ping: "Sent by “Send test event” to check an endpoint; ignores subscriptions.",
+  "account.updated": "Account status, live mode or business-details review status changed.",
+  "refund.created": "A refund was created.",
+  "refund.requires_action": "A refund leg is ready: sign `next_action` in your wallet before its deadline.",
+  "refund.pending": "Your refund transfer was detected; the route is delivering it to the payer.",
+  "refund.succeeded": "Evidence shows the payer received the refund.",
+  "refund.failed": "The refund failed or was returned to your destination; prepare it again to retry.",
+  "refund.canceled": "You canceled the refund before signing.",
+  "review.opened": "A compliance review opened on one of your payments or destinations. The payment stands.",
+  "review.closed": "The review closed.",
+};
+const objectOf = (type: string) =>
+  type === "ping" ? "ping" : type.startsWith("checkout.session") ? "checkout_session" : type.split(".")[0];
+const whenText = (t: string) => (WHEN[t] ?? "").split("`").join("");
+const envelope = schemaFields("EventPaymentIntentSucceeded");
+const toc = [
+  { depth: 2, slug: "types", text: "Event types" },
+  { depth: 2, slug: "envelope", text: "Event envelope" },
+];
+---
+<DocsLayout
+  title="Event types"
+  description="Every event NearPay sends to webhook endpoints, and the envelope they share."
+  eyebrow="Webhooks"
+  toc={toc}
+  wide
+>
+  <div class="prose">
+    <h2 id="types">Event types</h2>
+    <p>
+      Subscribe an endpoint to individual types or to <code>*</code>. New types can appear without a new API version;
+      ignore types you don’t handle and still answer <code>2xx</code>.
+    </p>
+  </div>
+  <div class="np-table-wrap">
+    <div class="np-table-scroll" tabindex="0" role="region" aria-label="Event types">
+      <table class="np-table">
+        <caption class="np-sr-only">Webhook event types</caption>
+        <thead>
+          <tr><th scope="col">Type</th><th scope="col">data.object</th><th scope="col">Sent when</th></tr>
+        </thead>
+        <tbody>
+          {
+            WEBHOOK_TYPE_NAMES.map((t) => (
+              <tr>
+                <th scope="row" class="np-table__cell--primary"><code>{t}</code></th>
+                <td><code>{objectOf(t)}</code></td>
+                <td>{whenText(t)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="prose">
+    <h2 id="envelope">Event envelope</h2>
+    <p>
+      Every delivery body is one event. <code>data.object</code> is the object as it is now, rendered in the endpoint’s
+      API version; <code>data.object.sequence</code> increases with every change, so discard an event whose sequence is
+      not higher than the last one you applied.
+    </p>
+  </div>
+  <FieldList fields={envelope} mode="response" />
+  <p class="generated-note">Generated from <code>@nearpay/spec</code> {SPEC_PACKAGE_VERSION} (<code>WEBHOOK_TYPES</code>).</p>
+</DocsLayout>

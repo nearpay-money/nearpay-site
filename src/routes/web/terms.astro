@@ -1,0 +1,34 @@
+---
+import LegalLayout from "../../layouts/LegalLayout.astro";
+---
+<LegalLayout
+  title="Terms — NearPay"
+  description="NearPay terms of service. Draft pending legal review."
+  heading="Terms of service"
+  updated="2026-11-07"
+>
+  <p>
+    These terms are a draft for the NearPay preview. They are not yet in force and will be replaced by reviewed terms
+    before NearPay is generally available.
+  </p>
+  <h2>The service</h2>
+  <p>
+    NearPay provides software that lets merchants accept payments that settle directly to a destination they control.
+    NearPay is non-custodial: it does not hold, pay out or reverse funds, and keys held by NearPay can only pay network
+    fees or relay payments the owner has already signed.
+  </p>
+  <h2>Merchant responsibilities</h2>
+  <ul>
+    <li>Provide accurate business details. NearPay reviews them before enabling live mode; this review is not a third-party verification.</li>
+    <li>Keep control of your settlement destination and the wallet that signs refunds.</li>
+    <li>Fulfil orders only after NearPay reports a payment as complete, which happens after settlement evidence is seen.</li>
+  </ul>
+  <h2>Route providers</h2>
+  <p>
+    Cross-chain payments are routed through third-party providers on NEAR Intents. Their terms require, among other things,
+    that merchants are reviewed and that payer addresses are screened. The final terms will set out these flow-down
+    provisions in full.
+  </p>
+  <h2>Fees</h2>
+  <p>Fees are described on the <a href="/pricing">pricing page</a>. They are indicative during the preview.</p>
+</LegalLayout>

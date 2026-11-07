@@ -1,0 +1,134 @@
+---
+/** Product page: what NearPay Payments does today (Stage 1–2 scope), in the marketing visual language. */
+import Icon from "../../components/Icon.astro";
+import { links, urls } from "../../config/site";
+import WebLayout from "../../layouts/WebLayout.astro";
+
+const products = [
+  {
+    id: "checkout",
+    icon: "card",
+    title: "Checkout",
+    body: "A hosted payment page, or embed it in your site with @nearpay/js. Customers pay from the wallet and token they already have; you set the price in dollars or in a token.",
+    href: `${urls.docs}/checkout`,
+    link: "Checkout guide",
+  },
+  {
+    id: "links",
+    icon: "external",
+    title: "Payment links",
+    body: "Share a link in a message, an invoice or a QR code. Each payment opens its own checkout and lands in your dashboard.",
+    href: `${urls.docs}/checkout/payment-links`,
+    link: "Payment links",
+  },
+  {
+    id: "refunds",
+    icon: "arrow-left",
+    title: "Refunds",
+    body: "Refund to the address the customer paid from. NearPay prepares the refund; you authorize it in your own wallet.",
+    href: `${urls.docs}/refunds`,
+    link: "Refunds guide",
+  },
+  {
+    id: "settlement",
+    icon: "wallet",
+    title: "Settlement you choose",
+    body: "Pick the currency, network and wallet where payments arrive. Changes to a destination go through a cooling-off period and approval.",
+    href: `${urls.docs}/settlement-destinations`,
+    link: "Settlement destinations",
+  },
+  {
+    id: "evidence",
+    icon: "check",
+    title: "Paid means settled",
+    body: "A payment is marked complete only after NearPay sees settlement evidence at your destination — then your webhook fires.",
+    href: `${urls.docs}/webhooks`,
+    link: "Webhooks",
+  },
+  {
+    id: "agents",
+    icon: "shield-check",
+    title: "Agent payments",
+    body: "Charge AI agents per request with the x402 protocol. Agents sign a transfer from their NEAR Intents account; you get a verified outcome.",
+    href: `${urls.docs}/agents`,
+    link: "Agent payments",
+  },
+] as const;
+---
+<WebLayout
+  title="Payments — NearPay"
+  description="Checkout, payment links, refunds and agent payments that settle directly to your chosen wallet. Non-custodial, on NEAR Intents."
+  current="payments"
+>
+  <section class="page-hero" aria-labelledby="payments-title">
+    <div class="site-container">
+      <p class="eyebrow">Payments</p>
+      <h1 id="payments-title" class="heading-section">Accept any supported token. Settle in the one you want.</h1>
+      <p class="lede">
+        Your customer pays from their wallet, in the token and network they hold. NearPay routes the payment through NEAR
+        Intents and it settles directly to your chosen destination — no bridging for them, no NearPay balance for you.
+      </p>
+      <div class="hero__actions">
+        <a class="np-button np-button--primary-wide" href={links.signup}>Start accepting payments</a>
+        <a class="np-button np-button--secondary" href={links.docsGetStarted}>Read the docs</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--white" aria-labelledby="products-title">
+    <div class="site-container">
+      <div class="section-head">
+        <h2 id="products-title" class="heading-section">Everything you need to get paid</h2>
+      </div>
+      <ul class="card-grid card-grid--3">
+        {
+          products.map((p) => (
+            <li id={p.id}>
+              <div class="link-card link-card--static">
+                <span class="link-card__icon">
+                  <Icon name={p.icon} />
+                </span>
+                <h3 class="link-card__title">{p.title}</h3>
+                <p class="link-card__body">{p.body}</p>
+                <a class="link-card__more" href={p.href}>
+                  {p.link}
+                  <Icon name="arrow-right" size={16} />
+                </a>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="custody-title">
+    <div class="site-container split">
+      <div class="section-head">
+        <h2 id="custody-title" class="heading-section">Non-custodial by design</h2>
+        <p class="lede">
+          NearPay never holds customer or merchant funds. Keys held by NearPay can pay network gas or relay a payment the
+          owner already signed — nothing else.
+        </p>
+      </div>
+      <dl class="np-kv np-kv--inline np-card example-card">
+        <div class="np-kv__row"><dt class="np-kv__label">Where funds go</dt><dd class="np-kv__value">Your settlement destination</dd></div>
+        <div class="np-kv__row"><dt class="np-kv__label">NearPay balance</dt><dd class="np-kv__value">None</dd></div>
+        <div class="np-kv__row"><dt class="np-kv__label">Refunds</dt><dd class="np-kv__value">Signed in your wallet</dd></div>
+        <div class="np-kv__row"><dt class="np-kv__label">Business details</dt><dd class="np-kv__value">Reviewed by NearPay</dd></div>
+        <div class="np-kv__row"><dt class="np-kv__label">Test mode</dt><dd class="np-kv__value">No real funds move</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="band cta" aria-labelledby="payments-cta">
+    <div class="site-container">
+      <h2 id="payments-cta" class="heading-section">Your next customer is ready to pay.</h2>
+      <p class="lede">See the fees before you start.</p>
+      <div class="cta__actions hero__actions">
+        <a class="np-button np-button--primary-wide" href={links.signup}>Get started</a>
+        <a class="np-button np-button--secondary" href="/pricing">See pricing</a>
+      </div>
+    </div>
+  </section>
+</WebLayout>

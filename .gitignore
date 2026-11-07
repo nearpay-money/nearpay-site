@@ -12,3 +12,6 @@ coverage/
 .DS_Store
 .idea/
 .vscode/
+.astro/
+test-results/
+playwright-report/

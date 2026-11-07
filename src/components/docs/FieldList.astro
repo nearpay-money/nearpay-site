@@ -1,0 +1,68 @@
+---
+/** Recursive list of schema fields (request bodies, parameters, objects). Nested objects use <details>. */
+import type { Field } from "../../lib/spec";
+import Icon from "../Icon.astro";
+import Markdown from "./Markdown.astro";
+
+interface Props {
+  fields: Field[];
+  /** Show "required" flags (request side) or "nullable" (response side). */
+  mode: "request" | "response";
+  depth?: number;
+}
+const { fields, mode, depth = 0 } = Astro.props;
+---
+<ul class="params">
+  {
+    fields.map((f) => (
+      <li class="param">
+        <div class="param__head">
+          <code class="param__name">{f.name}</code>
+          <span class="param__type">{f.constValue !== undefined ? `"${f.constValue}"` : f.type}</span>
+          {mode === "request" && f.required && <span class="param__flag">required</span>}
+          {mode === "response" && f.nullable && <span class="param__flag param__flag--muted">nullable</span>}
+          {mode === "request" && !f.required && f.defaultValue !== undefined && (
+            <span class="param__flag param__flag--muted">default {f.defaultValue}</span>
+          )}
+          {f.constraints.map((c) => (
+            <span class="param__flag param__flag--muted">{c}</span>
+          ))}
+        </div>
+        {f.description && (
+          <p class="param__desc">
+            <Markdown text={f.description} />
+          </p>
+        )}
+        {f.values && f.values.length > 0 && (
+          <p class="param__values">
+            {f.openEnum ? "Known values (more may be added): " : "One of: "}
+            {f.values.map((v, i) => (
+              <>
+                {i > 0 && ", "}
+                <code>{v}</code>
+              </>
+            ))}
+          </p>
+        )}
+        {f.children && f.children.length > 0 && (
+          <details>
+            <summary>
+              <Icon name="chevron-right" size={14} />
+              {`Show ${f.children.length} child attributes`}
+            </summary>
+            <Astro.self fields={f.children} mode={mode} depth={depth + 1} />
+          </details>
+        )}
+        {f.variants?.map((v) => (
+          <details>
+            <summary>
+              <Icon name="chevron-right" size={14} />
+              {v.name}
+            </summary>
+            <Astro.self fields={v.fields} mode={mode} depth={depth + 1} />
+          </details>
+        ))}
+      </li>
+    ))
+  }
+</ul>

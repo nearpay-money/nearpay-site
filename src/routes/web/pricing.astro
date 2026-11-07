@@ -1,0 +1,153 @@
+---
+/**
+ * Pricing — the default fee schedule (open-questions Q-BIZ-02), marked indicative until the owner
+ * answers it. Worked examples use integer cents and bigint basis points (INV-5).
+ */
+import { links } from "../../config/site";
+import WebLayout from "../../layouts/WebLayout.astro";
+import { feeFor, money, percent, USD } from "../../lib/money";
+import { FEE_SCHEDULE } from "../../lib/pricing";
+
+const order = 10_000n; // $100.00
+const stable = FEE_SCHEDULE.find((r) => r.routeClass === "stable_pair");
+if (!stable) throw new Error("stable_pair rule missing");
+const stableFee = feeFor(order, stable.bps);
+const minFee = (micros: bigint) => money(micros, { symbol: "$", decimals: 6 });
+---
+<WebLayout
+  title="Pricing — NearPay"
+  description="Indicative NearPay pricing: a fee per successful payment, by how the customer pays. No NearPay-held balances; funds settle directly to your wallet."
+  current="pricing"
+>
+  <section class="page-hero" aria-labelledby="pricing-title">
+    <div class="site-container">
+      <p class="eyebrow">Pricing</p>
+      <h1 id="pricing-title" class="heading-section">A fee per successful payment. Nothing held in between.</h1>
+      <p class="lede">
+        The fee depends on how your customer pays. It is collected in flight as the payment settles, so funds still go
+        straight to your wallet — NearPay never holds your balance.
+      </p>
+      <span class="np-badge np-badge--warning">Indicative pricing · may change before general availability</span>
+    </div>
+  </section>
+
+  <section class="band band--white" aria-labelledby="schedule-title">
+    <div class="site-container">
+      <div class="section-head">
+        <h2 id="schedule-title" class="heading-section">Default fee schedule</h2>
+        <p class="lede">All-in percentages of the payment amount, including the route provider’s share.</p>
+      </div>
+      <div class="np-table-wrap">
+        <div class="np-table-scroll" tabindex="0" role="region" aria-label="Fee schedule">
+          <table class="np-table price-table">
+            <caption class="np-sr-only">Default NearPay fees by payment type</caption>
+            <thead>
+              <tr>
+                <th scope="col">Payment type</th>
+                <th scope="col">When it applies</th>
+                <th scope="col">Example</th>
+                <th scope="col">Fee</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                FEE_SCHEDULE.map((rule) => (
+                  <tr>
+                    <th scope="row" class="np-table__cell--primary">{rule.name}</th>
+                    <td>{rule.when}</td>
+                    <td>{rule.example}</td>
+                    <td>
+                      <span class="price">{percent(rule.bps)}</span>
+                      {rule.minFeeUsdMicros !== undefined && (
+                        <span class="price-min">minimum {minFee(rule.minFeeUsdMicros)}</span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="bearer-title">
+    <div class="site-container">
+      <div class="section-head">
+        <h2 id="bearer-title" class="heading-section">You choose who covers the fee</h2>
+        <p class="lede">
+          Customers see the fee before they approve. Either way, checkout shows the amount, the payment fee and what you
+          receive as separate lines.
+        </p>
+      </div>
+      <div class="split">
+        <div class="np-card example-card">
+          <h3>Customer covers it <span class="np-badge np-badge--info">Default</span></h3>
+          <dl class="np-kv np-kv--inline">
+            <div class="np-kv__row"><dt class="np-kv__label">Order</dt><dd class="np-kv__value">{money(order, USD)}</dd></div>
+            <div class="np-kv__row"><dt class="np-kv__label">Payment fee ({percent(stable.bps)}, stablecoin pair)</dt><dd class="np-kv__value">{money(stableFee, USD)}</dd></div>
+            <div class="np-kv__row"><dt class="np-kv__label">Customer pays</dt><dd class="np-kv__value">{money(order + stableFee, USD)}</dd></div>
+            <div class="np-kv__row np-kv__row--total"><dt class="np-kv__label">You receive</dt><dd class="np-kv__value">{money(order, USD)}</dd></div>
+          </dl>
+          <p>The fee is added on top of your price. You receive the full price in your settlement currency.</p>
+        </div>
+        <div class="np-card example-card">
+          <h3>You cover it</h3>
+          <dl class="np-kv np-kv--inline">
+            <div class="np-kv__row"><dt class="np-kv__label">Order</dt><dd class="np-kv__value">{money(order, USD)}</dd></div>
+            <div class="np-kv__row"><dt class="np-kv__label">Payment fee ({percent(stable.bps)}, stablecoin pair)</dt><dd class="np-kv__value">{money(stableFee, USD)}</dd></div>
+            <div class="np-kv__row"><dt class="np-kv__label">Customer pays</dt><dd class="np-kv__value">{money(order, USD)}</dd></div>
+            <div class="np-kv__row np-kv__row--total"><dt class="np-kv__label">You receive</dt><dd class="np-kv__value">{money(order - stableFee, USD)}</dd></div>
+          </dl>
+          <p>Customers pay your price; the fee is deducted from what settles to your wallet.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--white" aria-labelledby="faq-title">
+    <div class="site-container">
+      <div class="section-head">
+        <h2 id="faq-title" class="heading-section">Good to know</h2>
+      </div>
+      <div class="faq">
+        <div>
+          <h3>Are network fees included?</h3>
+          <p>
+            No. The customer’s wallet may charge a separate network fee, which they review in their wallet before
+            approving. The NearPay fee covers routing the payment to your settlement currency.
+          </p>
+        </div>
+        <div>
+          <h3>Does NearPay hold my money?</h3>
+          <p>
+            No. Payments settle directly to the wallet you choose. There is no NearPay balance to pay out, and NearPay keys
+            cannot move your funds.
+          </p>
+        </div>
+        <div>
+          <h3>What does test mode cost?</h3>
+          <p>Nothing. Test mode runs on a simulated rail with test keys, and no real funds move.</p>
+        </div>
+        <div>
+          <h3>What do I need to accept live payments?</h3>
+          <p>
+            Add your business details and an active settlement destination. NearPay reviews the details you declare
+            before live mode is turned on.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band cta" aria-labelledby="pricing-cta">
+    <div class="site-container">
+      <h2 id="pricing-cta" class="heading-section">Start in test mode today.</h2>
+      <p class="lede">Create an account, get test keys and take a simulated payment in minutes.</p>
+      <div class="cta__actions">
+        <a class="np-button" href={links.signup}>Get started</a>
+      </div>
+    </div>
+  </section>
+</WebLayout>
