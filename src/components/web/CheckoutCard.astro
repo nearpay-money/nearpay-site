@@ -8,7 +8,7 @@ import { money, rescale, USD, USDC } from "../../lib/money";
 import Icon from "../Icon.astro";
 
 const price = 4900n; // USD cents — $49.00
-const fee = 49n; // USD cents — $0.49 (illustrative; real fees depend on the route, see /pricing)
+const fee = 25n; // USD cents — $0.25: 0.50% stable-pair fee on $49.00 (indicative schedule, /pricing; rounded up to the cent)
 const payUsdc = rescale(price + fee, USD.decimals, USDC.decimals);
 const receiveUsdc = rescale(price, USD.decimals, USDC.decimals);
 ---

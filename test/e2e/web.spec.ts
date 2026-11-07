@@ -19,7 +19,7 @@ test.describe("marketing site", () => {
     await expect(card).toContainText("Pay with");
     await expect(card).toContainText("USDC · Base");
     await expect(card).toContainText(/Payment fees\s*\$0\.49/);
-    await expect(card).toContainText("Pay 49.49 USDC");
+    await expect(card).toContainText("Pay 49.25 USDC");
     await expect(card).toContainText("Merchant receives 49.00 USDC");
     await expect(card).toContainText("Straight to their chosen destination");
     await expect(card.getByRole("button")).toHaveCount(0); // illustrative, not interactive
