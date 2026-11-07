@@ -18,7 +18,7 @@ test.describe("marketing site", () => {
     const card = page.getByRole("figure", { name: "Illustrative checkout · fees vary by payment" });
     await expect(card).toContainText("Pay with");
     await expect(card).toContainText("USDC · Base");
-    await expect(card).toContainText(/Payment fees\s*\$0\.49/);
+    await expect(card).toContainText(/Payment fees\s*\$0\.25/);
     await expect(card).toContainText("Pay 49.25 USDC");
     await expect(card).toContainText("Merchant receives 49.00 USDC");
     await expect(card).toContainText("Straight to their chosen destination");
