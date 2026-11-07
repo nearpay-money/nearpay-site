@@ -1,0 +1,119 @@
+---
+/** API reference overview: conventions + every public route, from @nearpay/spec. */
+import CodeBlock from "../../../components/docs/CodeBlock.astro";
+import DocsLayout from "../../../layouts/DocsLayout.astro";
+import { API_BASE_URL, GROUPS, OPENAPI_VERSION, OPERATIONS, operationsOf } from "../../../lib/spec";
+
+const errorExample = JSON.stringify(
+  {
+    error: {
+      type: "invalid_request_error",
+      code: "amount_below_destination_minimum",
+      message: "Amount must be at least 2.00 USD for destination sd_… (USDC on Ethereum).",
+      param: "amount",
+      doc_url: "https://docs.nearpay.money/errors/amount_below_destination_minimum",
+      request_id: "req_…",
+    },
+  },
+  null,
+  2,
+);
+const toc = [
+  { depth: 2, slug: "basics", text: "Basics" },
+  { depth: 2, slug: "authentication", text: "Authentication" },
+  { depth: 2, slug: "idempotency", text: "Idempotency" },
+  { depth: 2, slug: "pagination", text: "Pagination and filters" },
+  { depth: 2, slug: "errors", text: "Errors" },
+  { depth: 2, slug: "versioning", text: "Versioning" },
+  { depth: 2, slug: "resources", text: "Resources" },
+];
+const listShape = '{ "object": "list", "data": [...], "has_more": false }';
+---
+<DocsLayout
+  title="API reference"
+  description="The NearPay REST API: resource-oriented URLs, JSON bodies, integer money and signed webhooks."
+  eyebrow="Reference"
+  toc={toc}
+  wide
+>
+  <Fragment slot="meta">
+    <div class="docs-article__meta">
+      <span class="np-badge np-badge--info">API {OPENAPI_VERSION}</span>
+      <span class="np-badge">{OPERATIONS.length} endpoints</span>
+    </div>
+  </Fragment>
+  <div class="prose">
+    <h2 id="basics">Basics</h2>
+    <p>
+      Base URL <code>{API_BASE_URL}</code>. Requests and responses are JSON. Money is always an integer: fiat amounts in
+      minor units (cents), token amounts as decimal strings of base units, with the asset and its <code>decimals</code>
+      alongside. Times are Unix seconds. Every object has an <code>id</code> with a type prefix (<code>cs_</code>,
+      <code>pi_</code>, <code>re_</code>…) and a <code>livemode</code> flag.
+    </p>
+    <h2 id="authentication">Authentication</h2>
+    <p>
+      Send a secret key (<code>sk_live_…</code> / <code>sk_test_…</code>) or a restricted key (<code>rk_…</code>, limited
+      to its scopes) as a bearer token from your server. The key’s mode decides whether objects are live or test.
+      Publishable keys (<code>pk_…</code>) only mount the embedded checkout. Payer routes take the checkout session’s
+      client secret in <code>X-NearPay-Client-Secret</code> instead.
+    </p>
+  </div>
+  <CodeBlock lang="bash" label="curl" code={`curl ${API_BASE_URL}/v1/payment_intents?limit=3 \\\n  -H "Authorization: Bearer $NEARPAY_SECRET_KEY"`} />
+  <div class="prose">
+    <h2 id="idempotency">Idempotency</h2>
+    <p>
+      Every <code>POST</code> accepts an <code>Idempotency-Key</code> header (up to 255 characters, kept 24 hours). The
+      same key with the same body returns the original response with <code>Idempotent-Replayed: true</code>; the same key
+      with a different body is <a href="/errors/idempotency_key_reused"><code>idempotency_key_reused</code></a>. The
+      official SDK adds a key automatically and reuses it across its own retries.
+    </p>
+    <h2 id="pagination">Pagination and filters</h2>
+    <p>
+      List endpoints return <code>{listShape}</code>. Page with <code>limit</code> (1–100, default 10) and the cursors
+      <code>starting_after</code> / <code>ending_before</code> (ids from the current page). Lists take typed filters such
+      as <code>status</code>, <code>created[gte]</code> and, for payment intents, <code>amount[gte]</code>,
+      <code>customer</code> or <code>metadata[order_id]=1234</code>. Filters combine with AND; there is no free-text
+      search.
+    </p>
+    <h2 id="errors">Errors</h2>
+    <p>
+      Non-2xx responses carry one error object. Branch on <code>code</code> (a closed catalogue; every code has a page under
+      <a href="/errors">Errors</a>), show <code>message</code> to developers, and quote <code>request_id</code> to support.
+      Retry only <code>429</code>, <code>5xx</code> and codes marked retryable, with the same idempotency key.
+    </p>
+  </div>
+  <CodeBlock lang="json" label="Error response" code={errorExample} />
+  <div class="prose">
+    <h2 id="versioning">Versioning</h2>
+    <p>
+      Versions are dates, pinned per account (current: <code>2026-11-01</code>). Send <code>NearPay-Version</code> to
+      choose one per request. New fields, event types and enum values ship without a new version, so clients must
+      tolerate unknown fields and values. Webhook endpoints pin their own version.
+    </p>
+    <h2 id="resources">Resources</h2>
+  </div>
+  {
+    GROUPS.map((g) => (
+      <section class="resource" aria-labelledby={`res-${g.slug}`}>
+        <h3 class="resource__title" id={`res-${g.slug}`}>
+          <a href={`/api/${g.slug}`}>{g.title}</a>
+        </h3>
+        <ul class="endpoint-list">
+          {operationsOf(g.slug).map((o) => (
+            <li>
+              <a href={`/api/${g.slug}#${o.id}`}>
+                <span class={`method method--${o.method}`}>{o.method.toUpperCase()}</span>
+                <code class="endpoint-path">{o.path}</code>
+                <span class="endpoint-list__summary">{o.summary}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+  <p class="generated-note">
+    Generated from <code>@nearpay/spec</code> {OPENAPI_VERSION}. Dashboard-only routes (sign-in, team, API keys and
+    settlement-destination changes) belong to the dashboard and are not listed.
+  </p>
+</DocsLayout>

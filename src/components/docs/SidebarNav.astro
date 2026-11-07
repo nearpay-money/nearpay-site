@@ -1,0 +1,33 @@
+---
+import { currentHref, NAV } from "../../lib/nav";
+
+interface Props {
+  path: string;
+  label: string;
+}
+const { path, label } = Astro.props;
+const current = currentHref(path);
+---
+<nav aria-label={label}>
+  {
+    NAV.map((group) => (
+      <div class="docs-nav__group">
+        <p class="docs-nav__heading">{group.heading}</p>
+        <ul class="docs-nav__list">
+          {group.items.map((item) => (
+            <li>
+              <a class="docs-nav__link" href={item.href} aria-current={item.href === current ? "page" : undefined}>
+                <span>{item.label}</span>
+                {item.meta && (
+                  <span class="docs-nav__method" aria-label={`${item.meta} endpoints`}>
+                    {item.meta}
+                  </span>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</nav>

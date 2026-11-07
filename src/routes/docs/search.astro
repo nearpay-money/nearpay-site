@@ -1,0 +1,15 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+<DocsLayout title="Search" description="Search guides, API endpoints and error codes." noindex>
+  <div data-search-page>
+    <form action="/search" method="get" role="search">
+      <label class="np-field__label search-page__label" for="search-page-input">Search the docs</label>
+      <div class="np-input"><input id="search-page-input" class="np-input__control" type="search" name="q" autocomplete="off" spellcheck="false" /></div>
+    </form>
+    <p class="search-page__status" data-search-status role="status" aria-live="polite">
+      <span data-search-nojs>Search needs JavaScript. Use the menu to browse the docs, or open the <a href="/api">API reference</a> and <a href="/errors">error codes</a>.</span>
+    </p>
+    <ol class="search-results" data-search-results></ol>
+  </div>
+</DocsLayout>

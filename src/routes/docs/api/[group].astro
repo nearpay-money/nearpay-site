@@ -1,0 +1,71 @@
+---
+/** API reference group page — rendered from @nearpay/spec OpenAPI. Do not hand-edit; change the spec. */
+import FieldList from "../../../components/docs/FieldList.astro";
+import Markdown from "../../../components/docs/Markdown.astro";
+import Operation from "../../../components/docs/Operation.astro";
+import DocsLayout from "../../../layouts/DocsLayout.astro";
+import { GROUPS, OPENAPI_VERSION, operationsOf, schemaDescription, schemaRoot } from "../../../lib/spec";
+
+export function getStaticPaths() {
+  return GROUPS.map((g) => ({ params: { group: g.slug } }));
+}
+const group = GROUPS.find((g) => g.slug === Astro.params.group);
+if (!group) throw new Error(`unknown group ${Astro.params.group}`);
+const ops = operationsOf(group.slug);
+const object = group.object ? schemaRoot(group.object) : undefined;
+const objectFields = object ? (object.children ?? []) : [];
+const toc = [
+  ...(object ? [{ depth: 2, slug: "object", text: `The ${group.object} object` }] : []),
+  ...ops.map((o) => ({ depth: 2, slug: o.id, text: o.summary })),
+];
+const plain = group.intro.replace(/`/g, "");
+---
+<DocsLayout title={group.title} description={plain} eyebrow="API reference" toc={toc} wide>
+  <Fragment slot="meta">
+    <div class="docs-article__meta">
+      <span class="np-badge np-badge--info">API {OPENAPI_VERSION}</span>
+      {group.guide && <a href={group.guide.href}>{group.guide.label}</a>}
+    </div>
+  </Fragment>
+
+  <h2 class="np-sr-only">Endpoints</h2>
+  <ul class="endpoint-list" aria-label={`${group.title} endpoints`}>
+    {
+      ops.map((o) => (
+        <li>
+          <a href={`#${o.id}`}>
+            <span class={`method method--${o.method}`}>{o.method.toUpperCase()}</span>
+            <code class="endpoint-path">{o.path}</code>
+            <span class="endpoint-list__summary">{o.summary}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  {
+    object && group.object && (
+      <section class="operation" id="object" aria-labelledby="object-title">
+        <h2 class="operation__title" id="object-title">
+          The <code>{group.object}</code> object
+        </h2>
+        <p class="operation__desc">
+          <Markdown text={schemaDescription(group.object)} />
+        </p>
+        <h3>Attributes</h3>
+        {objectFields.length > 0 ? (
+          <FieldList fields={objectFields} mode="response" />
+        ) : (
+          <FieldList fields={[object]} mode="response" />
+        )}
+      </section>
+    )
+  }
+
+  {ops.map((o) => <Operation op={o} />)}
+
+  <p class="generated-note">
+    Generated from <code>@nearpay/spec</code> {OPENAPI_VERSION} (<code>openapi/public.yaml</code>). Clients must tolerate
+    unknown fields and new values of open enums.
+  </p>
+</DocsLayout>

@@ -1,0 +1,91 @@
+---
+import CodeBlock from "../../components/docs/CodeBlock.astro";
+/** Docs home. */
+import Icon from "../../components/Icon.astro";
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+const start = [
+  {
+    icon: "arrow-right",
+    title: "Get started",
+    body: "Test keys, your first checkout session and a webhook in ten minutes.",
+    href: "/get-started",
+  },
+  {
+    icon: "card",
+    title: "Checkout",
+    body: "Hosted page, embedded with @nearpay/js, or payment links.",
+    href: "/checkout",
+  },
+  {
+    icon: "bell",
+    title: "Webhooks",
+    body: "Signed events for payments, refunds, reviews and your account.",
+    href: "/webhooks",
+  },
+  {
+    icon: "clock",
+    title: "Test mode",
+    body: "A deterministic sandbox: pick an outcome with the amount’s last two digits.",
+    href: "/test-mode",
+  },
+  {
+    icon: "arrow-left",
+    title: "Refunds",
+    body: "NearPay prepares the refund; your wallet signs it.",
+    href: "/refunds",
+  },
+  {
+    icon: "shield-check",
+    title: "Agent payments",
+    body: "Charge AI agents per request with x402 on NEAR Intents.",
+    href: "/agents",
+  },
+] as const;
+const snippet = `import { NearPay } from "@nearpay/node";
+
+const nearpay = new NearPay(process.env.NEARPAY_SECRET_KEY!);
+
+const session = await nearpay.checkout.sessions.create({
+  amount: 4900, // $49.00 in cents
+  currency: "usd",
+  success_url: "https://shop.example/thanks",
+});
+// redirect the customer to session.url`;
+---
+<DocsLayout
+  title="NearPay documentation"
+  description="Accept crypto from any supported wallet and settle in the currency you choose — directly to your wallet. NearPay never holds your funds."
+  eyebrow="Docs"
+>
+  <ul class="card-grid">
+    {
+      start.map((c) => (
+        <li>
+          <a class="link-card" href={c.href}>
+            <span class="link-card__icon">
+              <Icon name={c.icon} />
+            </span>
+            <span class="link-card__title">{c.title}</span>
+            <span class="link-card__body">{c.body}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <div class="prose home-prose">
+    <h2 id="first-payment">Create a payment in one call</h2>
+    <p>Create a checkout session on your server and redirect the customer to its URL. NearPay handles wallets, tokens and networks; you get a webhook once the payment has settled at your destination.</p>
+  </div>
+  <CodeBlock code={snippet} lang="ts" label="server.ts" />
+  <div class="prose">
+    <h2 id="how-it-works">How a payment works</h2>
+    <ol>
+      <li>Your server creates a checkout session with the price and your settlement destination.</li>
+      <li>The customer picks a token and network they already hold, and pays from their wallet (or sends to a verified deposit address).</li>
+      <li>NEAR Intents routes the payment and it settles directly to your destination — never to a NearPay account.</li>
+      <li>NearPay verifies settlement evidence on chain, then marks the payment succeeded and sends <code>payment_intent.succeeded</code>.</li>
+    </ol>
+    <p>Looking for every endpoint? Open the <a href="/api">API reference</a>.</p>
+  </div>
+</DocsLayout>

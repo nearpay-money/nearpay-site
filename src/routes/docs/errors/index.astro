@@ -1,0 +1,83 @@
+---
+/** Error catalogue index, rendered from @nearpay/spec. */
+import DocsLayout from "../../../layouts/DocsLayout.astro";
+import { CATALOGUE_VERSION, ERRORS } from "../../../lib/spec";
+
+const generic = ERRORS.filter((e) => e.generic);
+const specific = ERRORS.filter((e) => !e.generic).sort((a, b) => a.code.localeCompare(b.code));
+const toc = [
+  { depth: 2, slug: "handling", text: "Handling errors" },
+  { depth: 2, slug: "generic", text: "Generic errors" },
+  { depth: 2, slug: "all", text: "All error codes" },
+];
+---
+<DocsLayout
+  title="Errors"
+  description="Every NearPay API error has a stable code, an HTTP status, a type and its own page."
+  eyebrow="Reference"
+  toc={toc}
+  wide
+>
+  <div class="prose">
+    <h2 id="handling">Handling errors</h2>
+    <p>
+      Branch on <code>error.code</code>. Retry only errors marked retryable — <code>429</code>, <code>5xx</code> and the
+      codes below — with backoff and the same <code>Idempotency-Key</code>, so a retry can never create a second object.
+      Quote <code>request_id</code> when you contact support. The SDK maps each <code>type</code> to an error class
+      (for example <code>NearPayInvalidRequestError</code>).
+    </p>
+    <h2 id="generic">Generic errors</h2>
+    <p>Any route can return these.</p>
+  </div>
+  <div class="np-table-wrap">
+    <div class="np-table-scroll" tabindex="0" role="region" aria-label="Generic errors">
+      <table class="np-table error-table">
+        <caption class="np-sr-only">Generic errors</caption>
+        <thead>
+          <tr><th scope="col">Code</th><th scope="col">HTTP</th><th scope="col">Type</th><th scope="col">Retry</th><th scope="col">Meaning</th></tr>
+        </thead>
+        <tbody>
+          {
+            generic.map((e) => (
+              <tr>
+                <th scope="row" class="np-table__cell--primary"><a href={`/errors/${e.code}`}><code>{e.code}</code></a></th>
+                <td>{e.status}</td>
+                <td><code>{e.type}</code></td>
+                <td>{e.retryable ? "Yes" : "No"}</td>
+                <td>{e.example}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="prose">
+    <h2 id="all">All error codes</h2>
+    <p>{ERRORS.length} codes in catalogue {CATALOGUE_VERSION}, alphabetical.</p>
+  </div>
+  <div class="np-table-wrap">
+    <div class="np-table-scroll" tabindex="0" role="region" aria-label="All error codes">
+      <table class="np-table error-table">
+        <caption class="np-sr-only">All route-specific error codes</caption>
+        <thead>
+          <tr><th scope="col">Code</th><th scope="col">HTTP</th><th scope="col">Type</th><th scope="col">Retry</th><th scope="col">Meaning</th></tr>
+        </thead>
+        <tbody>
+          {
+            specific.map((e) => (
+              <tr>
+                <th scope="row" class="np-table__cell--primary"><a href={`/errors/${e.code}`}><code>{e.code}</code></a></th>
+                <td>{e.status}</td>
+                <td><code>{e.type}</code></td>
+                <td>{e.retryable ? "Yes" : "No"}</td>
+                <td>{e.message}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="generated-note">Generated from the <code>@nearpay/spec</code> error catalogue {CATALOGUE_VERSION}.</p>
+</DocsLayout>

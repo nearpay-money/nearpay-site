@@ -1,0 +1,124 @@
+---
+/** One API operation, rendered from @nearpay/spec (generated — edit the spec, not this output). */
+import { authLabel, curlExample, GROUPS, type Operation } from "../../lib/spec";
+import CodeBlock from "./CodeBlock.astro";
+import FieldList from "./FieldList.astro";
+import Markdown from "./Markdown.astro";
+
+interface Props {
+  op: Operation;
+}
+const { op } = Astro.props;
+const objectGroup = GROUPS.find((g) => g.object && g.object === op.success.schema);
+---
+<section class="operation" id={op.id} aria-labelledby={`${op.id}-title`}>
+  <h2 class="operation__title" id={`${op.id}-title`}>{op.summary}</h2>
+  <p class="operation__line">
+    <span class={`method method--${op.method}`}>{op.method.toUpperCase()}</span>
+    <code class="endpoint-path">{op.path}</code>
+    {op.testModeOnly && <span class="np-badge np-badge--warning">Test mode only</span>}
+  </p>
+  {
+    op.description && (
+      <p class="operation__desc">
+        <Markdown text={op.description} />
+      </p>
+    )
+  }
+  <dl class="facts operation__facts">
+    <dt>Authentication</dt>
+    <dd>{authLabel(op.auth).map((a, i) => <>{i > 0 && " or "}<Markdown text={a} /></>)}</dd>
+    {
+      op.acceptsIdempotencyKey && (
+        <>
+          <dt>Idempotency</dt>
+          <dd>
+            Send an <code>Idempotency-Key</code> header to retry safely for 24 hours.
+          </dd>
+        </>
+      )
+    }
+    {
+      op.stepUp && (
+        <>
+          <dt>Confirmation</dt>
+          <dd>Dashboard sessions need a fresh passkey confirmation (step-up).</dd>
+        </>
+      )
+    }
+    <dt>Returns</dt>
+    <dd>
+      <span class="status-code status-code--ok">{op.success.status}</span>{" "}
+      {
+        op.success.schema ? (
+          objectGroup ? (
+            <a href={`/api/${objectGroup.slug}#object`}>{op.success.schema}</a>
+          ) : (
+            <code>{op.success.schema}</code>
+          )
+        ) : op.success.contentType === "text/event-stream" ? (
+          <code>text/event-stream</code>
+        ) : (
+          <span>{op.success.description}</span>
+        )
+      }
+    </dd>
+  </dl>
+
+  {
+    op.pathParams.length > 0 && (
+      <>
+        <h3>Path parameters</h3>
+        <FieldList fields={op.pathParams} mode="request" />
+      </>
+    )
+  }
+  {
+    op.queryParams.length > 0 && (
+      <>
+        <h3>Query parameters</h3>
+        <FieldList fields={op.queryParams} mode="request" />
+      </>
+    )
+  }
+  {
+    op.headerParams.length > 0 && (
+      <>
+        <h3>Headers</h3>
+        <FieldList fields={op.headerParams} mode="request" />
+      </>
+    )
+  }
+  {
+    op.body && op.body.fields.length > 0 && (
+      <>
+        <h3>Request body{op.body.schema && <span class="param__type"> {op.body.schema}</span>}</h3>
+        <FieldList fields={op.body.fields} mode="request" />
+      </>
+    )
+  }
+  {
+    op.errors.length > 0 && (
+      <>
+        <h3>Errors</h3>
+        <ul class="response-list">
+          {op.errors.map((e) => (
+            <li>
+              <span class="status-code status-code--err">{e.status}</span>
+              <ul class="error-codes">
+                {e.codes.map((c) => (
+                  <li>
+                    <a href={`/errors/${c}`}>{c}</a>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+        <p class="param__desc">Plus the <a href="/errors#generic">generic errors</a> every route can return.</p>
+      </>
+    )
+  }
+  <h3>Example request</h3>
+  <CodeBlock code={curlExample(op)} lang="bash" label="curl" />
+</section>
