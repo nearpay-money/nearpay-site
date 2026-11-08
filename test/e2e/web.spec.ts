@@ -34,7 +34,7 @@ test.describe("marketing site", () => {
     ]) {
       await expect(page.getByRole("heading", { name: h })).toBeVisible();
     }
-    for (const h of ["Payments", "Billing · coming next", "Agent payments"]) {
+    for (const h of ["Payments", "Billing", "Agent payments"]) {
       await expect(page.getByRole("heading", { name: h, exact: true })).toBeVisible();
     }
     const footer = page.getByRole("navigation", { name: "Footer" });

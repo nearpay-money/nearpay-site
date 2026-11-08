@@ -1,11 +1,11 @@
 ---
-/** Billing is not available yet (Stage 3). The page says so plainly and points to what works today. */
+/** Billing is live (Stage 3): invoices, subscriptions, tax rates. Auto-debit (vault mandates) is Stage 4 and is labelled as coming next. */
 import { links } from "../../config/site";
 import WebLayout from "../../layouts/WebLayout.astro";
 ---
 <WebLayout
-  title="Billing — coming next — NearPay"
-  description="Invoices and recurring billing with payment approval in the customer’s wallet are coming next to NearPay."
+  title="Billing — invoices and subscriptions — NearPay"
+  description="Send invoices and bill subscriptions that customers pay from their own wallet. Funds settle directly to you."
   current="billing"
 >
   <section class="page-hero" aria-labelledby="billing-title">
@@ -13,37 +13,40 @@ import WebLayout from "../../layouts/WebLayout.astro";
       <p class="eyebrow">Billing</p>
       <h1 id="billing-title" class="heading-section">Invoices and recurring billing, approved in the customer’s wallet.</h1>
       <p class="lede">
-        Send invoices your customers pay from their own wallet, and bill subscriptions with limits the customer approves
-        up front. Billing isn’t available yet — it’s the next thing we’re building.
+        Send invoices your customers pay from their own wallet, and bill subscriptions with an invoice each period.
+        No NearPay account or email needed to pay. Funds settle directly to your chosen wallet.
       </p>
-      <span class="np-badge np-badge--warning">Coming next</span>
+      <div class="hero__actions">
+        <a class="np-button np-button--primary-wide" href={links.signup}>Get started</a>
+        <a class="np-button np-button--secondary" href={`${links.docsHome}/billing/invoices`}>Read the invoice guide</a>
+      </div>
     </div>
   </section>
   <section class="band band--white" aria-labelledby="billing-plan">
     <div class="site-container">
       <div class="section-head">
-        <h2 id="billing-plan" class="heading-section">What’s planned</h2>
+        <h2 id="billing-plan" class="heading-section">What you can do today</h2>
       </div>
       <ul class="columns">
         <li>
           <h3 class="column__title">Invoices</h3>
-          <p class="column__body">Itemised invoices with a hosted page to pay them. No NearPay account or email needed to pay.</p>
+          <p class="column__body">Itemised invoices with tax, a hosted page to pay them, a PDF and email reminders. <a href={`${links.docsHome}/billing/invoices`}>Invoice guide</a></p>
         </li>
         <li>
           <h3 class="column__title">Subscriptions</h3>
-          <p class="column__body">Recurring prices with renewal reminders, so customers know what’s coming before they pay.</p>
+          <p class="column__body">Recurring prices billed by invoice each period, with renewal reminders and dunning. <a href={`${links.docsHome}/billing/subscriptions`}>Subscriptions guide</a></p>
         </li>
         <li>
-          <h3 class="column__title">Customer-approved limits</h3>
-          <p class="column__body">Customers approve how much can be collected and how often. Funds still settle directly to you.</p>
+          <h3 class="column__title">Auto-debit <span class="np-badge np-badge--warning">Coming next</span></h3>
+          <p class="column__body">Customers fund a mandate they can cancel at any time, with limits they approve up front. Not available yet.</p>
         </li>
       </ul>
     </div>
   </section>
   <section class="band cta" aria-labelledby="billing-cta">
     <div class="site-container">
-      <h2 id="billing-cta" class="heading-section">Take payments today.</h2>
-      <p class="lede">Checkout and payment links are available now.</p>
+      <h2 id="billing-cta" class="heading-section">Start billing today.</h2>
+      <p class="lede">Invoices, subscriptions, checkout and payment links are available now.</p>
       <div class="cta__actions hero__actions">
         <a class="np-button np-button--primary-wide" href={links.signup}>Get started</a>
         <a class="np-button np-button--secondary" href="/payments">Explore payments</a>
