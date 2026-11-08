@@ -5,7 +5,9 @@
 // - no third-party scripts, stylesheets, fonts or images (links to other sites are fine);
 // - every HTML page has <html lang>, one <h1>, a <title> and a skip link target (#main);
 // - docs: one page per error code of the @nearpay/spec catalogue, and every public route of the
-//   OpenAPI document appears on an API reference page.
+//   OpenAPI document appears on an API reference page;
+// - internal links: every same-site `href="/…"` / `href="#…"` resolves to a built page (or file), and
+//   its `#fragment` to an element id on that page (step 3.3).
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, relative } from "node:path";
@@ -55,6 +57,51 @@ export function checkHtml(file, html) {
   return out;
 }
 
+/** Same-site href → built file (`format: "file"`: `/a/b` → `a/b.html`, `/` → `index.html`). */
+export function targetOf(dir, href) {
+  const path = href.split("#")[0].split("?")[0];
+  if (path === "/" || path === "") return join(dir, "index.html");
+  const clean = path.replace(/\/$/, "");
+  return /\.[a-z0-9]+$/i.test(clean) ? join(dir, clean) : join(dir, `${clean}.html`);
+}
+
+/** Element ids of a page (`id="…"`), for fragment checks. */
+export function idsOf(html) {
+  return new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
+}
+
+/** Broken same-site links and fragments of one built site. */
+export function checkLinks(dir, files) {
+  const out = [];
+  const pages = new Map();
+  for (const f of files) if (f.endsWith(".html")) pages.set(f, readFileSync(f, "utf8"));
+  const exists = (f) => {
+    try {
+      return statSync(f).isFile();
+    } catch {
+      return false;
+    }
+  };
+  for (const [file, html] of pages) {
+    const where = relative(root, file);
+    const code = html.replace(/<pre[\s\S]*?<\/pre>/gi, "");
+    for (const m of code.matchAll(/<a\b[^>]*\shref="([^"]+)"/gi)) {
+      const href = m[1].replace(/&amp;/g, "&");
+      if (/^[a-z][a-z0-9+.-]*:/i.test(href) || href.startsWith("//")) continue; // other sites, mailto:
+      const target = href.startsWith("#") ? file : targetOf(dir, href);
+      if (!href.startsWith("#") && !exists(target)) {
+        out.push(`${where}: broken link ${href}`);
+        continue;
+      }
+      const fragment = href.includes("#") ? decodeURIComponent(href.split("#")[1]) : "";
+      if (!fragment || !target.endsWith(".html")) continue;
+      const ids = idsOf(pages.get(target) ?? readFileSync(target, "utf8"));
+      if (!ids.has(fragment)) out.push(`${where}: link ${href} has no #${fragment} target`);
+    }
+  }
+  return out;
+}
+
 function checkCss(file, css) {
   const where = relative(root, file);
   const out = [];
@@ -71,7 +118,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       if (f.endsWith(".html")) problems.push(...checkHtml(f, readFileSync(f, "utf8")));
       if (f.endsWith(".css")) problems.push(...checkCss(f, readFileSync(f, "utf8")));
     }
-    console.log(`${site}: ${files.filter((f) => f.endsWith(".html")).length} pages checked`);
+    problems.push(...checkLinks(dir, files));
+    console.log(`${site}: ${files.filter((f) => f.endsWith(".html")).length} pages checked (incl. internal links)`);
   }
 
   const require = createRequire(import.meta.url);

@@ -89,6 +89,10 @@ The agent signs exactly two transfers — the amount to `payTo` and the fee to `
 
 Agents can also pay a regular checkout session from an Intents account: `POST /v1/checkout/sessions/{id}/agent_pay/requirements`, then `POST /v1/checkout/sessions/{id}/agent_pay` with the signed payload (both with the session's client secret). `@nearpay/agent-signer` verifies the independent co-signature on the requirement before it signs — the same protection the human checkout uses.
 
+## Payments from other chains
+
+Agents without a NEAR Intents balance can pay from another chain — for example USDC on Base — with the `near-intents` method: add `origins` to the paywall and NEAR Intents delivers exactly your price. See [Let AI agents pay](/agents/ai-agents#accept-payments-from-other-chains).
+
 ## Track agent payments
 
 Agent payments appear as `AgentPayment` objects (`GET /v1/agent_payments`) and send `agent_payment.settled` or `agent_payment.failed`. Verify failures carry an `invalidReason` such as `insufficient_funds`, `requirement_expired` or `amount_mismatch`.

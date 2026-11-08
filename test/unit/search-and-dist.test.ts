@@ -1,5 +1,8 @@
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { checkHtml } from "../../scripts/check-dist.mjs";
+import { checkHtml, checkLinks, targetOf } from "../../scripts/check-dist.mjs";
 import { resolveFile } from "../../scripts/serve.mjs";
 import { rank, type SearchDoc } from "../../src/lib/search";
 
@@ -66,5 +69,32 @@ describe("preview server", () => {
     expect(resolveFile(root, "/search.astro")).toMatch(/search\.astro$/);
     expect(resolveFile(root, "/../../package.json")).toBeNull();
     expect(resolveFile(root, "/missing")).toBeNull();
+  });
+});
+
+describe("check-dist internal links", () => {
+  it("resolves pages, files and fragments, and reports broken ones", () => {
+    const dir = mkdtempSync(join(tmpdir(), "np-links-"));
+    mkdirSync(join(dir, "billing"));
+    mkdirSync(join(dir, "_assets"));
+    writeFileSync(join(dir, "_assets", "a.css"), "");
+    writeFileSync(
+      join(dir, "index.html"),
+      '<a href="/billing/invoices#emails">ok</a><a href="#top">self</a><a id="top" href="/_assets/a.css">f</a>' +
+        '<a href="https://example.com/x">ext</a><a href="mailto:a@b.c">m</a><pre><a href="/nope">in code</a></pre>',
+    );
+    writeFileSync(
+      join(dir, "billing", "invoices.html"),
+      '<h2 id="emails">E</h2><a href="/missing">x</a><a href="/#nowhere">y</a><a href="/billing/invoices/">z</a>',
+    );
+    const files = [join(dir, "index.html"), join(dir, "billing", "invoices.html"), join(dir, "_assets", "a.css")];
+    const out = checkLinks(dir, files).join("\n");
+    expect(out).toContain("broken link /missing");
+    expect(out).toContain("link /#nowhere has no #nowhere target");
+    expect(out).not.toContain("/nope");
+    expect(out.split("\n")).toHaveLength(2);
+    expect(targetOf("/d", "/")).toBe("/d/index.html");
+    expect(targetOf("/d", "/a/b?x=1#c")).toBe("/d/a/b.html");
+    expect(targetOf("/d", "/search-index.json")).toBe("/d/search-index.json");
   });
 });

@@ -58,6 +58,12 @@ Links to other NearPay surfaces default to production and can be overridden at b
 Stage 2 step 2.3: marketing site (Figma marketing frames), pricing (indicative, Q-BIZ-02), legal drafts, developer
 docs with the API reference and error pages generated from `@nearpay/spec` 0.2.0.
 
+Stage 3 step 3.3: docs on `@nearpay/spec` 0.3.0 and `@nearpay-internal/ui` 0.3.0 — guides "Send an invoice",
+"Recurring billing with subscriptions", "Tax rates", "Listen to events locally with the CLI" and "Let AI agents pay";
+reference groups for products, prices, tax rates, invoices (incl. PDF), subscriptions, the hosted invoice API, CLI
+login, cross-chain x402 and the event stream (frames table); error notes for the 0.3.0 codes. `check-dist` also
+checks every internal link and `#fragment`; Markdown tables scroll inside a focusable region on phones.
+
 ## Built with
 
 Libraries are listed here as they are added (hackathon rule Q-005): Astro 5 (static output), `@astrojs/prism` (class-based code highlighting), `yaml`, `@nearpay/spec`, `@nearpay-internal/ui` (tokens, DM Sans, component CSS), `zod` (spec peer); development: TypeScript, `@astrojs/check`, Biome, Vitest, Playwright, `@axe-core/playwright`, React (build-time only, peer of the ui package for `formatMoney`). Code and documentation are written with AI assistance (Claude) under human direction and review.

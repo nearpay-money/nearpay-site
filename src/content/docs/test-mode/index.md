@@ -35,6 +35,7 @@ Refund legs use the same table with the **refund amount's** last two digits (in 
 
 - **Checkout:** test checkout shows **Simulate payment**; it calls `POST /v1/checkout/sessions/{id}/public/attempts/{attempt}/simulate_deposit`.
 - **Step by step:** move an attempt yourself with [`POST /v1/test_helpers/payment_attempts/{attempt}/advance`](/api/test-helpers) and `{"to": "deposit" | "processing" | "success" | "refund" | "fail"}`.
+- **Whole payment:** [`POST /v1/test_helpers/checkout_sessions/{id}/pay`](/api/test-helpers) pays an open test session as a payer would, with `{"outcome": "succeeded" | "payment_failed" | "refunded" | "none"}` (default `succeeded`); the normal events follow. [`nearpay trigger`](/cli) is built on it.
 - **Refunds:** after you create a refund, [`POST /v1/test_helpers/refunds/{id}/simulate_deposit`](/api/test-helpers) stands in for signing and sending from your wallet.
 
 ```bash

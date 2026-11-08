@@ -34,15 +34,27 @@ export const NAV: readonly NavGroup[] = [
     ],
   },
   {
+    heading: "Billing",
+    items: [
+      { label: "Send an invoice", href: "/billing/invoices" },
+      { label: "Subscriptions", href: "/billing/subscriptions" },
+      { label: "Tax rates", href: "/billing/tax-rates" },
+    ],
+  },
+  {
     heading: "Webhooks",
     items: [
       { label: "Receive webhooks", href: "/webhooks" },
       { label: "Event types", href: "/webhooks/events" },
+      { label: "Listen locally with the CLI", href: "/cli" },
     ],
   },
   {
     heading: "Agents",
-    items: [{ label: "Agent payments (x402)", href: "/agents" }],
+    items: [
+      { label: "Let AI agents pay", href: "/agents/ai-agents" },
+      { label: "Agent payments (x402)", href: "/agents" },
+    ],
   },
   {
     heading: "API reference",

@@ -46,6 +46,47 @@ const siteRoutes = {
   },
 };
 
+/** Text of a hast node (header cells → table labels). */
+function textOf(node) {
+  if (node.type === "text") return node.value;
+  return (node.children ?? []).map(textOf).join("");
+}
+
+/**
+ * Wraps every Markdown table in a horizontally scrollable, keyboard-focusable region, so wide
+ * tables (event names, long identifiers) scroll inside the article on phones instead of widening
+ * the page. The label names the columns for screen readers.
+ */
+function rehypeScrollableTables() {
+  const visit = (node) => {
+    if (!node.children) return;
+    node.children = node.children.map((child) => {
+      if (child.type === "element" && child.tagName === "table") {
+        const headers = [];
+        const collect = (n) => {
+          if (n.type === "element" && n.tagName === "th") headers.push(textOf(n).trim());
+          else for (const c of n.children ?? []) collect(c);
+        };
+        collect(child);
+        return {
+          type: "element",
+          tagName: "div",
+          properties: {
+            className: ["prose-table"],
+            tabIndex: 0,
+            role: "region",
+            ariaLabel: headers.length ? `Table: ${headers.join(", ")}` : "Table",
+          },
+          children: [child],
+        };
+      }
+      visit(child);
+      return child;
+    });
+  };
+  return (tree) => visit(tree);
+}
+
 export default defineConfig({
   site: ORIGINS[SITE],
   outDir: `./dist/${SITE}`,
@@ -58,6 +99,7 @@ export default defineConfig({
   markdown: {
     syntaxHighlight: "prism",
     smartypants: false,
+    rehypePlugins: [rehypeScrollableTables],
   },
   vite: {
     build: { assetsInlineLimit: 0 },

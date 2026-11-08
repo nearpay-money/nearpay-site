@@ -12,7 +12,7 @@ const { op } = Astro.props;
 const objectGroup = GROUPS.find((g) => g.object && g.object === op.success.schema);
 ---
 <section class="operation" id={op.id} aria-labelledby={`${op.id}-title`}>
-  <h2 class="operation__title" id={`${op.id}-title`}>{op.summary}</h2>
+  <h2 class="operation__title" id={`${op.id}-title`}><Markdown text={op.summary} /></h2>
   <p class="operation__line">
     <span class={`method method--${op.method}`}>{op.method.toUpperCase()}</span>
     <code class="endpoint-path">{op.path}</code>
@@ -56,8 +56,10 @@ const objectGroup = GROUPS.find((g) => g.object && g.object === op.success.schem
           ) : (
             <code>{op.success.schema}</code>
           )
-        ) : op.success.contentType === "text/event-stream" ? (
-          <code>text/event-stream</code>
+        ) : op.success.contentType !== "application/json" ? (
+          <>
+            <code>{op.success.contentType}</code> {op.success.contentType === "application/pdf" && <span>(the file’s bytes, not JSON)</span>}
+          </>
         ) : (
           <span>{op.success.description}</span>
         )
@@ -65,6 +67,39 @@ const objectGroup = GROUPS.find((g) => g.object && g.object === op.success.schem
     </dd>
   </dl>
 
+  {
+    op.sseEvents && op.sseEvents.length > 0 && (
+      <>
+        <h3>Stream frames</h3>
+        <div class="np-table-wrap">
+          <div class="np-table-scroll" tabindex="0" role="region" aria-label={`${op.summary}: stream frames`}>
+            <table class="np-table sse-frames">
+              <caption class="np-sr-only">Server-sent event frames</caption>
+              <thead>
+                <tr>
+                  <th scope="col"><code>event:</code> name</th>
+                  <th scope="col"><code>data:</code> payload</th>
+                </tr>
+              </thead>
+              <tbody>
+                {op.sseEvents.map((e) => {
+                  const g = GROUPS.find((x) => x.object === e.schema);
+                  return (
+                    <tr>
+                      <th scope="row" class="np-table__cell--primary">
+                        <code>{e.name}</code>
+                      </th>
+                      <td>{e.schema ? g ? <a href={`/api/${g.slug}#object`}>{e.schema}</a> : <code>{e.schema}</code> : "—"}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </>
+    )
+  }
   {
     op.pathParams.length > 0 && (
       <>

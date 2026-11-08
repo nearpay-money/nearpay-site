@@ -4,6 +4,7 @@ import { errorNote, SURFACE_TEXT } from "../../src/lib/error-notes";
 import { currentHref, NAV, neighbours } from "../../src/lib/nav";
 import {
   authLabel,
+  canonicalHeader,
   curlExample,
   ERRORS,
   GENERIC_ERROR_CODES,
@@ -19,12 +20,31 @@ import {
 } from "../../src/lib/spec";
 
 describe("spec model", () => {
-  it("reads @nearpay/spec 0.2.0", () => {
-    expect(SPEC_PACKAGE_VERSION).toBe("0.2.0");
-    expect(ERRORS).toHaveLength(77);
+  it("reads @nearpay/spec 0.3.0", () => {
+    expect(SPEC_PACKAGE_VERSION).toBe("0.3.0");
+    expect(ERRORS).toHaveLength(87);
   });
   it("lists only developer routes, each in a group", () => {
-    expect(OPERATIONS.length).toBe(62);
+    expect(OPERATIONS.length).toBe(99); // 62 (Stages 1–2) + 37 (Stage 3: billing, hosted invoices, stream, CLI login, x402 near-intents, test helper)
+    for (const id of ["getCliLogin", "approveCliLogin", "denyCliLogin"]) {
+      expect(
+        OPERATIONS.some((o) => o.id === id),
+        id,
+      ).toBe(false); // dashboard-session only
+    }
+    expect(operationsOf("invoices").map((o) => o.id)).toContain("getInvoicePdf");
+    expect(
+      operationsOf("hosted-invoices")
+        .map((o) => o.id)
+        .sort(),
+    ).toEqual(["createPublicInvoiceSession", "getPublicInvoice", "getPublicInvoicePdf"]);
+    expect(
+      operationsOf("cli-login")
+        .map((o) => o.id)
+        .sort(),
+    ).toEqual(["createCliLogin", "pollCliLogin"]);
+    expect(operationsOf("x402").map((o) => o.id)).toContain("x402NearIntentsSettle");
+    expect(operationsOf("test-helpers").map((o) => o.id)).toContain("payCheckoutSessionTestHelper");
     expect(OPERATIONS.some((o) => o.path.startsWith("/v1/auth/"))).toBe(false);
     expect(OPERATIONS.some((o) => o.id === "createApiKey")).toBe(false); // session-only
     expect(OPERATIONS.some((o) => o.id === "updateRefundRecipient")).toBe(false);
@@ -81,9 +101,21 @@ describe("spec model", () => {
     expect(curl).toContain('"success_url"');
     const get = curlExample(OPERATIONS.find((o) => o.id === "getRefund")!);
     expect(get).toContain("/v1/refunds/re_01jbz9k3m4n5p6q7r8s9t0v1w2");
-    expect(curlExample(OPERATIONS.find((o) => o.id === "getPublicCheckoutSession")!)).toContain(
-      "X-NearPay-Client-Secret",
-    );
+    const payer = curlExample(OPERATIONS.find((o) => o.id === "getPublicCheckoutSession")!);
+    expect(payer.match(/X-NearPay-Client-Secret/g)).toHaveLength(1);
+    const hosted = curlExample(OPERATIONS.find((o) => o.id === "getPublicInvoice")!);
+    expect(hosted).toContain('-H "X-NearPay-Invoice-Secret: $INVOICE_SECRET"');
+    expect(hosted).not.toContain("Authorization");
+    expect(curlExample(OPERATIONS.find((o) => o.id === "getInvoicePdf")!)).toContain("-o invoice.pdf");
+    const stream = OPERATIONS.find((o) => o.id === "streamEvents")!;
+    expect(curlExample(stream)).toContain('-H "Accept: text/event-stream" -N');
+    expect(stream.sseEvents).toEqual([
+      { name: "ready", schema: "EventStreamReady" },
+      { name: "event", schema: "Event" },
+      { name: "reset", schema: "EventStreamReset" },
+    ]);
+    expect(canonicalHeader("x-nearpay-invoice-secret")).toBe("X-NearPay-Invoice-Secret");
+    expect(canonicalHeader("last-event-id")).toBe("Last-Event-Id");
   });
   it("navigation covers every reference group", () => {
     const hrefs = NAV.flatMap((g) => g.items.map((i) => i.href));
