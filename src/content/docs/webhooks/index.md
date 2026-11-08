@@ -95,6 +95,7 @@ The response carries the new `secret` once and `previous_secret_expires_at`. Unt
 
 - **Send a test event:** `POST /v1/webhook_endpoints/{id}/test` delivers a `ping` event to that endpoint, whatever it subscribes to.
 - **Resend an event:** `POST /v1/events/{id}/resend` with `{"endpoint": "we_…"}` delivers it again to one endpoint, or with `{}` to every enabled endpoint subscribed to its type. Events are kept for 30 days.
+- **Develop locally:** [`nearpay listen --forward-to http://localhost:3000/webhooks`](/cli) forwards your test-mode events to your machine, signed like deliveries, and `nearpay trigger <event>` makes them happen.
 
 ## Delivery IP addresses
 

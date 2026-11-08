@@ -263,6 +263,53 @@ const N: Record<string, ErrorNote> = {
   customer_deleted: { fix: ["The customer was deleted and can’t be used. Create a new customer."] },
   reconciliation_day_open: { fix: ["Reconcile a UTC day only after it has ended."], surface: "console" },
   fx_rate_unavailable: { fix: ["No current exchange rate for this currency. Retry later, or price in USD."] },
+  // stage 3 — billing and the developer tools
+  currency_mismatch: {
+    fix: [
+      "Every line of an invoice (and every item of a subscription) must use the invoice’s currency. Create a price in that currency, or start a separate invoice.",
+    ],
+  },
+  interval_mismatch: {
+    fix: [
+      "All items of a subscription share one billing period. Use recurring prices with the same `interval` and `interval_count`, or create a second subscription.",
+    ],
+  },
+  price_inactive: {
+    fix: ["Reactivate the price (`PATCH /v1/prices/{id}` with `active: true`) or use another active price."],
+  },
+  price_type_invalid: {
+    fix: [
+      "Invoice lines take `one_time` prices; subscription items take `recurring` prices. Use a price of the right type.",
+    ],
+  },
+  tax_rate_inactive: {
+    fix: ["Reactivate the tax rate or apply an active one. Rates already on finalized invoices are unaffected."],
+  },
+  tax_rates_mixed: {
+    fix: [
+      "A line’s tax rates must be all inclusive or all exclusive. Split the rates across lines, or use rates of one kind.",
+    ],
+  },
+  invoice_empty: {
+    fix: ["Add at least one line with a positive amount before finalizing. Zero-total invoices can’t be finalized."],
+  },
+  customer_email_missing: {
+    fix: [
+      "Add an email address to the customer (`PATCH /v1/customers/{id}`), then send again — or share the `hosted_invoice_url` yourself.",
+    ],
+  },
+  invoice_secret_invalid: {
+    fix: [
+      "Open the invoice from its full hosted link: the secret is the part after `#`. Ask the merchant to resend the invoice if the link is incomplete.",
+    ],
+    surface: "checkout",
+  },
+  invoice_not_payable: {
+    fix: [
+      "The invoice is already paid or was voided. Nothing more is due; contact the merchant if you expected to pay.",
+    ],
+    surface: "checkout",
+  },
 };
 
 export function errorNote(e: CatalogueError): ErrorNote {

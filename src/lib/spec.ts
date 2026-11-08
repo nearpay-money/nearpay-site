@@ -303,6 +303,8 @@ export interface Operation {
   errors: { status: string; codes: string[] }[];
   /** Example request body built from required fields (only values the spec gives as examples or defaults). */
   exampleBody?: Record<string, unknown>;
+  /** Server-sent event frames (`event:` name → `data:` schema) of a `text/event-stream` route. */
+  sseEvents?: { name: string; schema?: string }[];
 }
 
 export interface Group {
@@ -362,6 +364,52 @@ export const GROUPS: readonly Group[] = [
     guide: { href: "/customers", label: "Customers guide" },
     match: (p) => p.startsWith("/v1/customers"),
   },
+  // stage 3 — billing
+  {
+    slug: "products",
+    title: "Products",
+    intro:
+      "A product is something you sell. Products carry the name shown on invoices; their prices say how much and how often. Archive products with `active: false` — they are never deleted.",
+    object: "Product",
+    guide: { href: "/billing/invoices", label: "Invoices guide" },
+    match: (p) => p.startsWith("/v1/products"),
+  },
+  {
+    slug: "prices",
+    title: "Prices",
+    intro:
+      "A price is a one-time or recurring amount for a product, in a fiat currency (minor units) or an asset (base units). Prices are immutable except `active`, `nickname` and `metadata`: create a new price to change an amount.",
+    object: "Price",
+    guide: { href: "/billing/subscriptions", label: "Subscriptions guide" },
+    match: (p) => p.startsWith("/v1/prices"),
+  },
+  {
+    slug: "tax-rates",
+    title: "Tax rates",
+    intro:
+      "Manual tax rates applied per invoice line: an exact decimal percentage, inclusive or exclusive. Percentage and inclusiveness are immutable; deactivate a rate to retire it.",
+    object: "TaxRate",
+    guide: { href: "/billing/tax-rates", label: "Tax rates guide" },
+    match: (p) => p.startsWith("/v1/tax_rates"),
+  },
+  {
+    slug: "invoices",
+    title: "Invoices",
+    intro:
+      "An invoice bills a customer. Drafts are editable; finalizing assigns a number, a due date, the hosted invoice URL and the PDF. Customers pay on the hosted invoice page — there is no “mark as paid” without a payment.",
+    object: "Invoice",
+    guide: { href: "/billing/invoices", label: "Invoices guide" },
+    match: (p) => p.startsWith("/v1/invoices") && !p.includes("/public"),
+  },
+  {
+    slug: "subscriptions",
+    title: "Subscriptions",
+    intro:
+      "A subscription bills a customer every period with an emailed invoice (`collection_method: send_invoice`). Changes apply from the next renewal; there is no proration.",
+    object: "Subscription",
+    guide: { href: "/billing/subscriptions", label: "Subscriptions guide" },
+    match: (p) => p.startsWith("/v1/subscriptions"),
+  },
   {
     slug: "settlement-destinations",
     title: "Settlement destinations",
@@ -406,6 +454,15 @@ export const GROUPS: readonly Group[] = [
     match: (p) => p.startsWith("/v1/checkout/sessions/{id}/public"),
   },
   {
+    slug: "hosted-invoices",
+    title: "Hosted invoice API",
+    intro:
+      "Routes the hosted invoice page (and paying agents) call on behalf of the customer, authorised by the invoice secret from the hosted URL fragment in `X-NearPay-Invoice-Secret`. Payment continues on the payer API with the returned checkout session.",
+    object: "PublicInvoice",
+    guide: { href: "/billing/invoices#the-hosted-invoice-page", label: "Hosted invoice page" },
+    match: (p) => p.startsWith("/v1/invoices/{id}/public"),
+  },
+  {
     slug: "agent-payments",
     title: "Agent payments",
     intro: "Payments made by AI agents: x402 payments to your API and agent payments of checkout sessions.",
@@ -417,7 +474,7 @@ export const GROUPS: readonly Group[] = [
     slug: "x402",
     title: "x402 facilitator",
     intro:
-      "NearPay as an x402 facilitator for the `exact` scheme with `intents-transfer`: issue payment requirements, verify payloads and settle them. `@nearpay/x402` calls these for you.",
+      "NearPay as an x402 facilitator for the `exact` scheme: `intents-transfer` from a NEAR Intents account, and cross-chain `near-intents` deposits from other chains. Issue payment requirements, verify payloads and settle them. `@nearpay/x402` calls these for you.",
     guide: { href: "/agents", label: "Agent payments guide" },
     match: (p) => p.startsWith("/x402/"),
   },
@@ -434,6 +491,15 @@ export const GROUPS: readonly Group[] = [
     intro:
       "Independent co-signatures over deposit instructions. Checkout and `@nearpay/agent-signer` verify them against pinned keys before showing an address or signing.",
     match: (p) => p.startsWith("/v1/attestations"),
+  },
+  {
+    slug: "cli-login",
+    title: "CLI login",
+    intro:
+      "Device authorization for `nearpay login`: the CLI starts a login, a team member approves it in the dashboard, and the CLI receives a restricted test-mode key. `@nearpay/cli` calls these for you.",
+    object: "CliLogin",
+    guide: { href: "/cli", label: "CLI guide" },
+    match: (p) => p.startsWith("/v1/cli/"),
   },
   {
     slug: "test-helpers",
@@ -542,6 +608,12 @@ function buildOperations(): Operation[] {
           schema: typeof successSchema.$ref === "string" ? refName(successSchema.$ref) : undefined,
           contentType,
         },
+        sseEvents: Array.isArray(success["x-sse-events"])
+          ? (success["x-sse-events"] as string[]).map((name, i) => {
+              const member = ((successSchema.anyOf as Json[] | undefined) ?? [])[i];
+              return { name, schema: typeof member?.$ref === "string" ? refName(member.$ref) : undefined };
+            })
+          : undefined,
         errors: Object.entries(responses)
           .filter(([code, r]) => code !== "default" && Array.isArray(r["x-error-codes"]))
           .map(([status, r]) => ({ status, codes: r["x-error-codes"] as string[] })),
@@ -605,13 +677,32 @@ export function curlExample(op: Operation): string {
   } else if (op.auth.includes("client_secret")) {
     lines.push(`  -H "X-NearPay-Client-Secret: $CLIENT_SECRET"`);
   }
+  // required route headers (the invoice secret); the client secret is covered by the auth line above
+  for (const h of op.headerParams.filter((x) => x.required && x.name.toLowerCase() !== "x-nearpay-client-secret")) {
+    lines.push(
+      `  -H "${canonicalHeader(h.name)}: $${h.name
+        .replace(/^x-nearpay-/, "")
+        .replace(/-/g, "_")
+        .toUpperCase()}"`,
+    );
+  }
+  if (op.success.contentType === "text/event-stream") lines.push(`  -H "Accept: text/event-stream" -N`);
   if (op.acceptsIdempotencyKey) lines.push(`  -H "Idempotency-Key: $(uuidgen)"`);
   if (op.body) {
     lines.push(`  -H "Content-Type: application/json"`);
     const body = JSON.stringify(op.exampleBody ?? {}, null, 2).replace(/'/g, "'\\''");
     lines.push(`  -d '${body}'`);
   }
+  if (op.success.contentType === "application/pdf") lines.push("  -o invoice.pdf");
   return lines.join(" \\\n");
+}
+
+/** `x-nearpay-invoice-secret` → `X-NearPay-Invoice-Secret` (header names are case-insensitive). */
+export function canonicalHeader(name: string): string {
+  return name
+    .split("-")
+    .map((w) => (w === "nearpay" ? "NearPay" : w.charAt(0).toUpperCase() + w.slice(1)))
+    .join("-");
 }
 
 function exampleId(op: Operation, name: string): string {

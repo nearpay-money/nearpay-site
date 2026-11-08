@@ -818,6 +818,11 @@ svg {
 .prose a code {
   color: inherit;
 }
+/* In tables, size columns to whole identifiers (`uncollectible`, `invoice.paid`) instead of letting
+   min-content shrink them to a few characters; very long ones still wrap at the cell edge. */
+.prose .prose-table td > code {
+  overflow-wrap: break-word;
+}
 .prose blockquote {
   margin-left: 0;
   margin-right: 0;
@@ -843,6 +848,23 @@ svg {
   border-radius: var(--np-radius-control);
   font-size: var(--np-text-small);
   line-height: 20px;
+}
+/* Markdown tables sit in a scroll region (astro.config.mjs `rehypeScrollableTables`). */
+.prose .prose-table {
+  overflow-x: auto;
+  border: 1px solid var(--np-color-border);
+  border-radius: var(--np-radius-control);
+}
+.prose .prose-table:focus-visible {
+  outline: none;
+  box-shadow: var(--np-shadow-focus);
+}
+.prose .prose-table > table {
+  border: 0;
+  border-radius: 0;
+}
+.prose .prose-table > table tr:last-child td {
+  border-bottom: 0;
 }
 .prose th {
   padding: var(--np-space-2) var(--np-space-3);
@@ -1178,12 +1200,14 @@ svg {
   margin-bottom: var(--np-space-3);
 }
 .docs-article__title {
+  overflow-wrap: anywhere; /* error codes as titles on phones */
   font-size: var(--np-text-h2);
   font-weight: var(--np-weight-medium);
   line-height: 40px;
   letter-spacing: var(--np-tracking-heading);
 }
 .docs-article__lede {
+  overflow-wrap: anywhere; /* catalogue examples carry long asset ids */
   margin-top: var(--np-space-3);
   color: var(--np-color-text-secondary);
   font-size: var(--np-text-h4);
@@ -1574,7 +1598,7 @@ svg {
   list-style: none;
   font-size: var(--np-text-small);
 }
-.response-list li {
+.response-list > li {
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr);
   gap: var(--np-space-3);
@@ -1622,6 +1646,7 @@ svg {
 }
 .search-results__meta {
   display: block;
+  overflow-wrap: anywhere;
   color: var(--np-color-text-secondary);
   font-size: var(--np-text-small);
 }

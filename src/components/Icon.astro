@@ -31,6 +31,10 @@ const PATHS = {
   card: ["rect:3.5:5.5:17:13:1.5", "M3.5 10h17M7 14.5h4"],
   clock: ["circle:12:12:8.5", "M12 7.5V12l3 2"],
   bell: ["M6.5 16.5V11a5.5 5.5 0 0111 0v5.5l1.5 1.5H5l1.5-1.5z", "M10 20.5h4"],
+  refresh: ["M19.5 12a7.5 7.5 0 11-2.2-5.3", "M19.5 4.5v4h-4"],
+  // site-local until the kit icon set has them (kit gap): a document and a terminal prompt
+  document: ["M7 3.5h7l4.5 4.5v12.5H7z", "M14 3.5V8h4.5", "M9.5 12.5h6M9.5 16h6"],
+  terminal: ["rect:3.5:5:17:14:2", "M7.5 10l2.5 2-2.5 2M12 14.5h4.5"],
 } as const;
 const { name, size = 20, title, class: className } = Astro.props;
 const shapes = PATHS[name].map((d) => {

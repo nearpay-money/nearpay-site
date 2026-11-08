@@ -1,13 +1,15 @@
 ---
 /**
- * Renders the short Markdown the spec uses in descriptions (`code`, **bold**, links are not used) as
- * escaped HTML: only inline code is converted, everything else is text.
+ * Renders the short Markdown the spec uses in descriptions (`code`, **bold**; links are not used) as
+ * escaped HTML: inline code and bold are converted, everything else is text.
  */
 interface Props {
   text?: string;
 }
 const { text = "" } = Astro.props;
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-const html = esc(text).replace(/`([^`]+)`/g, "<code>$1</code>");
+const html = esc(text)
+  .replace(/`([^`]+)`/g, "<code>$1</code>")
+  .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
 ---
 <Fragment set:html={html} />

@@ -14,9 +14,19 @@ const guides = [
   "/webhooks",
   "/webhooks/events",
   "/agents",
+  "/agents/ai-agents",
+  "/billing/invoices",
+  "/billing/subscriptions",
+  "/billing/tax-rates",
+  "/cli",
   "/changelog",
   "/api",
   "/api/refunds",
+  "/api/invoices",
+  "/api/subscriptions",
+  "/api/hosted-invoices",
+  "/api/events",
+  "/api/cli-login",
   "/errors",
   "/errors/leg_expired",
 ];
@@ -54,16 +64,89 @@ test.describe("docs", () => {
     await expect(page.getByRole("link", { name: /POST \/v1\/refunds$/ })).toBeVisible();
   });
 
+  test("billing guides: sidebar group, test-mode callout, non-custodial copy, no Stage 4 promise", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(`${DOCS}/billing/invoices`);
+    const nav = page.getByRole("navigation", { name: "Docs", exact: true });
+    await expect(nav.getByRole("link", { name: "Send an invoice" })).toHaveAttribute("aria-current", "page");
+    for (const label of ["Subscriptions", "Tax rates", "Listen locally with the CLI", "Let AI agents pay"]) {
+      await expect(nav.getByRole("link", { name: label, exact: true })).toBeVisible();
+    }
+    const main = page.locator("main");
+    await expect(main.getByText(/settles directly to your/).first()).toBeVisible();
+    await expect(main.locator("blockquote", { hasText: "Test mode." })).toBeVisible();
+    await expect(main).not.toContainText(/verified (merchant|business|identity)/i);
+    await page.goto(`${DOCS}/billing/subscriptions`);
+    await expect(
+      page.locator("main blockquote", { hasText: "Automatic payments are not available yet." }),
+    ).toBeVisible();
+  });
+
+  test("Stage 3 reference: PDF bytes, the event stream frames, the invoice-secret header", async ({ page }) => {
+    await page.goto(`${DOCS}/api/invoices`);
+    const pdf = page.locator("#getInvoicePdf");
+    await expect(pdf.getByText("application/pdf", { exact: true })).toBeVisible();
+    await expect(pdf.locator("pre")).toContainText("-o invoice.pdf");
+    await expect(page.getByText("Restricted key (rk_…) with invoices.write").first()).toBeVisible();
+    await page.goto(`${DOCS}/api/events`);
+    const stream = page.locator("#streamEvents");
+    await expect(stream.getByRole("table")).toContainText("EventStreamReset");
+    await expect(stream.getByRole("rowheader", { name: "reset" })).toBeVisible();
+    await expect(stream.getByRole("link", { name: "Event", exact: true })).toHaveAttribute(
+      "href",
+      "/api/events#object",
+    );
+    await expect(stream.locator("pre")).toContainText("Accept: text/event-stream");
+    await page.goto(`${DOCS}/api/hosted-invoices`);
+    await expect(page.locator("#createPublicInvoiceSession pre")).toContainText(
+      "X-NearPay-Invoice-Secret: $INVOICE_SECRET",
+    );
+    await expect(page.locator("#createPublicInvoiceSession pre")).not.toContainText("Authorization");
+  });
+
+  test("phones: no page scrolls sideways; wide tables scroll inside a focusable region", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    for (const path of [
+      "/billing/invoices",
+      "/billing/subscriptions",
+      "/billing/tax-rates",
+      "/cli",
+      "/agents/ai-agents",
+      "/api/invoices",
+      "/api/events",
+      "/errors/amount_exceeds_refundable",
+      "/search?q=refund",
+    ]) {
+      await page.goto(`${DOCS}${path}`);
+      const width = await page.evaluate(() => document.documentElement.scrollWidth);
+      expect(width, path).toBeLessThanOrEqual(390);
+    }
+    await page.goto(`${DOCS}/cli`);
+    const region = page.getByRole("region", { name: /^Table: Can be triggered, Not yet$/ });
+    await expect(region).toHaveAttribute("tabindex", "0");
+    await region.focus();
+    await expect(region).toBeFocused();
+  });
+
   test("event types come from the spec", async ({ page }) => {
     await page.goto(`${DOCS}/webhooks/events`);
-    for (const t of ["refund.requires_action", "review.opened", "account.updated", "payment_intent.succeeded"]) {
+    for (const t of [
+      "refund.requires_action",
+      "review.opened",
+      "account.updated",
+      "payment_intent.succeeded",
+      "invoice.paid",
+      "customer.subscription.renewal_upcoming",
+    ]) {
       await expect(page.getByRole("rowheader", { name: t })).toBeVisible();
     }
   });
 
   test("nested attributes expand without JavaScript", async ({ page }) => {
     await page.goto(`${DOCS}/api/refunds`);
-    const toggle = page.locator("#object summary", { hasText: "Show 11 child attributes" }).first();
+    const toggle = page
+      .locator("#object summary", { hasText: "Show 12 child attributes" /* refund legs, spec 0.3.0 */ })
+      .first();
     await toggle.click();
     await expect(page.locator("#object details[open] .param__name", { hasText: "tx_hash" }).first()).toBeVisible();
   });

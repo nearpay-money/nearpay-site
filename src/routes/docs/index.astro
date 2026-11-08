@@ -20,7 +20,7 @@ const start = [
   {
     icon: "bell",
     title: "Webhooks",
-    body: "Signed events for payments, refunds, reviews and your account.",
+    body: "Signed events for payments, refunds, invoices and subscriptions.",
     href: "/webhooks",
   },
   {
@@ -36,10 +36,22 @@ const start = [
     href: "/refunds",
   },
   {
+    icon: "document",
+    title: "Invoices",
+    body: "Bill a customer with a hosted invoice page, a PDF and emails.",
+    href: "/billing/invoices",
+  },
+  {
+    icon: "refresh",
+    title: "Subscriptions",
+    body: "Recurring billing: a renewal invoice every period, with reminders.",
+    href: "/billing/subscriptions",
+  },
+  {
     icon: "shield-check",
-    title: "Agent payments",
-    body: "Charge AI agents per request with x402 on NEAR Intents.",
-    href: "/agents",
+    title: "Let AI agents pay",
+    body: "MCP tools, x402 paywalls (also cross-chain) and spending limits.",
+    href: "/agents/ai-agents",
   },
 ] as const;
 const snippet = `import { NearPay } from "@nearpay/node";
@@ -82,7 +94,7 @@ const session = await nearpay.checkout.sessions.create({
     <h2 id="how-it-works">How a payment works</h2>
     <ol>
       <li>Your server creates a checkout session with the price and your settlement destination.</li>
-      <li>The customer picks a token and network they already hold, and pays from their wallet (or sends to a verified deposit address).</li>
+      <li>The customer picks a token and network they already hold, and pays from their wallet (or sends to a deposit address checked by an independent co-signature).</li>
       <li>NEAR Intents routes the payment and it settles directly to your destination — never to a NearPay account.</li>
       <li>NearPay verifies settlement evidence on chain, then marks the payment succeeded and sends <code>payment_intent.succeeded</code>.</li>
     </ol>
