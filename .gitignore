@@ -15,3 +15,7 @@ coverage/
 .astro/
 test-results/
 playwright-report/
+
+# Brand files copied from @nearpay-internal/ui/brand by astro.config.mjs (brandAssets)
+public/*
+!public/.gitkeep

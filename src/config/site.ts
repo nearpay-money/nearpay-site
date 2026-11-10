@@ -16,6 +16,7 @@ export const urls = {
 
 export const links = {
   signup: `${urls.dashboard}/signup`,
+  signin: `${urls.dashboard}/signin`,
   dashboard: urls.dashboard,
   docsHome: urls.docs,
   docsGetStarted: `${urls.docs}/get-started`,
@@ -27,6 +28,10 @@ export const links = {
   privacy: `${urls.web}/privacy`,
   terms: `${urls.web}/terms`,
 } as const;
+
+/** Positioning line (owner, design v2): payments from any chain, settled on the chain you choose. */
+export const TAGLINE = "Get paid from any chain. Settle where you choose.";
+export const BRAND_COLOR = "#12263F";
 
 /** Content-Security-Policy every page is built to satisfy (also served as an HTTP header by nearpay-deploy). */
 export const CSP = [

@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!dist", "!**/coverage", "!.astro", "!test-results", "!playwright-report", "!public/favicon.svg"]
+    "includes": ["**", "!dist", "!**/coverage", "!.astro", "!test-results", "!playwright-report", "!public"]
   },
   "formatter": {
     "enabled": true,

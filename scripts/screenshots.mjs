@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { spawn } from "node:child_process";
-// Full-page screenshots of the main screens at 1440 and 390 px for design review.
+// Full-page screenshots of the main screens at 1440 and 390 px for design review, plus a viewport frame of
+// the home hero mid-animation (a payment dot on its route: 600 ms start delay + ~half of its 1.5 s trip).
 //   node scripts/screenshots.mjs [outDir]   (default /home/claude/shots/site; needs a built dist/)
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -53,6 +54,10 @@ try {
       await page.goto(url, { waitUntil: "networkidle" });
       await page.screenshot({ path: join(out, `${name}-${width}.png`), fullPage: true });
     }
+    await page.goto(`${WEB}/`, { waitUntil: "load" });
+    await page.locator(".np-convergence").scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1250);
+    await page.screenshot({ path: join(out, `web-home-hero-motion-${width}.png`) });
     await page.close();
   }
 } finally {

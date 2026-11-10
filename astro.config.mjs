@@ -6,8 +6,9 @@
 // and scripts are always emitted as files (inlineStylesheets: never, assetsInlineLimit: 0), code blocks use
 // Prism (class-based tokens; Shiki writes style="" attributes), and scripts/check-dist.mjs fails the build
 // on any inline script, inline style, style attribute or third-party URL.
-import { readdirSync, statSync } from "node:fs";
-import { join, relative, sep } from "node:path";
+import { copyFileSync, mkdirSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { dirname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "astro/config";
 
@@ -42,6 +43,49 @@ const siteRoutes = {
         if (!/\.(astro|ts)$/.test(file) || file.includes(`${sep}_`)) continue;
         injectRoute({ pattern: routePattern(file), entrypoint: file, prerender: true });
       }
+    },
+  },
+};
+
+/**
+ * Brand files (design v2, "Convergence") come from the kit's `brand/` folder — the single source — and
+ * are copied into `public/` (git-ignored) when the config loads, so dev and both builds serve them at
+ * the root: favicon.svg/.ico, apple-touch-icon.png, icon-192/512 (+ maskable), og-image.png. The web
+ * app manifest is written next to them.
+ */
+const BRAND_FILES = [
+  "favicon.svg",
+  "favicon.ico",
+  "apple-touch-icon.png",
+  "icon-192.png",
+  "icon-512.png",
+  "icon-maskable-512.png",
+  "og-image.png",
+];
+const brandAssets = {
+  name: "nearpay-brand-assets",
+  hooks: {
+    "astro:config:setup": () => {
+      const require = createRequire(import.meta.url);
+      const brandDir = join(dirname(require.resolve("@nearpay-internal/ui/package.json")), "brand");
+      const publicDir = fileURLToPath(new URL("./public/", import.meta.url));
+      mkdirSync(publicDir, { recursive: true });
+      for (const file of BRAND_FILES) copyFileSync(join(brandDir, file), join(publicDir, file));
+      const manifest = {
+        name: SITE === "docs" ? "NearPay Docs" : "NearPay",
+        short_name: "NearPay",
+        description: "Payments from any chain, settled on the chain you choose.",
+        start_url: "/",
+        display: "browser",
+        background_color: "#FFFFFF",
+        theme_color: "#12263F",
+        icons: [
+          { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+          { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+          { src: "/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+        ],
+      };
+      writeFileSync(join(publicDir, "site.webmanifest"), `${JSON.stringify(manifest, null, 2)}\n`);
     },
   },
 };
@@ -107,5 +151,5 @@ export default defineConfig({
     ssr: { external: ["prismjs", "@astrojs/prism"] },
     define: { "import.meta.env.NP_SITE": JSON.stringify(SITE) },
   },
-  integrations: [siteRoutes],
+  integrations: [brandAssets, siteRoutes],
 });

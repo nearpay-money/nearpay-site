@@ -1,0 +1,11 @@
+---
+/**
+ * The home hero's navy panel: the kit's ConvergenceHero rendered at build time (lib/hero.ts) and animated by
+ * the external module scripts/hero.ts. Fixed aspect ratio (600 × 560), so nothing shifts when it starts.
+ */
+import { heroMarkup } from "../../lib/hero";
+
+const html = heroMarkup();
+---
+<Fragment set:html={html} />
+<script src="../../scripts/hero.ts"></script>
