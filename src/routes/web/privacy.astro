@@ -20,7 +20,7 @@ import LegalLayout from "../../layouts/LegalLayout.astro";
   <h2>Data we process</h2>
   <ul>
     <li><strong>Merchant accounts:</strong> email address, passkey public keys, team members and roles, API key metadata and an audit log of account changes.</li>
-    <li><strong>Business details:</strong> the details a merchant declares to go live (legal name, country, registration number, business type, website, address, representative and expected volume). NearPay reviews them; they are not verified by a third party.</li>
+    <li><strong>Business details:</strong> the details a merchant declares to go live (legal name, country, optional registration number, business type, optional website, address, representative and expected volume). They are self-declared: NearPay screens the country automatically and does not review or verify them.</li>
     <li><strong>Payments:</strong> amounts, assets, networks, wallet addresses, refund addresses and transaction hashes. Blockchain transactions are public by nature.</li>
     <li><strong>Customers of merchants:</strong> an email address when a merchant collects one, and any customer records the merchant creates.</li>
     <li><strong>Security signals:</strong> IP address and a bot check on checkout, used for rate limits, abuse prevention and regional restrictions. Wallet and refund addresses are screened against sanctions lists.</li>
