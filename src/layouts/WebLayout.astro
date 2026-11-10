@@ -1,5 +1,9 @@
 ---
-/** Marketing page shell: header (nav + "Get started"), main, footer — Figma marketing frames. */
+/**
+ * Marketing page shell, design v2 (Main artboard): header (Convergence logo, product nav, Sign in, navy pill
+ * "Start accepting payments"), main, footer. Below 1100 px the nav, Sign in and the CTA move into a native
+ * <details> disclosure (no script).
+ */
 import Icon from "../components/Icon.astro";
 import Logo from "../components/Logo.astro";
 import { links, urls } from "../config/site";
@@ -14,24 +18,25 @@ interface Props {
 }
 const { title, description, current, noindex } = Astro.props;
 const nav = [
-  { id: "payments", label: "Payments", href: "/payments" },
-  { id: "billing", label: "Billing", href: "/billing" },
-  { id: "developers", label: "For developers", href: urls.docs },
-  { id: "pricing", label: "Pricing", href: "/pricing" },
+  { id: "payments", label: "Checkout", href: "/payments#checkout" },
+  { id: "links", label: "Payment links", href: "/payments#links" },
+  { id: "billing", label: "Subscriptions", href: "/billing" },
+  { id: "agents", label: "Agent payments", href: "/payments#agents" },
+  { id: "docs", label: "Docs", href: urls.docs },
 ];
 const footer = [
+  { label: "Pricing", href: "/pricing" },
   { label: "Docs", href: links.docsHome },
   { label: "Support", href: "/support" },
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
 ];
-const year = 2026;
 ---
 <Base title={title} description={description} bodyClass="web" noindex={noindex}>
   <header class="web-header">
     <div class="site-container web-header__bar">
       <Logo href="/" />
-      <nav class="web-nav only-desktop" aria-label="Main">
+      <nav class="web-nav web-header__wide" aria-label="Main">
         <ul class="web-nav__list">
           {
             nav.map((item) => (
@@ -44,8 +49,11 @@ const year = 2026;
           }
         </ul>
       </nav>
-      <a class="np-button web-header__cta only-desktop" href={links.signup}>Get started</a>
-      <details class="web-menu only-mobile">
+      <div class="web-header__actions web-header__wide">
+        <a class="web-nav__link web-header__signin" href={links.signin}>Sign in</a>
+        <a class="np-button np-button--navy np-button--pill web-header__cta" href={links.signup}>Start accepting payments</a>
+      </div>
+      <details class="web-menu web-header__narrow">
         <summary aria-label="Menu">
           <span class="web-menu__open"><Icon name="menu" size={24} /></span>
           <span class="web-menu__close"><Icon name="close" size={24} /></span>
@@ -61,7 +69,11 @@ const year = 2026;
                 </li>
               ))
             }
-            <li><a class="np-button np-button--full" href={links.signup}>Get started</a></li>
+            <li><a href="/pricing" aria-current={current === "pricing" ? "page" : undefined}>Pricing</a></li>
+            <li><a href={links.signin}>Sign in</a></li>
+            <li class="web-menu__cta">
+              <a class="np-button np-button--navy np-button--pill np-button--full" href={links.signup}>Start accepting payments</a>
+            </li>
           </ul>
         </nav>
       </details>
@@ -72,10 +84,7 @@ const year = 2026;
   </main>
   <footer class="web-footer">
     <div class="site-container web-footer__inner">
-      <div class="web-footer__brand">
-        <Logo href="/" />
-        <p class="web-footer__legal">© {year} NearPay · Non-custodial payments on NEAR Intents</p>
-      </div>
+      <p class="web-footer__legal">NearPay. Payments on NEAR Intents.</p>
       <nav aria-label="Footer">
         <ul class="footer-links">
           {footer.map((item) => <li><a href={item.href}>{item.label}</a></li>)}

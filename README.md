@@ -33,7 +33,9 @@ nearpay-site/
 │   ├── lib/spec.ts      build-time model of @nearpay/spec (OpenAPI + error catalogue) → API reference,
 │   │                    error pages, event types (rendered on every build; nothing generated is committed)
 │   ├── components/, layouts/, styles/site.css   on top of @nearpay-internal/ui tokens + CSS
-│   └── scripts/docs.ts  the only client script (docs copy buttons + search), 1.5 KB gz
+│   ├── lib/hero.ts      home hero: the kit's ConvergenceHero rendered to static HTML at build time
+│   ├── lib/convergence.ts  hero animation schedule (dependency-free, shared with the browser module)
+│   └── scripts/         client modules: docs.ts (copy buttons + search, 1.5 KB gz), hero.ts (hero animation, < 1 KB gz)
 ├── scripts/             check-dist (CSP/a11y/coverage gate), serve (preview with prod headers), screenshots
 └── test/                unit (Vitest) and e2e (Playwright + axe, CSP-violation guard)
 ```
@@ -51,7 +53,13 @@ Links to other NearPay surfaces default to production and can be overridden at b
 `NP_WEB_URL`, `NP_DOCS_URL`, `NP_DASHBOARD_URL`, `NP_API_URL`.
 
 **CSP:** every page satisfies `default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'`
-(also emitted as a meta tag). Nothing is inlined; the marketing site ships no JavaScript.
+(also emitted as a meta tag). Nothing is inlined. The marketing site's only JavaScript is the home hero animation, an
+external module (`src/scripts/hero.ts`) that starts SMIL animations on the build-time markup; it never runs under
+`prefers-reduced-motion: reduce`, and the page is complete without it.
+
+**Brand (design v2, "Convergence"):** favicon.svg/.ico, apple-touch-icon, PWA icons and og-image.png are copied from
+`@nearpay-internal/ui/brand/` into `public/` (git-ignored) when the Astro config loads; `site.webmanifest` is written
+next to them. Theme colour `#12263F`.
 
 ## Status
 
@@ -64,6 +72,10 @@ reference groups for products, prices, tax rates, invoices (incl. PDF), subscrip
 login, cross-chain x402 and the event stream (frames table); error notes for the 0.3.0 codes. `check-dist` also
 checks every internal link and `#fragment`; Markdown tables scroll inside a focusable region on phones.
 
+Design v2 (owner-approved 2026-11-11): home from the Main artboard (Convergence logo, ConvergenceHero panel, chain
+strip, payment sequence, developer section, non-custodial band); every other page restyled on `@nearpay-internal/ui`
+0.5.0 tokens and Instrument Sans with the same header and footer.
+
 ## Built with
 
-Libraries are listed here as they are added (hackathon rule Q-005): Astro 5 (static output), `@astrojs/prism` (class-based code highlighting), `yaml`, `@nearpay/spec`, `@nearpay-internal/ui` (tokens, DM Sans, component CSS), `zod` (spec peer); development: TypeScript, `@astrojs/check`, Biome, Vitest, Playwright, `@axe-core/playwright`, React (build-time only, peer of the ui package for `formatMoney`). Code and documentation are written with AI assistance (Claude) under human direction and review.
+Libraries are listed here as they are added (hackathon rule Q-005): Astro 5 (static output), `@astrojs/prism` (class-based code highlighting), `yaml`, `@nearpay/spec`, `@nearpay-internal/ui` (tokens, Instrument Sans, component CSS, brand files, ConvergenceHero), `zod` (spec peer); development: TypeScript, `@astrojs/check`, Biome, Vitest, Playwright, `@axe-core/playwright`, React and react-dom (build-time only: peer of the ui package for `formatMoney`, and server rendering of the hero; never shipped to the browser). Code and documentation are written with AI assistance (Claude) under human direction and review.

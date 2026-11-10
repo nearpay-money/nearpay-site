@@ -1,13 +1,14 @@
 ---
 /**
- * Document shell for both sites: design tokens, DM Sans (self-hosted) and kit component CSS from
- * @nearpay-internal/ui, the site stylesheet, and a CSP meta tag mirroring the served header.
+ * Document shell for both sites: design tokens, Instrument Sans (self-hosted) and kit component CSS from
+ * @nearpay-internal/ui 0.5 (design v2), the site stylesheet, brand icons/manifest/og:image (copied from the
+ * kit's brand/ folder at build, astro.config.mjs) and a CSP meta tag mirroring the served header.
  */
 import "@nearpay-internal/ui/fonts.css";
 import "@nearpay-internal/ui/tokens.css";
 import "@nearpay-internal/ui/styles.css";
 import "../styles/site.css";
-import { CSP } from "../config/site";
+import { BRAND_COLOR, CSP } from "../config/site";
 
 interface Props {
   title: string;
@@ -18,6 +19,7 @@ interface Props {
 }
 const { title, description, bodyClass, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL("/og-image.png", Astro.site).href;
 ---
 <!doctype html>
 <html lang="en">
@@ -29,13 +31,22 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <meta name="theme-color" content="#f7f9f8" />
+    <meta name="theme-color" content={BRAND_COLOR} />
+    <meta property="og:site_name" content="NearPay" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="NearPay — Get paid from any chain. Settle where you choose." />
+    <meta name="twitter:card" content="summary_large_image" />
     {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <slot name="head" />
   </head>
   <body class:list={["np-root", bodyClass]} data-theme="light">

@@ -72,7 +72,7 @@ const minFee = (micros: bigint) => money(micros, { symbol: "$", decimals: 6 });
     </div>
   </section>
 
-  <section class="band" aria-labelledby="bearer-title">
+  <section class="band band--subtle" aria-labelledby="bearer-title">
     <div class="site-container">
       <div class="section-head">
         <h2 id="bearer-title" class="heading-section">You choose who covers the fee</h2>
@@ -141,12 +141,12 @@ const minFee = (micros: bigint) => money(micros, { symbol: "$", decimals: 6 });
     </div>
   </section>
 
-  <section class="band cta" aria-labelledby="pricing-cta">
+  <section class="band band--navy cta" aria-labelledby="pricing-cta">
     <div class="site-container">
       <h2 id="pricing-cta" class="heading-section">Start in test mode today.</h2>
       <p class="lede">Create an account, get test keys and take a simulated payment in minutes.</p>
-      <div class="cta__actions">
-        <a class="np-button" href={links.signup}>Get started</a>
+      <div class="page-actions">
+        <a class="np-button np-button--mint np-button--lg np-button--pill" href={links.signup}>Get started</a>
       </div>
     </div>
   </section>
