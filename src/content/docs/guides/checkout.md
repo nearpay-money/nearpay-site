@@ -57,7 +57,7 @@ Sessions accept payments for `expires_in` seconds (300–86 400, default 3 600),
 3. Approve in their wallet, or send to a deposit address. A deposit address is shown only after it has been independently co-signed, and checkout asks the customer to confirm the network first.
 4. **Confirming your payment** while it settles, then **Payment complete** once NearPay has verified settlement evidence.
 
-The business name shown is the legal name NearPay reviewed for your account ("Business details reviewed by NearPay").
+The business name shown is the legal name you declared for your account ("Business details declared by the merchant").
 
 ## After the payment
 

@@ -80,7 +80,7 @@ Fulfil orders from the webhook, not from the redirect to `success_url`: a custom
 
 Live mode needs two things:
 
-- **Business details reviewed by NearPay.** You declare your business details in the dashboard; NearPay ops review them before turning on live mode. This is a review of what you declared, not a third-party identity verification.
+- **Your business details.** Declare them in the dashboard (legal name, country, business type, address, representative and expected volume; the registration number and website are optional). Live mode turns on as soon as you save them — there is no NearPay review. Businesses registered in a country NearPay cannot serve are declined automatically.
 - **An active live settlement destination.** New destinations and changes to them become active after a cooling-off period.
 
 Then swap `sk_test_…` for `sk_live_…`. Live payments settle directly to your wallet — NearPay never holds a balance for you.

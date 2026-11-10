@@ -226,7 +226,9 @@ const N: Record<string, ErrorNote> = {
   two_person_required: { fix: ["Ask a second approver to confirm the action."], surface: "console" },
   authenticator_not_allowed: { fix: ["Use an allow-listed hardware security key."], surface: "console" },
   kyb_profile_incomplete: {
-    fix: ["Fill in the business details listed in the message, then submit them for review."],
+    fix: [
+      "Fill in the business details listed in the message, then save them again. The registration number is optional.",
+    ],
     surface: "dashboard",
   },
   intent_not_succeeded: {
