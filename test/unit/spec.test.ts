@@ -1,4 +1,4 @@
-import { WEBHOOK_TYPE_NAMES } from "@nearpay/spec";
+import { WEBHOOK_TYPE_NAMES } from "@nearpay-money/spec";
 import { describe, expect, it } from "vitest";
 import { errorNote, SURFACE_TEXT } from "../../src/lib/error-notes";
 import { currentHref, NAV, neighbours } from "../../src/lib/nav";
@@ -20,12 +20,12 @@ import {
 } from "../../src/lib/spec";
 
 describe("spec model", () => {
-  it("reads @nearpay/spec 0.3.0", () => {
-    expect(SPEC_PACKAGE_VERSION).toBe("0.3.0");
-    expect(ERRORS).toHaveLength(87);
+  it("reads @nearpay-money/spec 0.5.0", () => {
+    expect(SPEC_PACKAGE_VERSION).toBe("0.5.0");
+    expect(ERRORS).toHaveLength(89); // 87 (spec 0.3.0) + 2 Stage 4 codes
   });
   it("lists only developer routes, each in a group", () => {
-    expect(OPERATIONS.length).toBe(99); // 62 (Stages 1–2) + 37 (Stage 3: billing, hosted invoices, stream, CLI login, x402 near-intents, test helper)
+    expect(OPERATIONS.length).toBe(100); // 62 (Stages 1–2) + 38 (Stage 3: billing, hosted invoices, stream, CLI login, x402 near-intents, test helpers incl. the subscription clock); Stage 4 mandates not documented yet
     for (const id of ["getCliLogin", "approveCliLogin", "denyCliLogin"]) {
       expect(
         OPERATIONS.some((o) => o.id === id),

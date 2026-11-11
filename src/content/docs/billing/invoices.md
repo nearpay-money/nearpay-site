@@ -106,11 +106,11 @@ curl -X POST https://api.nearpay.money/v1/invoices/in_01jbz9k3m4n5p6q7r8s9t0v1w2
 
 NearPay emails the customer a link to the hosted invoice page and sets `status_transitions.sent_at`. You can send again — for example after the customer changed their email — at most once every 10 minutes per invoice ([`rate_limited`](/errors/rate_limited) otherwise). A customer without an email answers [`customer_email_missing`](/errors/customer_email_missing).
 
-### The same with `@nearpay/node`
+### The same with `@nearpay-money/node`
 
 ```ts
 import { writeFile } from "node:fs/promises";
-import { NearPay } from "@nearpay/node";
+import { NearPay } from "@nearpay-money/node";
 
 const nearpay = new NearPay(process.env.NEARPAY_SECRET_KEY!);
 

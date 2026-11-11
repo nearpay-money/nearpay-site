@@ -1,6 +1,6 @@
 ---
-/** Webhook event types, rendered from @nearpay/spec (WEBHOOK_TYPES + the Event schema). */
-import { WEBHOOK_TYPE_NAMES } from "@nearpay/spec";
+/** Webhook event types, rendered from @nearpay-money/spec (WEBHOOK_TYPES + the Event schema). */
+import { WEBHOOK_TYPE_NAMES } from "@nearpay-money/spec";
 import FieldList from "../../../components/docs/FieldList.astro";
 import DocsLayout from "../../../layouts/DocsLayout.astro";
 import { SPEC_PACKAGE_VERSION, schemaFields } from "../../../lib/spec";
@@ -62,7 +62,7 @@ const toc = [
         </thead>
         <tbody>
           {
-            WEBHOOK_TYPE_NAMES.map((t) => (
+            WEBHOOK_TYPE_NAMES.filter((t) => !t.startsWith("mandate.")).map((t) => ( // Stage 4 auto-debit: not documented yet
               <tr>
                 <th scope="row" class="np-table__cell--primary"><code>{t}</code></th>
                 <td><code>{objectOf(t)}</code></td>
@@ -83,5 +83,5 @@ const toc = [
     </p>
   </div>
   <FieldList fields={envelope} mode="response" />
-  <p class="generated-note">Generated from <code>@nearpay/spec</code> {SPEC_PACKAGE_VERSION} (<code>WEBHOOK_TYPES</code>).</p>
+  <p class="generated-note">Generated from <code>@nearpay-money/spec</code> {SPEC_PACKAGE_VERSION} (<code>WEBHOOK_TYPES</code>).</p>
 </DocsLayout>

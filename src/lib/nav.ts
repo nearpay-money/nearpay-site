@@ -1,4 +1,4 @@
-/** Docs sidebar. Guides are Markdown in src/content/docs; reference pages are rendered from @nearpay/spec. */
+/** Docs sidebar. Guides are Markdown in src/content/docs; reference pages are rendered from @nearpay-money/spec. */
 import { GROUPS, operationsOf } from "./spec";
 
 export interface NavItem {

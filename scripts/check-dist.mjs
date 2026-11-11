@@ -4,7 +4,7 @@
 //   handlers, no javascript: URLs; scripts and stylesheets are same-origin files;
 // - no third-party scripts, stylesheets, fonts or images (links to other sites are fine);
 // - every HTML page has <html lang>, one <h1>, a <title> and a skip link target (#main);
-// - docs: one page per error code of the @nearpay/spec catalogue, and every public route of the
+// - docs: one page per error code of the @nearpay-money/spec catalogue, and every public route of the
 //   OpenAPI document appears on an API reference page;
 // - internal links: every same-site `href="/…"` / `href="#…"` resolves to a built page (or file), and
 //   its `#fragment` to an element id on that page (step 3.3).
@@ -123,7 +123,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
 
   const require = createRequire(import.meta.url);
-  const specRoot = dirname(require.resolve("@nearpay/spec/package.json"));
+  const specRoot = dirname(require.resolve("@nearpay-money/spec/package.json"));
   const catalogue = parse(readFileSync(join(specRoot, "errors/catalogue.yaml"), "utf8"));
   for (const e of catalogue.errors) {
     try {
@@ -143,7 +143,12 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       const op = item[method];
       if (!op) continue;
       const auth = op["x-nearpay"]?.auth ?? [];
-      const developer = !path.startsWith("/v1/auth/") && auth.some((a) => a !== "session");
+      // Stage 4 auto-debit (mandates) is not documented yet: same rule as isUndocumentedRoute (src/lib/spec.ts).
+      const undocumented =
+        path.startsWith("/v1/mandates") ||
+        path.startsWith("/v1/test_helpers/mandates") ||
+        /\/public\/mandate/.test(path);
+      const developer = !path.startsWith("/v1/auth/") && !undocumented && auth.some((a) => a !== "session");
       if (!developer) continue;
       routes += 1;
       if (!reference.includes(`id="${op.operationId}"`))

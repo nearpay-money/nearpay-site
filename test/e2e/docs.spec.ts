@@ -148,7 +148,15 @@ test.describe("docs", () => {
       .locator("#object summary", { hasText: "Show 12 child attributes" /* refund legs, spec 0.3.0 */ })
       .first();
     await toggle.click();
-    await expect(page.locator("#object details[open] .param__name", { hasText: "tx_hash" }).first()).toBeVisible();
+    // since spec 0.4.0 a leg's tx_hash sits in its `evidence` object, itself collapsed (Bitcoin/Solana evidence)
+    await page
+      .locator("#object details[open] summary", { hasText: "Show 14 child attributes" })
+      .filter({ visible: true })
+      .first()
+      .click();
+    await expect(
+      page.locator("#object details[open] .param__name", { hasText: "tx_hash" }).filter({ visible: true }).first(),
+    ).toBeVisible();
   });
 
   test("copy button copies and announces", async ({ page, context }) => {
@@ -158,7 +166,7 @@ test.describe("docs", () => {
     await button.click();
     await expect(button).toHaveText("Copied");
     await expect(page.getByRole("status").filter({ hasText: "Code copied to clipboard" })).toBeAttached();
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toContain("npm install @nearpay/node");
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toContain("npm install @nearpay-money/node");
   });
 
   test("search finds guides, endpoints and error codes", async ({ page }) => {

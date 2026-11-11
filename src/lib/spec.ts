@@ -1,5 +1,5 @@
 /**
- * Build-time model of the public contract, read from the installed `@nearpay/spec` package:
+ * Build-time model of the public contract, read from the installed `@nearpay-money/spec` package:
  * `openapi/public.yaml` (API reference) and `errors/catalogue.yaml` (error pages). Nothing here is
  * hand-written contract: pages are rendered from this model on every build, so there are no generated
  * files to edit. Grouping, ordering and wording of group intros are presentation only.
@@ -11,7 +11,7 @@ import { parse } from "yaml";
 
 type Json = Record<string, unknown>;
 const require = createRequire(import.meta.url);
-const specRoot = dirname(require.resolve("@nearpay/spec/package.json"));
+const specRoot = dirname(require.resolve("@nearpay-money/spec/package.json"));
 
 export const SPEC_PACKAGE_VERSION: string = (
   JSON.parse(readFileSync(join(specRoot, "package.json"), "utf8")) as { version: string }
@@ -323,7 +323,7 @@ export const GROUPS: readonly Group[] = [
     slug: "checkout-sessions",
     title: "Checkout sessions",
     intro:
-      "A checkout session is a hosted or embedded payment page for one payment. Create one on your server, then redirect the customer to its `url` or mount it with `@nearpay/js`.",
+      "A checkout session is a hosted or embedded payment page for one payment. Create one on your server, then redirect the customer to its `url` or mount it with `@nearpay-money/js`.",
     object: "CheckoutSession",
     guide: { href: "/checkout", label: "Checkout guide" },
     match: (p) => p.startsWith("/v1/checkout/sessions") && !p.includes("/public") && !p.includes("/agent_pay"),
@@ -449,7 +449,7 @@ export const GROUPS: readonly Group[] = [
     slug: "payer-api",
     title: "Payer API",
     intro:
-      "Routes the checkout (and `@nearpay/js` custom UIs) call on behalf of the payer, authorised by the session’s client secret in `X-NearPay-Client-Secret`. Never send a secret key from a browser.",
+      "Routes the checkout (and `@nearpay-money/js` custom UIs) call on behalf of the payer, authorised by the session’s client secret in `X-NearPay-Client-Secret`. Never send a secret key from a browser.",
     object: "PublicCheckoutSession",
     match: (p) => p.startsWith("/v1/checkout/sessions/{id}/public"),
   },
@@ -474,7 +474,7 @@ export const GROUPS: readonly Group[] = [
     slug: "x402",
     title: "x402 facilitator",
     intro:
-      "NearPay as an x402 facilitator for the `exact` scheme: `intents-transfer` from a NEAR Intents account, and cross-chain `near-intents` deposits from other chains. Issue payment requirements, verify payloads and settle them. `@nearpay/x402` calls these for you.",
+      "NearPay as an x402 facilitator for the `exact` scheme: `intents-transfer` from a NEAR Intents account, and cross-chain `near-intents` deposits from other chains. Issue payment requirements, verify payloads and settle them. `@nearpay-money/x402` calls these for you.",
     guide: { href: "/agents", label: "Agent payments guide" },
     match: (p) => p.startsWith("/x402/"),
   },
@@ -489,14 +489,14 @@ export const GROUPS: readonly Group[] = [
     slug: "attestations",
     title: "Deposit attestations",
     intro:
-      "Independent co-signatures over deposit instructions. Checkout and `@nearpay/agent-signer` verify them against pinned keys before showing an address or signing.",
+      "Independent co-signatures over deposit instructions. Checkout and `@nearpay-money/agent-signer` verify them against pinned keys before showing an address or signing.",
     match: (p) => p.startsWith("/v1/attestations"),
   },
   {
     slug: "cli-login",
     title: "CLI login",
     intro:
-      "Device authorization for `nearpay login`: the CLI starts a login, a team member approves it in the dashboard, and the CLI receives a restricted test-mode key. `@nearpay/cli` calls these for you.",
+      "Device authorization for `nearpay login`: the CLI starts a login, a team member approves it in the dashboard, and the CLI receives a restricted test-mode key. `@nearpay-money/cli` calls these for you.",
     object: "CliLogin",
     guide: { href: "/cli", label: "CLI guide" },
     match: (p) => p.startsWith("/v1/cli/"),
@@ -515,8 +515,19 @@ export const GROUPS: readonly Group[] = [
  * dashboard sign-in. Dashboard-session-only routes (`/v1/auth/*`, account, team, API keys,
  * settlement-destination management) are excluded — they are the dashboard's own API.
  */
+/**
+ * Stage 4 auto-debit (mandates, spec ≥ 0.4.0) is not documented on the site yet: the billing guides say auto-debit
+ * is "not available yet" (lld/sdks-and-tools.md), so its routes stay out of the reference until it ships.
+ */
+export function isUndocumentedRoute(path: string): boolean {
+  return (
+    path.startsWith("/v1/mandates") || path.startsWith("/v1/test_helpers/mandates") || /\/public\/mandate/.test(path)
+  );
+}
+
 export function isDeveloperRoute(path: string, auth: string[]): boolean {
   if (path.startsWith("/v1/auth/")) return false;
+  if (isUndocumentedRoute(path)) return false;
   return auth.some((a) => a !== "session");
 }
 

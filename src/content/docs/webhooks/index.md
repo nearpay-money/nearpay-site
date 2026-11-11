@@ -43,7 +43,7 @@ NearPay-Event-Type: payment_intent.succeeded
 Always verify the **raw body bytes exactly as received** — parsing and re-serialising JSON changes them. With the SDK:
 
 ```ts
-import { webhooks } from "@nearpay/node";
+import { webhooks } from "@nearpay-money/node";
 
 const event = webhooks.constructEvent(rawBody, req.headers["nearpay-signature"], [currentSecret, previousSecret]);
 ```

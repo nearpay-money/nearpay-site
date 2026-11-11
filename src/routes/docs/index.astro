@@ -14,7 +14,7 @@ const start = [
   {
     icon: "card",
     title: "Checkout",
-    body: "Hosted page, embedded with @nearpay/js, or payment links.",
+    body: "Hosted page, embedded with @nearpay-money/js, or payment links.",
     href: "/checkout",
   },
   {
@@ -54,7 +54,7 @@ const start = [
     href: "/agents/ai-agents",
   },
 ] as const;
-const snippet = `import { NearPay } from "@nearpay/node";
+const snippet = `import { NearPay } from "@nearpay-money/node";
 
 const nearpay = new NearPay(process.env.NEARPAY_SECRET_KEY!);
 

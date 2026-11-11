@@ -1,7 +1,7 @@
 ---
 
 title: Embedded checkout
-description: Mount the checkout in your page with @nearpay/js. It runs in an isolated iframe, so your page never handles addresses or wallets.
+description: Mount the checkout in your page with @nearpay-money/js. It runs in an isolated iframe, so your page never handles addresses or wallets.
 slug: checkout/embedded
 eyebrow: Accept payments
 ---
@@ -54,7 +54,7 @@ const checkout = NearPay("pk_test_…").mountCheckout({
 // later: checkout.destroy();
 ```
 
-Or from npm with `@nearpay/js`, or React with `@nearpay/react`:
+Or from npm with `@nearpay-money/js`, or React with `@nearpay-money/react`:
 
 ```tsx
 <NearPayProvider publishableKey="pk_test_…">
