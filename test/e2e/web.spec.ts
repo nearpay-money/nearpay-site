@@ -24,9 +24,21 @@ test.describe("marketing site", () => {
       "href",
       /docs\.nearpay\.money\/get-started$/,
     );
-    await expect(
-      page.getByText("No sign-up review. Test mode included. Live as soon as you save your business details."),
-    ).toBeVisible();
+    await expect(page.locator(".hero__lede")).toHaveText(
+      "Customers pay with any token on any chain. It lands in your own wallet — NearPay never holds the funds.",
+    );
+    await expect(page.getByText("No sign-up review")).toHaveCount(0); // note line removed (owner feedback)
+    // Calm hero: the tagline sits on exactly two lines at 1440, the panel is no wider than 512 px and the
+    // whole section fits the first screen with the chain strip peeking in.
+    const title = await page.locator(".hero__title").evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return { height: el.getBoundingClientRect().height, line: Number.parseFloat(cs.lineHeight) };
+    });
+    expect(Math.round(title.height / title.line)).toBe(2);
+    const panelBox = await page.locator(".np-convergence").boundingBox();
+    expect(panelBox?.width ?? 0).toBeLessThanOrEqual(512);
+    expect((panelBox?.y ?? 0) + (panelBox?.height ?? 0)).toBeLessThan(900);
+    expect((await page.locator(".chain-strip").boundingBox())?.y ?? 900).toBeLessThan(900 - 48);
 
     // Hero panel: the kit's ConvergenceHero (chain chips, settlement card, text alternative).
     const hero = page.locator(".np-convergence");
@@ -91,9 +103,9 @@ test.describe("marketing site", () => {
       (dots) => dots.filter((d) => Number(getComputedStyle(d).opacity) > 0.5).length,
     );
     expect(visible).toBe(1);
-    // No layout shift: the panel keeps the kit's 600 × 560 ratio.
+    // No layout shift: the panel keeps its fixed 600 × 520 ratio (site-level crop of the kit's 600 × 560 drawing).
     const box = await hero.boundingBox();
-    expect(Math.abs((box?.width ?? 0) / (box?.height ?? 1) - 600 / 560)).toBeLessThan(0.01);
+    expect(Math.abs((box?.width ?? 0) / (box?.height ?? 1) - 600 / 520)).toBeLessThan(0.01);
   });
 
   test("hero is static under prefers-reduced-motion", async ({ page }) => {

@@ -281,66 +281,88 @@ svg {
   display: block;
 }
 
-/* Hero: copy + ConvergenceHero panel, side by side from ~1100 px (flex 460 / 560, gap 56). */
+/* Hero: copy + ConvergenceHero panel. Calm and compact (owner feedback 2026-11-11): two-line headline,
+   one short lede, two CTAs; the panel ~512 × 443 px. Two columns (600 / 512 fr, gap 64) from 1024 px,
+   vertically centred; the section plus the peeking chain strip fit a 1440 × 900 / 1280 × 800 first screen.
+   Spacing on the 8 px grid. */
 .hero {
   padding: var(--np-space-8) 0 var(--np-space-12);
 }
-@media (min-width: 960px) {
+@media (min-width: 1024px) {
   .hero {
     padding: 72px 0 96px;
   }
 }
 .hero__grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  gap: 48px;
   align-items: center;
-  gap: 40px 56px;
+}
+@media (min-width: 1024px) {
+  .hero__grid {
+    grid-template-columns: minmax(0, 600fr) minmax(0, 512fr);
+    gap: 48px;
+  }
+}
+@media (min-width: 1200px) {
+  .hero__grid {
+    gap: 64px;
+  }
 }
 .hero__copy {
-  flex: 1 1 460px;
+  container-type: inline-size;
   min-width: 0;
 }
 .hero__visual {
-  flex: 1 1 560px;
+  width: 100%;
+  max-width: 512px;
   min-width: 0;
 }
+/* Each sentence of the tagline on its own line; the size follows the column (cqi) so the longer line
+   (~10.8 em) always fits: 55 px in the 600 px desktop column, 40 px on phones (each line then balances). */
 .hero__title {
-  max-width: 600px;
   margin: 0;
-  font-size: clamp(42px, 3.6vw + 26px, 76px);
+  font-size: clamp(40px, 9.2cqi, 56px);
   font-weight: var(--np-weight-strong);
-  line-height: 0.98;
+  line-height: 1.04;
   letter-spacing: -0.045em;
+}
+.hero__line {
+  display: block;
   text-wrap: balance;
 }
 .hero__lede {
-  max-width: 520px;
-  margin-top: var(--np-space-6);
+  max-width: 480px;
+  margin-top: var(--np-space-5);
   color: var(--np-color-text-secondary);
-  font-size: var(--np-text-h4);
-  line-height: 1.55;
+  font-size: 17px;
+  line-height: 26px;
 }
 @media (min-width: 768px) {
+  .hero__title {
+    line-height: 1.02;
+  }
   .hero__lede {
-    margin-top: 28px;
-    font-size: 20px;
+    margin-top: var(--np-space-6);
+    font-size: 18px;
+    line-height: 28px;
   }
 }
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 12px;
   margin-top: var(--np-space-8);
 }
 @media (min-width: 768px) {
   .hero__actions {
-    margin-top: 36px;
+    margin-top: var(--np-space-10);
   }
 }
 .hero__actions .np-button--lg {
-  min-height: 54px;
+  min-height: 48px;
   padding-inline: 24px;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: var(--np-weight-semibold);
 }
 @media (max-width: 479.98px) {
@@ -348,16 +370,51 @@ svg {
     flex: 1 1 100%;
   }
 }
-.hero__note {
-  margin-top: 28px;
-  color: var(--np-color-text-tertiary);
-  font-size: var(--np-text-small);
-  line-height: 20px;
-}
 
-/* ConvergenceHero panel (kit `.np-convergence`; aspect ratio fixed by the kit: no layout shift). */
-.hero-panel {
+/* ConvergenceHero panel (kit `.np-convergence`). Site-level crop, no kit change: the figure shows the kit's
+   600 × 560 drawing from y 40 to 560 (600 × 520, equal margins above the first route and below the last),
+   so the SVG is offset/oversized to match and the chips follow the routes at 10 / 30 / 50 / 70 / 90 %.
+   The ratio is still fixed by CSS: no layout shift when the animation starts. */
+.hero-panel.np-convergence {
+  aspect-ratio: 600 / 520;
   box-shadow: none;
+}
+.hero-panel .np-convergence__svg {
+  top: -7.6923%; /* -40 / 520 */
+  height: 107.6923%; /* 560 / 520 */
+}
+.hero-panel .np-convergence__route {
+  stroke-width: 1.75;
+}
+.hero-panel .np-convergence__label {
+  padding: 5px 12px;
+  font-size: 13px;
+  line-height: 16px;
+}
+.hero-panel .np-convergence__label--0 {
+  top: 10%;
+}
+.hero-panel .np-convergence__label--1 {
+  top: 30%;
+}
+.hero-panel .np-convergence__label--2 {
+  top: 50%;
+}
+.hero-panel .np-convergence__label--3 {
+  top: 70%;
+}
+.hero-panel .np-convergence__label--4 {
+  top: 90%;
+}
+/* Settlement card: small, in the bottom-right corner, clear of the settlement point and its pulse
+   (point at 75 % / 50 %; the card starts below ~62 %). */
+.hero-panel .np-convergence__card {
+  top: auto;
+  right: 4.667%;
+  bottom: 5.333%;
+  width: min(200px, 40%);
+  padding: 14px 16px;
+  border-radius: 14px;
 }
 .hero-received__head {
   display: flex;
@@ -367,18 +424,20 @@ svg {
 }
 .hero-received__title {
   color: var(--np-color-text-secondary);
-  font-size: var(--np-text-caption);
+  font-size: 12px;
   font-weight: var(--np-weight-semibold);
   line-height: 18px;
 }
 .hero-received .np-badge {
+  padding: 0 8px;
   border-radius: var(--np-radius-pill);
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 18px;
 }
 .hero-received__amount {
-  margin-top: 10px;
+  margin-top: 8px;
   color: var(--np-color-text);
-  font-size: 32px;
+  font-size: 26px;
   font-weight: var(--np-weight-strong);
   line-height: 1.1;
   letter-spacing: -0.03em;
@@ -387,12 +446,13 @@ svg {
 .hero-received__sub {
   margin-top: 4px;
   color: var(--np-color-text-secondary);
-  font-size: var(--np-text-caption);
-  line-height: 18px;
+  font-size: 12px;
+  line-height: 16px;
+  text-wrap: balance;
 }
 .hero-received__rule {
   height: 1px;
-  margin: 14px 0;
+  margin: 10px 0;
   border: 0;
   background: var(--site-rule);
 }
@@ -401,22 +461,31 @@ svg {
   justify-content: space-between;
   gap: var(--np-space-2);
   color: var(--np-color-text-secondary);
-  font-size: var(--np-text-caption);
-  line-height: 18px;
+  font-size: 12px;
+  line-height: 16px;
 }
 .hero-received__row strong {
   color: var(--np-color-text);
   font-weight: var(--np-weight-semibold);
 }
-/* Narrow panels (phones): the card would overflow the panel's bottom edge at the kit's 60 % top, so it is
-   anchored to the bottom-right corner below the settlement point, wider and compact (all four lines kept). */
+/* Narrow panels (phones): smaller chips; the card stays in the bottom-right corner, clear of the settlement
+   point: title, amount and settlement line only (the figcaption keeps the full text alternative). */
 @container np-convergence (width < 480px) {
-  .np-convergence__card {
-    top: auto;
-    right: 3.5%;
-    bottom: 3.5%;
-    width: 62%;
+  .hero-panel .np-convergence__label {
+    padding: 3px 10px;
+    font-size: 12px;
+    line-height: 16px;
+  }
+  .hero-panel .np-convergence__card {
+    right: 4%;
+    bottom: 4%;
+    width: 50%;
     padding: 10px 12px;
+    border-radius: 12px;
+  }
+  .hero-received__rule,
+  .hero-received__row {
+    display: none;
   }
   .hero-received__amount {
     margin-top: 4px;
