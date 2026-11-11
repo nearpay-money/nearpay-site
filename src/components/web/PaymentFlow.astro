@@ -35,7 +35,7 @@ const steps = [
 ];
 const alt = `Animated diagram: a customer pays ${FLOW_PAYMENTS.map((p) => `${p.pays} on ${p.chain}`).join(", then ")}. Each time the NearPay checkout quotes $49.00 as an exact amount of that token, NEAR Intents routes the payment on-chain without NearPay holding it, the merchant's wallet receives 49.00 USDC on Base, confirmed in 1 block, and the merchant's server gets a signed payment_intent.succeeded webhook, answered 200 OK, about five seconds after the customer paid.`;
 ---
-<section class="flow" aria-labelledby="flow-title">
+<section id="how-it-works" class="flow" aria-labelledby="flow-title">
   <div class="site-container">
     <h2 id="flow-title" class="section-title flow__title">A payment, from wallet to wallet, in seconds.</h2>
     <div class="flow-panel">

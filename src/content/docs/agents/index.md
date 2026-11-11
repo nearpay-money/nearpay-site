@@ -83,7 +83,7 @@ A NearPay requirement looks like this:
 }
 ```
 
-The agent signs exactly two transfers — the amount to `payTo` and the fee to `fee.to`, both with the `binding` as memo — before `deadline`. The fee is the [intents-transfer rate](https://nearpay.money/pricing). NearPay's relayer submits the signed payload and pays gas; it can't change the recipients or amounts.
+The agent signs exactly two transfers — the amount to `payTo` and the fee to `fee.to`, both with the `binding` as memo — before `deadline`. The fee is the [intents-transfer rate](https://nearpay.money/#pricing). NearPay's relayer submits the signed payload and pays gas; it can't change the recipients or amounts.
 
 ## Agents paying checkout sessions
 

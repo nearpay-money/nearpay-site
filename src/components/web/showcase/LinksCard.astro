@@ -3,6 +3,7 @@
  * Showcase card d: payment links. A link and QR card is copied, shared in a chat, scanned and paid.
  * The QR pattern is decorative (lib/showcase.ts: it encodes nothing). One 12 s CSS loop.
  */
+import { links } from "../../../config/site";
 import { money, USD } from "../../../lib/money";
 import { qrPath } from "../../../lib/showcase";
 import Icon from "../../Icon.astro";
@@ -17,7 +18,7 @@ const qr = qrPath(2026, 25);
   id="links"
   title="Payment links"
   body="Create a link or QR code in seconds and share it anywhere: a chat, an email, a post or a printed sign. No code needed."
-  link={{ href: "/payments#links", label: "Explore payment links" }}
+  link={{ href: links.docsPaymentLinks, label: "Explore payment links" }}
   alt={`Animated example: a ${price} payment link with a QR code is copied, shared in a chat message, scanned, and paid with USDT on BNB Chain.`}
 >
   <div class="mkl-card">

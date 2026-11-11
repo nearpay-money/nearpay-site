@@ -21,13 +21,46 @@ export const links = {
   docsHome: urls.docs,
   docsGetStarted: `${urls.docs}/get-started`,
   docsCheckout: `${urls.docs}/checkout`,
+  docsPaymentLinks: `${urls.docs}/checkout/payment-links`,
+  docsInvoices: `${urls.docs}/billing/invoices`,
   docsAgents: `${urls.docs}/agents`,
   docsApi: `${urls.docs}/api`,
-  pricing: `${urls.web}/pricing`,
+  pricing: `${urls.web}/#pricing`,
   support: `${urls.web}/support`,
   privacy: `${urls.web}/privacy`,
   terms: `${urls.web}/terms`,
 } as const;
+
+/**
+ * Sections of the landing page the header links to (owner, 2026-11-12), in order. `id` is the element id on
+ * the home page: an in-page anchor there, `/#id` from every other page. "Docs" goes to the docs site.
+ */
+export const HOME_SECTIONS = [
+  { id: "how-it-works", label: "How it works" },
+  { id: "products", label: "Products" },
+  { id: "developers", label: "Developers" },
+  { id: "pricing", label: "Pricing" },
+] as const;
+export type HomeSection = (typeof HOME_SECTIONS)[number]["id"];
+
+/** Header nav: the home sections, then Docs. `onHome` makes the section links in-page anchors. */
+export function headerNav(onHome: boolean): { label: string; href: string }[] {
+  return [
+    ...HOME_SECTIONS.map((s) => ({ label: s.label, href: `${onHome ? "" : "/"}#${s.id}` })),
+    { label: "Docs", href: urls.docs },
+  ];
+}
+
+/**
+ * Old marketing pages (removed 2026-11-12; their content now lives on the home page). Each old URL still
+ * builds as a tiny noindex page that forwards to the matching home section with `<meta http-equiv="refresh">`
+ * (not governed by CSP; no script) and shows a plain link as the fallback, so old links never dead-end.
+ */
+export const MOVED_PAGES: Readonly<Record<string, { to: HomeSection; title: string }>> = {
+  payments: { to: "products", title: "Payments" },
+  billing: { to: "products", title: "Billing" },
+  pricing: { to: "pricing", title: "Pricing" },
+};
 
 /** Positioning line (owner, 2026-11-11): the home headline, page titles and meta. */
 export const TAGLINE = "Accept crypto payments. Hassle-free.";
