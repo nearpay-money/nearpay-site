@@ -7,6 +7,10 @@ import ConvergencePanel from "../../components/web/ConvergencePanel.astro";
 import { links, TAGLINE } from "../../config/site";
 import WebLayout from "../../layouts/WebLayout.astro";
 
+// Hero copy (owner feedback 2026-11-11: two-line headline = TAGLINE split at its full stop; one short lede).
+const heroLines = TAGLINE.split(/(?<=\.)\s+/);
+const HERO_LEDE =
+  "Customers pay with any token on any chain. It lands in your own wallet — NearPay never holds the funds.";
 const chains = ["NEAR", "Ethereum", "Base", "Arbitrum", "Solana", "Bitcoin", "Polygon", "BNB Chain"];
 const steps = [
   {
@@ -57,16 +61,14 @@ const snippet = [
   <section class="hero" aria-labelledby="hero-title">
     <div class="site-container hero__grid">
       <div class="hero__copy">
-        <h1 id="hero-title" class="hero__title">{TAGLINE}</h1>
-        <p class="hero__lede">
-          Your customers pay with the wallet and token they already have. NEAR Intents routes it, NearPay checks it
-          on-chain, and the money lands in your wallet. We never hold it.
-        </p>
+        <h1 id="hero-title" class="hero__title">
+          {heroLines.map((line, i) => <>{i > 0 && " "}<span class="hero__line">{line}</span></>)}
+        </h1>
+        <p class="hero__lede">{HERO_LEDE}</p>
         <div class="hero__actions">
           <a class="np-button np-button--lg np-button--pill" href={links.signup}>Start accepting payments</a>
           <a class="np-button np-button--secondary np-button--lg np-button--pill" href={links.docsGetStarted}>See a live checkout</a>
         </div>
-        <p class="hero__note">No sign-up review. Test mode included. Live as soon as you save your business details.</p>
       </div>
       <div class="hero__visual">
         <ConvergencePanel />
