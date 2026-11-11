@@ -3,10 +3,12 @@
  * Marketing home — design v2 (owner-approved 2026-11-11) with the landing v3 changes (owner, 2026-11-11):
  * hero with the new headline, Get started / Sign up and a multi-colour aurora behind the ConvergenceHero
  * panel; chain strip; the payment flow as an animated diagram; the product showcase (bento of animated
- * product cards, the developer section folded in); the non-custodial band.
+ * product cards, the developer section folded in); pricing (owner, 2026-11-12); the non-custodial band.
+ * Header anchors: #how-it-works (flow), #products (showcase), #developers (developer card), #pricing.
  */
 import ConvergencePanel from "../../components/web/ConvergencePanel.astro";
 import PaymentFlow from "../../components/web/PaymentFlow.astro";
+import Pricing from "../../components/web/Pricing.astro";
 import Showcase from "../../components/web/showcase/Showcase.astro";
 import { links, TAGLINE } from "../../config/site";
 import WebLayout from "../../layouts/WebLayout.astro";
@@ -71,6 +73,8 @@ const promises = [
   <PaymentFlow />
 
   <Showcase />
+
+  <Pricing />
 
   <section class="promise-band" aria-label="Why NearPay">
     <div class="site-container">

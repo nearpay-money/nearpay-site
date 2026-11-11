@@ -13,9 +13,6 @@ const WEB = "http://127.0.0.1:4410";
 const DOCS = "http://127.0.0.1:4411";
 const pages = [
   ["web-home", `${WEB}/`],
-  ["web-pricing", `${WEB}/pricing`],
-  ["web-payments", `${WEB}/payments`],
-  ["web-billing", `${WEB}/billing`],
   ["web-support", `${WEB}/support`],
   ["web-terms", `${WEB}/terms`],
   ["docs-home", `${DOCS}/`],

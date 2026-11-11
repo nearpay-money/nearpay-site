@@ -1,6 +1,6 @@
 /*
  * Home page only (imported by routes/web/index.astro): the payment flow diagram and the product showcase
- * (landing v3, owner 2026-11-11). Design v2 tokens; mockup data is sample data.
+ * (landing v3, owner 2026-11-11), and the pricing section (owner 2026-11-12). Design v2 tokens; mockup data is sample data.
  *
  * Motion rules
  * - One orchestrated CSS loop per diagram/card; transform and opacity only (layers never change layout).
@@ -3902,4 +3902,295 @@
     opacity: 0;
     transform: scale(2.6);
   }
+}
+
+/* ========================================================================================== */
+/* Header anchors: land each section's heading ~32-40 px under the sticky header (not its top padding). */
+/* ========================================================================================== */
+/* Id selectors: they must beat site.css's generic `.web-main [id]` whatever order the two files load in. */
+#how-it-works.flow,
+#products.showcase {
+  scroll-margin-top: calc(var(--web-header-h) - 72px + 32px);
+}
+#pricing.pricing {
+  scroll-margin-top: calc(var(--web-header-h) - 24px + 32px);
+}
+@media (min-width: 960px) {
+  #how-it-works.flow {
+    scroll-margin-top: calc(var(--web-header-h) - 112px + 40px);
+  }
+  #products.showcase {
+    scroll-margin-top: calc(var(--web-header-h) - 96px + 40px);
+  }
+  #pricing.pricing {
+    scroll-margin-top: calc(var(--web-header-h) - 16px + 40px);
+  }
+}
+
+/* ========================================================================================== */
+/* Pricing (owner, 2026-11-12): one rate panel + three short facts. Static.                    */
+/* ========================================================================================== */
+.pricing {
+  padding: 24px 0 88px;
+}
+@media (min-width: 960px) {
+  .pricing {
+    padding: 16px 0 120px;
+  }
+}
+.pricing__head {
+  max-width: 720px;
+}
+.pricing__lede {
+  max-width: 640px;
+  margin: 20px 0 0;
+  color: var(--np-color-text-secondary);
+  font-size: var(--np-text-body);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+@media (min-width: 768px) {
+  .pricing__lede {
+    font-size: var(--np-text-h4);
+  }
+}
+.pricing__note {
+  max-width: 100%;
+  height: auto;
+  min-height: 24px;
+  margin-top: 20px;
+  padding-block: 3px;
+  border-radius: 12px;
+  white-space: normal;
+}
+
+/* Rate panel: the landing's soft multi-colour wash on the subtle canvas (as the flow panel), one column per rate. */
+.pr-panel {
+  margin-top: 40px;
+  border: 1px solid var(--site-rule);
+  border-radius: 28px;
+  background:
+    radial-gradient(45% 70% at 100% 0%, rgb(180 180 255 / 0.3), transparent 70%),
+    radial-gradient(40% 60% at 0% 100%, rgb(142 240 211 / 0.32), transparent 70%), #f5f8fb;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .pr-panel {
+    margin-top: 56px;
+  }
+}
+.pr-rates {
+  display: grid;
+  list-style: none;
+}
+.pr-rate {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  grid-template-areas:
+    "fee name"
+    "fee when"
+    "fee min"
+    "fee route";
+  align-content: start;
+  column-gap: 16px;
+  padding: 24px 20px;
+}
+.pr-rate + .pr-rate {
+  border-top: 1px solid var(--site-rule);
+}
+@media (min-width: 768px) {
+  .pr-rates {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pr-rate {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "fee" "name" "when" "min" "route";
+    padding: 28px;
+  }
+  .pr-rate + .pr-rate {
+    border-top: 0;
+  }
+  .pr-rate:nth-child(n + 3) {
+    border-top: 1px solid var(--site-rule);
+  }
+  .pr-rate:nth-child(even) {
+    border-left: 1px solid var(--site-rule);
+  }
+}
+@media (min-width: 1100px) {
+  .pr-rates {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .pr-rate:nth-child(n + 3) {
+    border-top: 0;
+  }
+  .pr-rate + .pr-rate {
+    border-left: 1px solid var(--site-rule);
+  }
+}
+.pr-rate__name {
+  grid-area: name;
+  margin: 0;
+  font-size: 17px;
+  line-height: 24px;
+  letter-spacing: -0.01em;
+}
+.pr-rate__fee {
+  grid-area: fee;
+  margin: 0;
+}
+@media (min-width: 768px) {
+  .pr-rate__fee {
+    margin-bottom: 14px;
+  }
+}
+.pr-rate__pct {
+  color: var(--np-navy);
+  font-size: 30px;
+  font-weight: var(--np-weight-strong);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 768px) {
+  .pr-rate__pct {
+    font-size: 48px;
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+}
+.pr-rate__min {
+  grid-area: min;
+  margin: 8px 0 0;
+  color: var(--np-color-text);
+  font-size: 14px;
+  font-weight: var(--np-weight-semibold);
+  line-height: 20px;
+}
+.pr-rate__when {
+  grid-area: when;
+  margin: 6px 0 0;
+  color: var(--np-color-text-secondary);
+  font-size: 15px;
+  line-height: 1.55;
+}
+/* Example route: what the customer pays with, joined to what you receive (Convergence: violet route, teal dot). */
+.pr-route {
+  grid-area: route;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 16px 0 0;
+}
+.pr-route__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 4px 11px;
+  border: 1px solid var(--np-border-fine);
+  border-radius: 999px;
+  background: var(--np-white);
+  color: var(--site-text-strong);
+  font-size: 13px;
+  font-weight: var(--np-weight-medium);
+  line-height: 18px;
+  white-space: nowrap;
+}
+.pr-route__text {
+  margin: 0;
+  color: var(--np-color-text-tertiary);
+  font-size: 13px;
+  line-height: 18px;
+}
+.pr-route__line {
+  width: 2px;
+  height: 12px;
+  margin-left: 17px;
+  border-radius: 1px;
+  background: linear-gradient(var(--np-violet), var(--np-teal-brand));
+}
+.pr-route__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--np-teal-brand);
+  box-shadow: 0 0 0 3px rgb(0 163 140 / 0.18);
+}
+.pr-panel__foot {
+  margin: 0;
+  padding: 14px 20px 16px;
+  border-top: 1px solid var(--site-rule);
+  color: var(--np-color-text-tertiary);
+  font-size: 13px;
+  line-height: 18px;
+}
+@media (min-width: 768px) {
+  .pr-panel__foot {
+    padding-inline: 28px;
+  }
+}
+
+/* Three facts under the panel. */
+.pr-facts {
+  display: grid;
+  gap: 28px;
+  margin-top: 40px;
+  list-style: none;
+}
+@media (min-width: 960px) {
+  .pr-facts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px;
+    margin-top: 48px;
+  }
+}
+.pr-fact {
+  padding-top: 20px;
+  border-top: 1px solid var(--site-rule);
+}
+.pr-fact__title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: -0.015em;
+}
+.pr-fact__body {
+  margin: 8px 0 0;
+  color: var(--np-color-text-secondary);
+  font-size: 15px;
+  line-height: 1.55;
+}
+.pr-split {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 0;
+}
+.pr-split__case {
+  padding: 10px 14px;
+  border: 1px solid var(--np-border-fine);
+  border-radius: 12px;
+  background: var(--np-white);
+}
+.pr-split__who {
+  color: var(--np-color-text);
+  font-size: 13px;
+  font-weight: var(--np-weight-semibold);
+  line-height: 18px;
+}
+.pr-split__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0 0;
+  color: var(--np-color-text-secondary);
+  font-size: 14px;
+  line-height: 20px;
+}
+.pr-split__num {
+  color: var(--np-color-text);
+  font-variant-numeric: tabular-nums;
+}
+.pr-split__num--strong {
+  font-weight: var(--np-weight-semibold);
 }

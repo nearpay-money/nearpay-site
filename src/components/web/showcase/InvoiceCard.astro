@@ -3,6 +3,7 @@
  * Showcase card b: invoices and subscriptions. An invoice moves Draft → Sent → Paid (paid in SOL, settled as
  * USDC), then a subscription renews. One 12 s CSS loop.
  */
+import { links } from "../../../config/site";
 import { money, USD } from "../../../lib/money";
 import Icon from "../../Icon.astro";
 import ShowcaseCard from "./ShowcaseCard.astro";
@@ -18,7 +19,7 @@ const plan = money(2_900n, USD);
   id="billing"
   title="Invoices and subscriptions"
   body="Email an invoice or bill on a schedule. Customers pay in the token they hold; you’re paid in the asset you chose."
-  link={{ href: "/billing", label: "Explore billing" }}
+  link={{ href: links.docsInvoices, label: "Explore billing" }}
   alt={`Animated example: invoice INV-0042 for ${total} to a fictional customer goes from Draft to Sent to Paid, paid with SOL on Solana, then a ${plan} monthly Pro plan subscription renews.`}
 >
   <div class="mki-invoice">

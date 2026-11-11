@@ -1,10 +1,11 @@
 ---
+import { markSvg } from "@nearpay-internal/ui/brand";
 /**
  * Showcase card a: checkout on a merchant's site. A fictional game studio's product page in a browser frame;
  * the cursor clicks "Pay with crypto", the NearPay hosted checkout opens (approved Checkout-proposed design:
  * navy order side, network and token pickers, total), a token is picked, then "Paid". One 14 s CSS loop.
  */
-import { markSvg } from "@nearpay-internal/ui/brand";
+import { links } from "../../../config/site";
 import { money, USD, USDC } from "../../../lib/money";
 import { ETH } from "../../../lib/showcase";
 import Icon from "../../Icon.astro";
@@ -27,7 +28,7 @@ const tokens = [
   id="checkout"
   title="Checkout on your site"
   body="Add a Pay with crypto button. Customers pick any token on any chain, see the exact total, and pay from their own wallet."
-  link={{ href: "/payments#checkout", label: "Explore Checkout" }}
+  link={{ href: links.docsCheckout, label: "Explore Checkout" }}
   alt={`Animated example: on a fictional game studio's product page, a customer clicks Pay with crypto for a ${price} Founder's pack. The NearPay checkout opens, they choose ETH on Arbitrum, pay ${send}, and see a Paid confirmation; the merchant receives ${receives}.`}
 >
   <div class="mkc-browser">

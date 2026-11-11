@@ -16,9 +16,11 @@ interface Props {
   /** Extra class on <body> (e.g. `web`, `docs`). */
   bodyClass?: string;
   noindex?: boolean;
+  /** Canonical URL when it isn't this page's own (forwarding pages point at their target). */
+  canonical?: string;
 }
 const { title, description, bodyClass, noindex = false } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const canonical = Astro.props.canonical ?? new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL("/og-image.png", Astro.site).href;
 ---
 <!doctype html>

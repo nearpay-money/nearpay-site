@@ -24,6 +24,13 @@
   /* Warm accents for the multi-colour gradients (decorative only: never text). */
   --site-apricot: #ffb25b;
   --site-rose: #f27ba4;
+  /* Marketing header height (sticky): section anchors land just below it. */
+  --web-header-h: 72px;
+}
+@media (min-width: 1100px) {
+  :root {
+    --web-header-h: 88px;
+  }
 }
 html {
   scroll-padding-top: var(--site-scroll-offset, 24px);
@@ -194,23 +201,28 @@ svg {
 .web {
   background: var(--np-color-surface);
 }
+/* Sticky (owner, 2026-11-12: the nav jumps to landing sections). Frosted white, so the hero aurora still tints
+   it at the top of the page and scrolled content stays legible underneath; a hairline shadow marks its edge. */
 .web-header {
-  position: relative;
-  z-index: 10;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgb(255 255 255 / 0.78);
+  box-shadow: 0 1px 0 rgb(18 38 63 / 0.06);
+  -webkit-backdrop-filter: saturate(1.5) blur(16px);
+  backdrop-filter: saturate(1.5) blur(16px);
 }
 .web-header__bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--np-space-6);
-  min-height: 72px;
-  padding-top: var(--np-space-2);
-  padding-bottom: var(--np-space-2);
+  height: var(--web-header-h);
 }
-@media (min-width: 1100px) {
-  .web-header__bar {
-    min-height: 88px;
-  }
+/* In-page targets (#how-it-works, #products, #developers, #pricing) clear the sticky header; sections with
+   large top padding set their own, smaller margin (styles/showcase.css). Smooth scrolling: html, above. */
+.web-main [id] {
+  scroll-margin-top: calc(var(--web-header-h) + 24px);
 }
 .web-header__wide {
   display: none;
@@ -246,20 +258,6 @@ svg {
 .web-menu__list a:not(.np-button):hover {
   color: var(--site-indigo);
   text-decoration: none;
-}
-/* Current page: a short bar under the label (not a text underline). */
-.web-nav__link[aria-current="page"] {
-  color: var(--np-color-text);
-}
-.web-nav__link[aria-current="page"]::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 6px;
-  height: 2px;
-  border-radius: 1px;
-  background: currentColor;
 }
 .web-header__actions {
   align-items: center;
@@ -306,6 +304,8 @@ svg {
   top: 100%;
   left: 0;
   right: 0;
+  max-height: calc(100dvh - var(--web-header-h));
+  overflow-y: auto;
   padding: var(--np-space-2) 20px var(--np-space-6);
   background: var(--np-color-surface);
   border-bottom: 1px solid var(--np-color-border);
@@ -331,9 +331,6 @@ svg {
   font-weight: var(--np-weight-medium);
   text-decoration: none;
   transition: color 180ms var(--np-ease);
-}
-.web-menu__list a[aria-current="page"] {
-  color: var(--np-color-accent-text);
 }
 .web-menu__cta {
   display: grid;
@@ -778,7 +775,7 @@ svg {
 }
 
 /* ========================================================================================== */
-/* Marketing inner pages (product, billing, pricing, support, legal, 404)                       */
+/* Marketing inner pages (support, legal, 404)                                                 */
 /* ========================================================================================== */
 .band {
   padding: 56px 0;
@@ -790,21 +787,6 @@ svg {
 }
 .band--white {
   background: var(--np-color-surface);
-}
-.band--subtle {
-  border-top: 1px solid var(--site-rule);
-  border-bottom: 1px solid var(--site-rule);
-  background: #f5f8fb;
-}
-.band--navy {
-  background: var(--np-navy);
-  color: var(--np-on-navy);
-}
-.band--navy .heading-section {
-  color: var(--np-on-navy);
-}
-.band--navy .lede {
-  color: var(--np-on-navy-secondary);
 }
 .page-hero {
   padding: var(--np-space-8) 0 var(--np-space-12);
@@ -851,125 +833,6 @@ svg {
   .page-actions .np-button {
     flex: 1 1 100%;
   }
-}
-.columns {
-  display: grid;
-  gap: var(--np-space-8);
-  list-style: none;
-}
-@media (min-width: 768px) {
-  .columns {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 32px;
-  }
-}
-.columns > li {
-  padding-top: 22px;
-  border-top: 2px solid var(--np-color-text);
-}
-.column__title {
-  font-size: 22px;
-  line-height: 1.25;
-  letter-spacing: -0.02em;
-}
-.column__body {
-  margin-top: 10px;
-  color: var(--np-color-text-secondary);
-  font-size: var(--np-text-body);
-  line-height: 1.6;
-}
-.section-head + .columns {
-  margin-top: var(--np-space-10);
-}
-.cta {
-  text-align: left;
-}
-.cta .lede {
-  margin-top: var(--np-space-4);
-}
-.price-table td:last-child,
-.price-table th:last-child {
-  text-align: right;
-}
-.price-table .price {
-  color: var(--np-color-text);
-  font-size: var(--np-text-h4);
-  font-weight: var(--np-weight-strong);
-  line-height: 28px;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-.price-table .price-min {
-  display: block;
-  color: var(--np-color-text-secondary);
-  font-size: var(--np-text-caption);
-  line-height: 16px;
-}
-.price-table td {
-  color: var(--np-color-text-secondary);
-  font-size: var(--np-text-small);
-  line-height: 20px;
-  padding-top: var(--np-space-4);
-  padding-bottom: var(--np-space-4);
-}
-.split {
-  display: grid;
-  gap: var(--np-space-8);
-}
-@media (min-width: 960px) {
-  .split {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 56px;
-    align-items: start;
-  }
-}
-.example-card {
-  padding: var(--np-space-6);
-  border-radius: var(--np-radius-card);
-}
-.example-card h3 {
-  font-size: var(--np-text-h4);
-  line-height: 28px;
-  letter-spacing: -0.01em;
-}
-.example-card .np-kv {
-  margin-top: var(--np-space-4);
-}
-.example-card p {
-  margin-top: var(--np-space-4);
-  color: var(--np-color-text-secondary);
-  font-size: var(--np-text-small);
-  line-height: 20px;
-}
-.faq {
-  display: grid;
-  gap: var(--np-space-8);
-}
-@media (min-width: 960px) {
-  .faq {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 56px;
-  }
-}
-.faq h3 {
-  font-size: var(--np-text-h4);
-  line-height: 28px;
-  letter-spacing: -0.01em;
-}
-.faq p {
-  margin-top: var(--np-space-3);
-  color: var(--np-color-text-secondary);
-  line-height: 1.6;
-}
-.section-head .lede {
-  margin-top: var(--np-space-4);
-  max-width: 720px;
-}
-.section-head + * {
-  margin-top: var(--np-space-10);
-}
-.stack-lg > * + * {
-  margin-top: var(--np-space-6);
 }
 .legal {
   max-width: 760px;
@@ -1536,18 +1399,6 @@ svg {
   .card-grid--3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-}
-.link-card--static:hover {
-  border-color: var(--np-color-border);
-}
-.link-card__more {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--np-space-1);
-  min-height: 44px;
-  margin-top: auto;
-  font-size: var(--np-text-small);
-  font-weight: var(--np-weight-medium);
 }
 .card-grid {
   display: grid;

@@ -1,38 +1,37 @@
 ---
 /**
- * Marketing page shell, design v2 (Main artboard): header (Convergence logo, product nav, and two rectangular
- * buttons, owner 2026-11-11: "Sign in" white with indigo text, "Contact team" solid indigo with a chevron),
- * main, footer. Below 1100 px the nav and both buttons move into a native <details> disclosure (no script).
+ * Marketing page shell, design v2 (Main artboard): sticky header (Convergence logo, nav to the landing sections
+ * and Docs, two rectangular buttons, owner 2026-11-11: "Sign in" white with indigo text, "Contact team" solid
+ * indigo with a chevron), main, footer. Nav (owner, 2026-11-12): How it works, Products, Developers, Pricing,
+ * Docs; section links are in-page anchors on the home page and `/#id` elsewhere (config/site.ts headerNav).
+ * Below 1100 px the nav and both buttons move into a native <details> disclosure; scripts/menu.ts only closes
+ * it after a section link is chosen or on Escape.
  */
 import Icon from "../components/Icon.astro";
 import Logo from "../components/Logo.astro";
-import { links, urls } from "../config/site";
+import { headerNav, links } from "../config/site";
 import Base from "./Base.astro";
 
 interface Props {
   title: string;
   description: string;
-  /** Marks the matching nav item as the current page. */
-  current?: "payments" | "billing" | "pricing";
   noindex?: boolean;
+  /** Canonical URL when it isn't this page's own (forwarding pages). */
+  canonical?: string;
 }
-const { title, description, current, noindex } = Astro.props;
-const nav = [
-  { id: "payments", label: "Checkout", href: "/payments#checkout" },
-  { id: "links", label: "Payment links", href: "/payments#links" },
-  { id: "billing", label: "Subscriptions", href: "/billing" },
-  { id: "agents", label: "Agent payments", href: "/payments#agents" },
-  { id: "docs", label: "Docs", href: urls.docs },
-];
+const { title, description, noindex, canonical } = Astro.props;
+const onHome = Astro.url.pathname.replace(/(index)?(\.html)?$/, "") === "/";
+const nav = headerNav(onHome);
 const footer = [
-  { label: "Pricing", href: "/pricing" },
+  { label: "Pricing", href: onHome ? "#pricing" : "/#pricing" },
   { label: "Docs", href: links.docsHome },
   { label: "Support", href: "/support" },
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
 ];
 ---
-<Base title={title} description={description} bodyClass="web" noindex={noindex}>
+<Base title={title} description={description} bodyClass="web" noindex={noindex} canonical={canonical}>
+  <slot name="head" slot="head" />
   <header class="web-header">
     <div class="site-container web-header__bar">
       <Logo href="/" />
@@ -41,7 +40,7 @@ const footer = [
           {
             nav.map((item) => (
               <li>
-                <a class="web-nav__link" href={item.href} aria-current={item.id === current ? "page" : undefined}>
+                <a class="web-nav__link" href={item.href}>
                   {item.label}
                 </a>
               </li>
@@ -65,13 +64,10 @@ const footer = [
             {
               nav.map((item) => (
                 <li>
-                  <a href={item.href} aria-current={item.id === current ? "page" : undefined}>
-                    {item.label}
-                  </a>
+                  <a href={item.href}>{item.label}</a>
                 </li>
               ))
             }
-            <li><a href="/pricing" aria-current={current === "pricing" ? "page" : undefined}>Pricing</a></li>
             <li class="web-menu__cta">
               <a class="np-button np-button--secondary" href={links.signin}>Sign in</a>
               <a class="np-button np-button--primary" href="/support">
@@ -96,4 +92,5 @@ const footer = [
       </nav>
     </div>
   </footer>
+  <script src="../scripts/menu.ts"></script>
 </Base>

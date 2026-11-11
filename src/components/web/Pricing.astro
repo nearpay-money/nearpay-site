@@ -1,0 +1,108 @@
+---
+/**
+ * Home: pricing (owner, 2026-11-12; replaces the old /pricing page). The default fee schedule from lib/pricing.ts
+ * (Q-BIZ-02, indicative until the owner answers it), each rate with an example route drawn as two chips joined by
+ * a Convergence-style connector; then three short facts: who covers the fee (a worked $100.00 example in bigint
+ * cents, INV-5), network fees, and free test mode. Static: no motion, no script.
+ */
+import { feeFor, money, percent, USD } from "../../lib/money";
+import { FEE_SCHEDULE } from "../../lib/pricing";
+
+const order = 10_000n; // $100.00
+const stable = FEE_SCHEDULE.find((r) => r.routeClass === "stable_pair");
+if (!stable) throw new Error("stable_pair rule missing");
+const fee = feeFor(order, stable.bps);
+const minFee = (micros: bigint) => money(micros, { symbol: "$", decimals: 6 });
+const bearers = [
+  { who: "Your customer covers it (default)", pays: order + fee, receive: order },
+  { who: "You cover it", pays: order, receive: order - fee },
+];
+---
+<section id="pricing" class="pricing" aria-labelledby="pricing-title">
+  <div class="site-container">
+    <div class="pricing__head">
+      <h2 id="pricing-title" class="section-title">One fee per successful payment.</h2>
+      <p class="pricing__lede">
+        The fee depends on how your customer pays. It’s taken as the payment settles, so the money still goes
+        straight to your wallet. NearPay never holds your balance.
+      </p>
+      <p class="np-badge np-badge--warning pricing__note">Indicative pricing, may change before general availability</p>
+    </div>
+
+    <div class="pr-panel">
+      <ul class="pr-rates">
+        {
+          FEE_SCHEDULE.map((rule) => (
+            <li class={`pr-rate pr-rate--${rule.routeClass.replace("_", "-")}`}>
+              <h3 class="pr-rate__name">{rule.name}</h3>
+              <p class="pr-rate__fee">
+                <span class="pr-rate__pct">{percent(rule.bps)}</span>
+              </p>
+              <p class="pr-rate__when">{rule.when}</p>
+              {rule.minFeeUsdMicros !== undefined && (
+                <p class="pr-rate__min">Minimum fee {minFee(rule.minFeeUsdMicros)}</p>
+              )}
+              {rule.route ? (
+                <p class="pr-route">
+                  <span class="np-sr-only">For example: {rule.example}.</span>
+                  <span class="pr-route__chip" aria-hidden="true">{rule.route[0]}</span>
+                  <span class="pr-route__line" aria-hidden="true" />
+                  <span class="pr-route__chip pr-route__chip--to" aria-hidden="true">
+                    <span class="pr-route__dot" />
+                    {rule.route[1]}
+                  </span>
+                </p>
+              ) : (
+                <p class="pr-route">
+                  <span class="pr-route__text">{rule.example}.</span>
+                </p>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+      <p class="pr-panel__foot">All-in percentage of each payment, including the route provider’s share.</p>
+    </div>
+
+    <ul class="pr-facts">
+      <li class="pr-fact">
+        <h3 class="pr-fact__title">You choose who covers the fee</h3>
+        <p class="pr-fact__body">
+          On a {money(order, USD)} order paid with a different stablecoin ({percent(stable.bps)}):
+        </p>
+        <dl class="pr-split">
+          {
+            bearers.map((b) => (
+              <div class="pr-split__case">
+                <dt class="pr-split__who">{b.who}</dt>
+                <dd class="pr-split__row">
+                  <span>Customer pays</span>
+                  <span class="pr-split__num">{money(b.pays, USD)}</span>
+                </dd>
+                <dd class="pr-split__row">
+                  <span>You receive</span>
+                  <span class="pr-split__num pr-split__num--strong">{money(b.receive, USD)}</span>
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </li>
+      <li class="pr-fact">
+        <h3 class="pr-fact__title">Network fees are separate</h3>
+        <p class="pr-fact__body">
+          The customer’s wallet may charge a network fee, which they see before they approve. The NearPay fee covers
+          routing the payment to your settlement currency. Checkout shows the amount, the payment fee and the total as
+          separate lines.
+        </p>
+      </li>
+      <li class="pr-fact">
+        <h3 class="pr-fact__title">Test mode is free</h3>
+        <p class="pr-fact__body">
+          Build and test your integration with test keys on a simulated rail. No real funds move, and nothing is
+          charged.
+        </p>
+      </li>
+    </ul>
+  </div>
+</section>

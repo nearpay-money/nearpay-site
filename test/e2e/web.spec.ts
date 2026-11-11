@@ -7,9 +7,18 @@ test.describe("marketing site", () => {
     await expect(page).toHaveTitle("NearPay — Accept crypto payments. Hassle-free.");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Accept crypto payments. Hassle-free.");
     await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /any token on any blockchain/);
+    // Header nav (owner, 2026-11-12): exactly these links, in order; sections are in-page anchors here.
     const nav = page.getByRole("navigation", { name: "Main" }).first();
-    for (const label of ["Checkout", "Payment links", "Subscriptions", "Agent payments", "Docs"]) {
-      await expect(nav.getByRole("link", { name: label })).toBeVisible();
+    await expect(nav.getByRole("link")).toHaveText(["How it works", "Products", "Developers", "Pricing", "Docs"]);
+    expect(await nav.getByRole("link").evaluateAll((els) => els.map((e) => e.getAttribute("href")))).toEqual([
+      "#how-it-works",
+      "#products",
+      "#developers",
+      "#pricing",
+      "https://docs.nearpay.money",
+    ]);
+    for (const old of ["Checkout", "Payment links", "Subscriptions", "Agent payments"]) {
+      await expect(nav.getByRole("link", { name: old, exact: true })).toHaveCount(0);
     }
     // Header (owner 2026-11-11): two rectangular buttons, no pill CTA and no plain-text Sign in link.
     const actions = page.locator(".web-header__actions");
@@ -91,6 +100,14 @@ test.describe("marketing site", () => {
       "A dashboard for every payment",
       "Agent payments",
       "One API call to a hosted checkout.",
+      "One fee per successful payment.",
+      "Same asset",
+      "Stablecoin pair",
+      "Any other token",
+      "Intents transfer",
+      "You choose who covers the fee",
+      "Network fees are separate",
+      "Test mode is free",
       "We never hold your money",
       "Every payment is checked",
       "Live in minutes",
@@ -148,7 +165,7 @@ test.describe("marketing site", () => {
   });
 
   test("buttons: one rectangular system, no pills, no arrows in labels", async ({ page }) => {
-    for (const path of ["/", "/payments", "/billing", "/pricing", "/404"]) {
+    for (const path of ["/", "/support", "/privacy", "/404"]) {
       test.info().annotations.push({ type: "allow-404" });
       await page.setViewportSize({ width: 1440, height: 900 });
       await page.goto(`${WEB}${path}`);
@@ -168,7 +185,7 @@ test.describe("marketing site", () => {
   test("header nav links change colour on hover and focus, never underline", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`${WEB}/`);
-    const link = page.locator(".web-nav__link", { hasText: "Payment links" });
+    const link = page.locator(".web-nav__link", { hasText: "Products" });
     const before = await link.evaluate((el) => getComputedStyle(el).color);
     expect(await link.evaluate((el) => getComputedStyle(el).transitionProperty)).toContain("color");
     await link.hover();
@@ -335,27 +352,151 @@ test.describe("marketing site", () => {
     await expect(menuPanel.getByRole("link", { name: "Sign in" })).toHaveClass(/np-button--secondary/);
     await expect(menuPanel.getByRole("link", { name: "Contact team" })).toHaveAttribute("href", "/support");
     await expect(menuPanel.getByRole("link", { name: "Contact team" })).toBeVisible();
-    await expect(menuPanel.getByRole("link", { name: "Pricing" })).toBeVisible();
+    await expect(menuPanel.locator(".web-menu__list a:not(.np-button)")).toHaveText([
+      "How it works",
+      "Products",
+      "Developers",
+      "Pricing",
+      "Docs",
+    ]);
+    await expectAccessible(page);
+    // A section link scrolls to the section and closes the menu (scripts/menu.ts), so the panel doesn't cover it.
     await menuPanel.getByRole("link", { name: "Pricing" }).click();
-    await expect(page).toHaveURL(`${WEB}/pricing`);
+    await expect(page).toHaveURL(`${WEB}/#pricing`);
+    await expect(page.locator(".web-menu")).not.toHaveAttribute("open", "");
+    await expect(page.locator("#pricing-title")).toBeInViewport();
+    // Escape closes an open menu and returns focus to the menu button.
+    await menu.click();
+    await expect(page.locator(".web-menu")).toHaveAttribute("open", "");
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".web-menu")).not.toHaveAttribute("open", "");
+    await expect(menu).toBeFocused();
+  });
+
+  test("header: sticky, and section links from other pages go to /#anchor", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(`${WEB}/support`);
+    const nav = page.getByRole("navigation", { name: "Main" }).first();
+    expect(await nav.getByRole("link").evaluateAll((els) => els.map((e) => e.getAttribute("href")))).toEqual([
+      "/#how-it-works",
+      "/#products",
+      "/#developers",
+      "/#pricing",
+      "https://docs.nearpay.money",
+    ]);
+    await expect(
+      page.getByRole("navigation", { name: "Footer" }).getByRole("link", { name: "Pricing" }),
+    ).toHaveAttribute("href", "/#pricing");
+    await nav.getByRole("link", { name: "Developers" }).click();
+    await expect(page).toHaveURL(`${WEB}/#developers`);
+    await expect(page.locator("#dev-title")).toBeInViewport();
+    // Sticky: still at the top after scrolling.
+    expect((await page.locator(".web-header").boundingBox())?.y).toBe(0);
+    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
+  });
+
+  test("section anchors land just under the sticky header (desktop and phone)", async ({ page }) => {
+    for (const [width, height] of [
+      [1440, 900],
+      [390, 844],
+    ] as const) {
+      await page.setViewportSize({ width, height });
+      for (const [id, heading] of [
+        ["how-it-works", "#flow-title"],
+        ["products", "#showcase-title"],
+        ["developers", "#developers"], // the card (its copy is vertically centred in a tall card on desktop)
+        ["pricing", "#pricing-title"],
+      ] as const) {
+        await page.goto("about:blank"); // a fresh load each time (not a same-page fragment change)
+        await page.goto(`${WEB}/#${id}`);
+        await page.waitForFunction(() => document.readyState === "complete");
+        // Wait until the scroll position has settled (a smooth scroll, if any, has finished).
+        let last = -1;
+        await expect
+          .poll(
+            async () => {
+              const y = await page.evaluate(() => window.scrollY);
+              const settled = y > 0 && y === last;
+              last = y;
+              return settled;
+            },
+            { intervals: [250] },
+          )
+          .toBe(true);
+        const header = (await page.locator(".web-header").boundingBox())?.height ?? 0;
+        const top = (await page.locator(heading).boundingBox())?.y ?? -1;
+        expect(top, `${width}: #${id}`).toBeGreaterThanOrEqual(header);
+        expect(top, `${width}: #${id}`).toBeLessThan(header + 140);
+      }
+    }
+  });
+
+  test("in-page navigation scrolls smoothly, and instantly under reduced motion", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(`${WEB}/`);
+    expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("smooth");
+    await page.locator(".web-nav__link", { hasText: "Pricing" }).click();
+    await expect(page).toHaveURL(`${WEB}/#pricing`);
+    await expect(page.locator("#pricing-title")).toBeInViewport();
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("auto");
+  });
+
+  test("old marketing URLs forward to the home sections", async ({ page, request }) => {
+    for (const [old, target] of [
+      ["/pricing", "/#pricing"],
+      ["/payments", "/#products"],
+      ["/billing", "/#products"],
+    ]) {
+      const res = await request.get(`${WEB}${old}`);
+      expect(res.status(), old).toBe(200);
+      const html = await res.text();
+      expect(html).toContain(`<meta http-equiv="refresh" content="0; url=${target}">`);
+      expect(html).toContain('<meta name="robots" content="noindex">');
+      expect(html).toContain(`<link rel="canonical" href="https://nearpay.money${target}">`);
+      expect(html).toMatch(new RegExp(`<a class="np-button[^"]*" href="${target}">Go to `));
+      await page.goto(`${WEB}${old}`);
+      await expect(page).toHaveURL(`${WEB}${target}`);
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText("Accept crypto payments. Hassle-free.");
+    }
+  });
+
+  test("pricing section shows the indicative Q-BIZ-02 schedule, before the navy band", async ({ page }) => {
+    // Still frames for axe (the showcase above loops; the home test holds its frames separately).
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(`${WEB}/`);
+    const pricing = page.locator("section#pricing");
+    await expect(pricing.getByText("Indicative pricing, may change before general availability")).toBeVisible();
+    const rates = pricing.locator(".pr-rate");
+    await expect(rates).toHaveCount(4);
+    await expect(rates.locator(".pr-rate__name")).toHaveText([
+      "Same asset",
+      "Stablecoin pair",
+      "Any other token",
+      "Intents transfer",
+    ]);
+    await expect(rates.locator(".pr-rate__pct")).toHaveText(["0.20%", "0.50%", "1.00%", "0.30%"]);
+    await expect(rates.nth(3)).toContainText("Minimum fee $0.001");
+    await expect(rates.nth(1).locator(".np-sr-only")).toHaveText(
+      "For example: USDT on Arbitrum, settled as USDC on Base.",
+    );
+    await expect(pricing).toContainText("including the route provider’s share");
+    await expect(pricing).toContainText("NearPay never holds your balance");
+    // Worked example (bigint cents): 0.50% of $100.00, customer covers it by default.
+    const cases = pricing.locator(".pr-split__case");
+    await expect(cases.nth(0)).toContainText("Your customer covers it (default)");
+    await expect(cases.nth(0)).toContainText("$100.50");
+    await expect(cases.nth(1)).toContainText("$99.50");
+    await expect(pricing).toContainText("No real funds move, and nothing is charged.");
+    // Order: showcase, pricing, then the final navy band.
+    const order = await page.$$eval("main > section", (els) => els.map((e) => e.className.split(" ")[0]));
+    expect(order.slice(-3)).toEqual(["showcase", "pricing", "promise-band"]);
+    await pricing.scrollIntoViewIfNeeded();
     await expectAccessible(page);
   });
 
-  test("pricing shows the indicative Q-BIZ-02 schedule", async ({ page }) => {
-    await page.goto(`${WEB}/pricing`);
-    await expect(page.getByText("Indicative pricing · may change before general availability")).toBeVisible();
-    const rows = page.locator(".price-table tbody tr");
-    await expect(rows).toHaveCount(4);
-    await expect(rows.nth(0)).toContainText("0.20%");
-    await expect(rows.nth(1)).toContainText("0.50%");
-    await expect(rows.nth(2)).toContainText("1.00%");
-    await expect(rows.nth(3)).toContainText("0.30%");
-    await expect(rows.nth(3)).toContainText("minimum $0.001");
-    await expect(page.getByText("NearPay never holds your balance")).toBeVisible();
-    await expectAccessible(page);
-  });
-
-  for (const path of ["/payments", "/billing", "/support", "/privacy", "/terms"]) {
+  for (const path of ["/support", "/privacy", "/terms"]) {
     test(`${path} is accessible and honest`, async ({ page }) => {
       await page.goto(`${WEB}${path}`);
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
