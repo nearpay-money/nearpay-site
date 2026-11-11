@@ -1215,6 +1215,12 @@ svg {
   top: var(--np-space-2);
   right: var(--np-space-2);
 }
+/* Plain-text blocks (prompts, sample output) wrap like prose; room on the right for Copy */
+.prose pre.language-text {
+  padding-right: calc(var(--np-space-5) + 64px);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 
 /* ========================================================================================== */
 /* Docs shell                                                                                   */

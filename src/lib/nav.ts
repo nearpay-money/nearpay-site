@@ -18,6 +18,7 @@ export const NAV: readonly NavGroup[] = [
     items: [
       { label: "Overview", href: "/" },
       { label: "Get started", href: "/get-started" },
+      { label: "Integrate with an AI agent", href: "/build-with-ai" },
       { label: "Test mode", href: "/test-mode" },
     ],
   },
