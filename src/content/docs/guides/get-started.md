@@ -19,15 +19,15 @@ Keep secret keys on your server. Use a restricted key (`rk_…`) with only the s
 ## 2. Install the SDK
 
 ```bash
-npm install @nearpay/node
+npm install @nearpay-money/node
 ```
 
-The SDK is typed from `@nearpay/spec`, adds an `Idempotency-Key` to every `POST` and retries network errors safely. You can also call the REST API directly — every example in the [API reference](/api) has a `curl` version.
+The SDK is typed from `@nearpay-money/spec`, adds an `Idempotency-Key` to every `POST` and retries network errors safely. You can also call the REST API directly — every example in the [API reference](/api) has a `curl` version.
 
 ## 3. Create a checkout session
 
 ```ts
-import { NearPay } from "@nearpay/node";
+import { NearPay } from "@nearpay-money/node";
 
 const nearpay = new NearPay(process.env.NEARPAY_SECRET_KEY!);
 

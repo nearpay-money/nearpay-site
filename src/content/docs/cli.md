@@ -11,11 +11,11 @@ The NearPay CLI is the fastest way to build a webhook handler: it streams your a
 ## Install
 
 ```bash
-npm install -g @nearpay/cli
+npm install -g @nearpay-money/cli
 nearpay --version
 ```
 
-The package is `@nearpay/cli`; the command is `nearpay`. It needs Node.js 22 or later.
+The package is `@nearpay-money/cli`; the command is `nearpay`. It needs Node.js 22 or later.
 
 ## Log in
 
@@ -46,7 +46,7 @@ Every new event is printed as it happens: time, type, event id and the object it
 nearpay listen --events invoice.paid,customer.subscription.deleted --print-json
 ```
 
-The stream resumes where it left off after a dropped connection, so no event is skipped while the CLI reconnects. It's built on [`GET /v1/events/stream`](/api/events#streamEvents), which you can also use from your own tools — [`@nearpay/node`](https://www.npmjs.com/package/@nearpay/node) wraps it as `nearpay.events.stream()`.
+The stream resumes where it left off after a dropped connection, so no event is skipped while the CLI reconnects. It's built on [`GET /v1/events/stream`](/api/events#streamEvents), which you can also use from your own tools — [`@nearpay-money/node`](https://www.npmjs.com/package/@nearpay-money/node) wraps it as `nearpay.events.stream()`.
 
 ## Forward events to your app
 
@@ -60,7 +60,7 @@ Verify forwarded events exactly as you'll verify real webhooks, using the secret
 
 ```ts
 import express from "express";
-import { NearPay } from "@nearpay/node";
+import { NearPay } from "@nearpay-money/node";
 
 const nearpay = new NearPay(process.env.NEARPAY_SECRET_KEY!);
 const app = express();

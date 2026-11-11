@@ -10,11 +10,11 @@ A **checkout session** is one payment page. You create it on your server with th
 
 There are three ways to put it in front of customers:
 
-|                                              | Best for                                      | How                          |
-| -------------------------------------------- | --------------------------------------------- | ---------------------------- |
-| **Hosted checkout**                          | Web shops, invoices, anything with a redirect | Redirect to `session.url`    |
-| [**Embedded checkout**](/checkout/embedded)  | Keeping customers on your page                | Mount it with `@nearpay/js`  |
-| [**Payment links**](/checkout/payment-links) | No code: share a URL or QR code               | Create a link once, reuse it |
+|                                              | Best for                                      | How                               |
+| -------------------------------------------- | --------------------------------------------- | --------------------------------- |
+| **Hosted checkout**                          | Web shops, invoices, anything with a redirect | Redirect to `session.url`         |
+| [**Embedded checkout**](/checkout/embedded)  | Keeping customers on your page                | Mount it with `@nearpay-money/js` |
+| [**Payment links**](/checkout/payment-links) | No code: share a URL or QR code               | Create a link once, reuse it      |
 
 ## Create a session
 

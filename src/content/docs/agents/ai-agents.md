@@ -10,7 +10,7 @@ AI agents can pay with NearPay the same way people do: from a wallet they contro
 
 | You want to…                                         | Use                                                                                    |
 | ---------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Give an agent (Claude, any MCP client) payment tools | The MCP server [`@nearpay/mcp`](#the-mcp-server)                                       |
+| Give an agent (Claude, any MCP client) payment tools | The MCP server [`@nearpay-money/mcp`](#the-mcp-server)                                 |
 | Charge agents per request for your API               | An [x402 paywall](#charge-agents-with-x402), also cross-chain                          |
 | Let an agent settle a checkout session or an invoice | [Agent checkout](#pay-a-checkout-session) and [hosted invoices](#pay-a-hosted-invoice) |
 
@@ -18,7 +18,7 @@ NearPay never holds the agent's funds or keys. The agent signs with its own key;
 
 ## The MCP server
 
-`@nearpay/mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server. It runs locally over stdio, or as a streamable HTTP server, and exposes two kinds of tools:
+`@nearpay-money/mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server. It runs locally over stdio, or as a streamable HTTP server, and exposes two kinds of tools:
 
 | Tool                              | Kind     | What it does                                                                                        |
 | --------------------------------- | -------- | --------------------------------------------------------------------------------------------------- |
@@ -35,17 +35,17 @@ Merchant tools use the API key you configure — use a restricted key (`rk_…`)
   "mcpServers": {
     "nearpay": {
       "command": "npx",
-      "args": ["-y", "@nearpay/mcp"]
+      "args": ["-y", "@nearpay-money/mcp"]
     }
   }
 }
 ```
 
-The keys, the agent's signer, the spending limits and the allowed merchants are set in the server's configuration — see the `@nearpay/mcp` README for the options. Start with test keys: in test mode every payment runs in the sandbox and no real funds move.
+The keys, the agent's signer, the spending limits and the allowed merchants are set in the server's configuration — see the `@nearpay-money/mcp` README for the options. Start with test keys: in test mode every payment runs in the sandbox and no real funds move.
 
 ## Charge agents with x402
 
-[x402](https://www.x402.org) lets your API answer `402 Payment Required` with a price. `@nearpay/x402` adds a paywall to a route; NearPay is the facilitator that issues single-use payment requirements, verifies the agent's payment and settles it to your settlement destination before your handler runs. [Agent payments (x402)](/agents) covers the basics; this section adds payments from other chains.
+[x402](https://www.x402.org) lets your API answer `402 Payment Required` with a price. `@nearpay-money/x402` adds a paywall to a route; NearPay is the facilitator that issues single-use payment requirements, verifies the agent's payment and settles it to your settlement destination before your handler runs. [Agent payments (x402)](/agents) covers the basics; this section adds payments from other chains.
 
 ### Accept payments from other chains
 
@@ -53,7 +53,7 @@ By default agents pay with `intents-transfer` from a NEAR Intents balance. Add `
 
 ```ts
 import express from "express";
-import { paywall } from "@nearpay/x402";
+import { paywall } from "@nearpay-money/x402";
 
 const BASE_USDC = "nep141:base-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913.omft.near";
 
@@ -79,7 +79,7 @@ If the route can't deliver, NEAR Intents refunds the deposit to the agent's addr
 ### Pay from an agent
 
 ```ts
-import { evmDepositor, withX402 } from "@nearpay/x402";
+import { evmDepositor, withX402 } from "@nearpay-money/x402";
 
 const BASE_USDC = "nep141:base-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913.omft.near";
 
@@ -97,7 +97,7 @@ The client prefers `intents-transfer` when you also pass a NEAR signer with enou
 
 ## Pay a checkout session
 
-An agent can pay a regular checkout session from its NEAR Intents account. With the session's client secret it asks for requirements (`POST /v1/checkout/sessions/{id}/agent_pay/requirements`), verifies the independent co-signature on them against keys pinned in the agent's configuration, signs, and submits (`POST /v1/checkout/sessions/{id}/agent_pay`). `@nearpay/agent-signer` does all of this and refuses to sign when the co-signature or any field doesn't match — the same protection people get in checkout. `nearpay_pay_checkout_session` wraps it for MCP clients.
+An agent can pay a regular checkout session from its NEAR Intents account. With the session's client secret it asks for requirements (`POST /v1/checkout/sessions/{id}/agent_pay/requirements`), verifies the independent co-signature on them against keys pinned in the agent's configuration, signs, and submits (`POST /v1/checkout/sessions/{id}/agent_pay`). `@nearpay-money/agent-signer` does all of this and refuses to sign when the co-signature or any field doesn't match — the same protection people get in checkout. `nearpay_pay_checkout_session` wraps it for MCP clients.
 
 ## Pay a hosted invoice
 

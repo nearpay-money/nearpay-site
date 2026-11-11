@@ -16,12 +16,12 @@ eyebrow: Agents
 ## Put a price on a route
 
 ```bash
-npm install @nearpay/x402
+npm install @nearpay-money/x402
 ```
 
 ```ts
 import express from "express";
-import { paywall } from "@nearpay/x402";
+import { paywall } from "@nearpay-money/x402";
 
 const app = express();
 
@@ -33,7 +33,7 @@ app.get(
 );
 ```
 
-For fetch-style handlers (Next.js route handlers) use `withPaywall`; for Hono, `honoPaywall` from `@nearpay/x402/hono`.
+For fetch-style handlers (Next.js route handlers) use `withPaywall`; for Hono, `honoPaywall` from `@nearpay-money/x402/hono`.
 
 What the paywall does:
 
@@ -46,8 +46,8 @@ Settlement happens before your handler: if your handler then fails, the agent ha
 ## Pay as an agent
 
 ```ts
-import { withX402, decodePaymentResponse } from "@nearpay/x402";
-import { nearSigner } from "@nearpay/agent-signer";
+import { withX402, decodePaymentResponse } from "@nearpay-money/x402";
+import { nearSigner } from "@nearpay-money/agent-signer";
 
 const pay = withX402(fetch, nearSigner({ accountId: "agent.near", keyPair }), {
   maxAmountPerRequest: { "nep141:17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1": "50000" },
@@ -87,7 +87,7 @@ The agent signs exactly two transfers — the amount to `payTo` and the fee to `
 
 ## Agents paying checkout sessions
 
-Agents can also pay a regular checkout session from an Intents account: `POST /v1/checkout/sessions/{id}/agent_pay/requirements`, then `POST /v1/checkout/sessions/{id}/agent_pay` with the signed payload (both with the session's client secret). `@nearpay/agent-signer` verifies the independent co-signature on the requirement before it signs — the same protection the human checkout uses.
+Agents can also pay a regular checkout session from an Intents account: `POST /v1/checkout/sessions/{id}/agent_pay/requirements`, then `POST /v1/checkout/sessions/{id}/agent_pay` with the signed payload (both with the session's client secret). `@nearpay-money/agent-signer` verifies the independent co-signature on the requirement before it signs — the same protection the human checkout uses.
 
 ## Payments from other chains
 

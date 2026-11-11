@@ -1,7 +1,7 @@
 /** Static search index for the docs (guides, API operations and groups, error codes, event types). */
 
 import { getCollection } from "astro:content";
-import { WEBHOOK_TYPE_NAMES } from "@nearpay/spec";
+import { WEBHOOK_TYPE_NAMES } from "@nearpay-money/spec";
 import type { SearchDoc } from "../../lib/search";
 import { ERRORS, GROUPS, OPERATIONS } from "../../lib/spec";
 

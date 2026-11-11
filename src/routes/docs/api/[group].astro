@@ -1,5 +1,5 @@
 ---
-/** API reference group page — rendered from @nearpay/spec OpenAPI. Do not hand-edit; change the spec. */
+/** API reference group page — rendered from @nearpay-money/spec OpenAPI. Do not hand-edit; change the spec. */
 import FieldList from "../../../components/docs/FieldList.astro";
 import Markdown from "../../../components/docs/Markdown.astro";
 import Operation from "../../../components/docs/Operation.astro";
@@ -65,7 +65,7 @@ const plain = group.intro.replace(/`/g, "");
   {ops.map((o) => <Operation op={o} />)}
 
   <p class="generated-note">
-    Generated from <code>@nearpay/spec</code> {OPENAPI_VERSION} (<code>openapi/public.yaml</code>). Clients must tolerate
+    Generated from <code>@nearpay-money/spec</code> {OPENAPI_VERSION} (<code>openapi/public.yaml</code>). Clients must tolerate
     unknown fields and new values of open enums.
   </p>
 </DocsLayout>

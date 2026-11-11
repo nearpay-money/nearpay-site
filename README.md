@@ -30,7 +30,7 @@ nearpay-site/
 │   ├── routes/web/      marketing: home, payments, billing, pricing, support, privacy, terms, 404
 │   ├── routes/docs/     docs: home, guides ([...slug]), api/, errors/, webhooks/events, search, 404
 │   ├── content/docs/    hand-written guides (Markdown)
-│   ├── lib/spec.ts      build-time model of @nearpay/spec (OpenAPI + error catalogue) → API reference,
+│   ├── lib/spec.ts      build-time model of @nearpay-money/spec (OpenAPI + error catalogue) → API reference,
 │   │                    error pages, event types (rendered on every build; nothing generated is committed)
 │   ├── components/, layouts/, styles/site.css   on top of @nearpay-internal/ui tokens + CSS
 │   ├── lib/hero.ts      home hero: the kit's ConvergenceHero rendered to static HTML at build time
@@ -64,9 +64,9 @@ next to them. Theme colour `#12263F`.
 ## Status
 
 Stage 2 step 2.3: marketing site (Figma marketing frames), pricing (indicative, Q-BIZ-02), legal drafts, developer
-docs with the API reference and error pages generated from `@nearpay/spec` 0.2.0.
+docs with the API reference and error pages generated from `@nearpay-money/spec` 0.2.0.
 
-Stage 3 step 3.3: docs on `@nearpay/spec` 0.3.0 and `@nearpay-internal/ui` 0.3.0 — guides "Send an invoice",
+Stage 3 step 3.3: docs on `@nearpay-money/spec` 0.3.0 and `@nearpay-internal/ui` 0.3.0 — guides "Send an invoice",
 "Recurring billing with subscriptions", "Tax rates", "Listen to events locally with the CLI" and "Let AI agents pay";
 reference groups for products, prices, tax rates, invoices (incl. PDF), subscriptions, the hosted invoice API, CLI
 login, cross-chain x402 and the event stream (frames table); error notes for the 0.3.0 codes. `check-dist` also
@@ -78,4 +78,4 @@ strip, payment sequence, developer section, non-custodial band); every other pag
 
 ## Built with
 
-Libraries are listed here as they are added (hackathon rule Q-005): Astro 5 (static output), `@astrojs/prism` (class-based code highlighting), `yaml`, `@nearpay/spec`, `@nearpay-internal/ui` (tokens, Instrument Sans, component CSS, brand files, ConvergenceHero), `zod` (spec peer); development: TypeScript, `@astrojs/check`, Biome, Vitest, Playwright, `@axe-core/playwright`, React and react-dom (build-time only: peer of the ui package for `formatMoney`, and server rendering of the hero; never shipped to the browser). Code and documentation are written with AI assistance (Claude) under human direction and review.
+Libraries are listed here as they are added (hackathon rule Q-005): Astro 5 (static output), `@astrojs/prism` (class-based code highlighting), `yaml`, `@nearpay-money/spec`, `@nearpay-internal/ui` (tokens, Instrument Sans, component CSS, brand files, ConvergenceHero), `zod` (spec peer); development: TypeScript, `@astrojs/check`, Biome, Vitest, Playwright, `@axe-core/playwright`, React and react-dom (build-time only: peer of the ui package for `formatMoney`, and server rendering of the hero; never shipped to the browser). Code and documentation are written with AI assistance (Claude) under human direction and review.

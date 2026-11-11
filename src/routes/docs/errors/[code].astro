@@ -1,6 +1,6 @@
 ---
 /**
- * One page per error code, rendered from the @nearpay/spec error catalogue (the `doc_url` of every
+ * One page per error code, rendered from the @nearpay-money/spec error catalogue (the `doc_url` of every
  * error points here). Facts come from the catalogue and OpenAPI; "What to do" from error-notes.ts.
  */
 import CodeBlock from "../../../components/docs/CodeBlock.astro";
@@ -80,5 +80,5 @@ const groupTitle = (slug: string) => GROUPS.find((g) => g.slug === slug)?.title 
       )
     }
   </div>
-  <p class="generated-note">Generated from the <code>@nearpay/spec</code> error catalogue {CATALOGUE_VERSION}.</p>
+  <p class="generated-note">Generated from the <code>@nearpay-money/spec</code> error catalogue {CATALOGUE_VERSION}.</p>
 </DocsLayout>

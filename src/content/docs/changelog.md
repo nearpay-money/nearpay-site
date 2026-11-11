@@ -6,9 +6,9 @@ slug: changelog
 eyebrow: Resources
 ---
 
-API versions are dates (current: `2026-11-01`). Additive changes — new endpoints, fields, event types and enum values — ship without a new version. The contract package `@nearpay/spec` is versioned separately.
+API versions are dates (current: `2026-11-01`). Additive changes — new endpoints, fields, event types and enum values — ship without a new version. The contract package `@nearpay-money/spec` is versioned separately.
 
-## @nearpay/spec 0.3.0 — 8 November 2026
+## @nearpay-money/spec 0.3.0 — 8 November 2026
 
 - **Billing:** products, prices (one-time and recurring), manual tax rates, invoices (draft → finalize → send, void, mark uncollectible, PDF), a hosted invoice page with its own API, and subscriptions billed by emailed invoice with reminders and dunning. Guides: [Send an invoice](/billing/invoices), [Subscriptions](/billing/subscriptions), [Tax rates](/billing/tax-rates).
 - **Events stream:** `GET /v1/events/stream` sends new events as server-sent events (test-mode keys), with resume by `Last-Event-ID`. The [CLI](/cli) uses it for `nearpay listen`.
@@ -19,7 +19,7 @@ API versions are dates (current: `2026-11-01`). Additive changes — new endpoin
 - `invoice` on payment intents and checkout sessions; `listPaymentIntents?invoice=`.
 - 10 new error codes, each with its own [error page](/errors).
 
-## @nearpay/spec 0.2.0 — 7 November 2026
+## @nearpay-money/spec 0.2.0 — 7 November 2026
 
 - **Refunds:** create, prepare, submit and cancel refunds; route legs (`sign_and_send`) and NEAR Intents legs (`sign_intent`); test helper to simulate the merchant's transfer.
 - **Payment links:** reusable priced links with `max_uses`, `collect_email` and deactivation.
@@ -28,11 +28,11 @@ API versions are dates (current: `2026-11-01`). Additive changes — new endpoin
 - **Webhooks:** secret rotation with an overlap window, event resend, and new event types `refund.*`, `review.opened`, `review.closed`, `account.updated`.
 - 17 new error codes, each with its own [error page](/errors).
 
-## @nearpay/spec 0.1.5
+## @nearpay-money/spec 0.1.5
 
 - Webhook delivery log (`GET /v1/webhook_endpoints/{id}/deliveries`).
 - `sequence` on checkout sessions and agent payments; `replayed` on x402 settle responses.
 
-## @nearpay/spec 0.1.0
+## @nearpay-money/spec 0.1.0
 
 - Checkout sessions, payment intents, webhook endpoints, events, agent payments and the x402 facilitator.

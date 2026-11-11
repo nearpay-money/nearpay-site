@@ -86,7 +86,7 @@ On the invoice:
 To preview totals before you create an invoice, use the same functions NearPay uses. They take bigint amounts and the rates' `rate_ppm`:
 
 ```ts
-import { computeInvoiceTotals } from "@nearpay/node"; // re-exported from @nearpay/spec
+import { computeInvoiceTotals } from "@nearpay-money/node"; // re-exported from @nearpay-money/spec
 
 const totals = computeInvoiceTotals([
   { amount: 4999n, tax_rates: [{ id: "txr_01jbz9k3m4n5p6q7r8s9t0v1w2", rate_ppm: 88750, inclusive: false }] },
