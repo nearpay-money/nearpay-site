@@ -94,6 +94,9 @@
 .fl-timer__value {
   display: inline-flex;
 }
+.fl-timer__unit {
+  margin-left: 3px;
+}
 .fl-col {
   display: inline-block;
   height: 20px;
@@ -223,6 +226,20 @@
 .fl-layer--p1,
 .fl-layer--p2 {
   opacity: 0;
+}
+/* The checkout's quote for the current payment (same layers and timing as the customer wallet). */
+.fl-quote {
+  position: relative;
+  height: 20px;
+  color: var(--site-indigo-ink);
+  font-size: 13px;
+  font-weight: var(--np-weight-semibold);
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.fl-quote .fl-layer {
+  gap: 0;
 }
 .fl-layer__text {
   min-width: 0;
@@ -1116,16 +1133,19 @@
   color: var(--np-on-navy-muted);
   font-size: 10px;
 }
+/* Source above destination (a horizontal row would overflow the narrow order column). */
 .mkc-route__row {
   display: flex;
-  align-items: center;
-  gap: 5px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
   margin-top: 6px;
 }
 .mkc-route__row svg {
   flex: none;
-  width: 18px;
-  height: 8px;
+  width: 8px;
+  height: 14px;
+  margin-left: 12px;
 }
 .mkc-chip {
   padding: 3px 6px;
@@ -2266,7 +2286,7 @@
 /* Side by side when the card is wide enough for the snippet (full-width on tablets, span 4 from 1320 px). */
 @media (min-width: 960px) and (max-width: 1099.98px), (min-width: 1320px) {
   .sc-card--dev {
-    grid-template-columns: minmax(0, 0.76fr) minmax(0, 1.24fr);
+    grid-template-columns: minmax(0, 0.66fr) minmax(0, 1.34fr);
     align-items: center;
     gap: 32px;
     padding: 36px;
@@ -3230,20 +3250,31 @@
   }
 }
 @keyframes mkc-modal {
+  /* Slides up from below the stage and back down (transform only; the opacity steps happen off-stage, so
+     the checkout never shows as a low-contrast, half-faded frame). */
   0%,
-  16% {
+  15.9% {
     opacity: 0;
-    transform: translateY(16px) scale(0.97);
+    transform: translateY(420px);
+  }
+  16% {
+    opacity: 1;
+    transform: translateY(420px);
   }
   22%,
-  89% {
+  88% {
     opacity: 1;
     transform: none;
+    animation-timing-function: cubic-bezier(0.5, 0, 0.75, 0);
   }
-  95%,
+  93.9% {
+    opacity: 1;
+    transform: translateY(420px);
+  }
+  94%,
   100% {
     opacity: 0;
-    transform: translateY(8px) scale(0.98);
+    transform: translateY(420px);
   }
 }
 @keyframes mkc-list {
@@ -3555,18 +3586,18 @@
   49% {
     opacity: 1;
   }
-  51%,
+  50%,
   100% {
     opacity: 0;
   }
 }
 @keyframes mkd-pp-a {
   0%,
-  49% {
+  50% {
     opacity: 0;
     transform: scale(0.85);
   }
-  51.5% {
+  52% {
     opacity: 1;
     transform: scale(1.08);
   }
@@ -3581,18 +3612,18 @@
   77% {
     opacity: 1;
   }
-  79%,
+  78%,
   100% {
     opacity: 0;
   }
 }
 @keyframes mkd-pp-b {
   0%,
-  77% {
+  78% {
     opacity: 0;
     transform: scale(0.85);
   }
-  79.5% {
+  80% {
     opacity: 1;
     transform: scale(1.08);
   }

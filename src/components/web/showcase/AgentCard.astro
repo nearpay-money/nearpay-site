@@ -11,7 +11,7 @@ import ShowcaseCard from "./ShowcaseCard.astro";
   title="Agent payments"
   body="Charge AI agents per request. Your API answers 402 Payment Required, the agent pays from its wallet, and the request goes through."
   link={{ href: "/payments#agents", label: "Explore agent payments" }}
-  alt="Animated example: an AI agent requests a report from a fictional paid API, receives 402 Payment Required for 0.01 USDC, signs the payment from its NEAR Intents account, retries and receives 200 OK with the report. Its wallet goes from 0.84 to 0.83 USDC."
+  alt="Animated example: an AI agent requests a report from a fictional paid API, receives 402 Payment Required for 0.01 USDC, signs the payment from its NEAR Intents account straight to the API owner’s wallet, retries and receives 200 OK with the report. Its wallet goes from 0.84 to 0.83 USDC."
 >
   <div class="mka-term">
     <div class="mka-head">
@@ -30,7 +30,7 @@ import ShowcaseCard from "./ShowcaseCard.astro";
       <div class="mka-pay mka-l3">
         <p><Icon name="wallet" size={14} />Signing 0.01 USDC from NEAR Intents</p>
         <span class="mka-bar"><i></i></span>
-        <p class="mka-paid"><Icon name="check" size={14} />Verified and settled by NearPay</p>
+        <p class="mka-paid"><Icon name="check" size={14} />Paid to the API owner’s wallet</p>
       </div>
       <p class="mka-req mka-l4"><span class="mka-m">GET</span>/v1/reports/gas-weekly<span class="mka-hdr">PAYMENT-SIGNATURE</span></p>
       <p class="mka-res mka-l5"><span class="mka-code mka-code--200">200</span>OK</p>

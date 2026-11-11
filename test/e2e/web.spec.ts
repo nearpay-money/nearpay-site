@@ -113,6 +113,8 @@ test.describe("marketing site", () => {
     await expect(page.locator(".sc-card--dashboard .mk")).toContainText("Recent payments");
     await expect(page.locator(".sc-card--links .mk")).toContainText("pay.nearpay.money/l/");
     await expect(page.locator(".sc-card--agents .mk")).toContainText("402");
+    await expect(page.locator(".sc-card--agents .mk")).toContainText("Paid to the API owner’s wallet");
+    await expect(flow.locator(".fl-quote")).toContainText("= 0.01408 ETH");
     const log = page.locator(".evlog__list");
     for (const e of ["checkout.session.completed", "payment_intent.succeeded"]) await expect(log).toContainText(e);
     await expect(log).toContainText("200 OK");
@@ -130,7 +132,19 @@ test.describe("marketing site", () => {
     const text = ((await page.locator("main").textContent()) ?? "").toLowerCase();
     expect(text).not.toContain("verified business");
     expect(text).not.toContain("one settlement out");
-    await expectAccessible(page);
+    expect(text).not.toContain("settled by nearpay");
+    // Contrast is checked on held frames rather than at a random moment: a frame caught mid cross-fade (two
+    // labels at half opacity) is not a state anyone reads. Each frame below has every card mid-story with its
+    // labels fully shown (Sent invoice, Confirming row, token picker, 402…); reduced motion covers the end state.
+    for (const ms of [2000, 6000, 9500]) {
+      await page.evaluate((t) => {
+        for (const a of document.getAnimations()) {
+          a.pause();
+          a.currentTime = t;
+        }
+      }, ms);
+      await expectAccessible(page);
+    }
   });
 
   test("buttons: one rectangular system, no pills, no arrows in labels", async ({ page }) => {

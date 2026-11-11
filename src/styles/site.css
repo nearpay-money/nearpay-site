@@ -434,12 +434,32 @@ svg {
     radial-gradient(24% 24% at 82% 78%, rgb(255 178 91 / 0.75), rgb(255 178 91 / 0)),
     radial-gradient(26% 26% at 42% 38%, rgb(180 180 255 / 0.8), rgb(180 180 255 / 0));
 }
+/* Deep brand teal (#007A68 / #00A38C) sweeping under the panel's top edge, so the wash reads as NearPay
+   rather than pastel. Behind the navy panel only: no text sits on it. */
+.hero-aurora__layer--c {
+  background:
+    radial-gradient(22% 20% at 70% 30%, rgb(0 122 104 / 0.55), rgb(0 122 104 / 0)),
+    radial-gradient(20% 22% at 46% 60%, rgb(0 163 140 / 0.45), rgb(0 163 140 / 0)),
+    radial-gradient(18% 16% at 90% 58%, rgb(91 91 214 / 0.55), rgb(91 91 214 / 0));
+  mix-blend-mode: multiply;
+}
 @media (prefers-reduced-motion: no-preference) {
   .hero-aurora__layer--a {
     animation: aurora-a 18s ease-in-out infinite alternate;
   }
   .hero-aurora__layer--b {
     animation: aurora-b 26s ease-in-out infinite alternate;
+  }
+  .hero-aurora__layer--c {
+    animation: aurora-c 14s ease-in-out infinite alternate;
+  }
+}
+@keyframes aurora-c {
+  from {
+    transform: translate(-3%, 2%) rotate(0deg);
+  }
+  to {
+    transform: translate(4%, -3%) rotate(14deg) scale(1.08);
   }
 }
 @keyframes aurora-a {

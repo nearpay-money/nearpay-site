@@ -33,7 +33,7 @@ const steps = [
     body: "Confirmed in one block on its own chain, then a signed webhook tells your server.",
   },
 ];
-const alt = `Animated diagram: a customer pays ${FLOW_PAYMENTS.map((p) => `${p.pays} on ${p.chain}`).join(", then ")}. Each time the NearPay checkout quotes $49.00, NEAR Intents routes the payment on-chain without NearPay holding it, the merchant's wallet receives 49.00 USDC on Base, confirmed in 1 block, and the merchant's server gets a signed payment_intent.succeeded webhook, answered 200 OK, about five seconds after the customer paid.`;
+const alt = `Animated diagram: a customer pays ${FLOW_PAYMENTS.map((p) => `${p.pays} on ${p.chain}`).join(", then ")}. Each time the NearPay checkout quotes $49.00 as an exact amount of that token, NEAR Intents routes the payment on-chain without NearPay holding it, the merchant's wallet receives 49.00 USDC on Base, confirmed in 1 block, and the merchant's server gets a signed payment_intent.succeeded webhook, answered 200 OK, about five seconds after the customer paid.`;
 ---
 <section class="flow" aria-labelledby="flow-title">
   <div class="site-container">
@@ -43,9 +43,8 @@ const alt = `Animated diagram: a customer pays ${FLOW_PAYMENTS.map((p) => `${p.p
         <p class="fl-timer">
           <Icon name="clock" size={16} />
           <span class="fl-timer__value">
-            <span class="fl-col"><span class="fl-strip fl-strip--units">{[0, 1, 2, 3, 4].map((d) => <span>{d}</span>)}</span></span>.<span class="fl-col"><span class="fl-strip fl-strip--tenths">{tenths.map((d) => <span>{d}</span>)}</span></span>
+            <span class="fl-col"><span class="fl-strip fl-strip--units">{[0, 1, 2, 3, 4].map((d) => <span>{d}</span>)}</span></span>.<span class="fl-col"><span class="fl-strip fl-strip--tenths">{tenths.map((d) => <span>{d}</span>)}</span></span><span class="fl-timer__unit">s</span>
           </span>
-          s
         </p>
 
         <div class="fl-node fl-node--wallet">
@@ -74,6 +73,13 @@ const alt = `Animated diagram: a customer pays ${FLOW_PAYMENTS.map((p) => `${p.p
           <span class="fl-node__ring"></span>
           <p class="fl-node__label"><Fragment set:html={mark} />NearPay checkout</p>
           <p class="fl-amount fl-amount--lg">$49.00</p>
+          <p class="fl-quote">
+            {
+              FLOW_PAYMENTS.map((p, i) => (
+                <span class={`fl-layer fl-layer--p${i}`}>= {p.pays}</span>
+              ))
+            }
+          </p>
           <p class="fl-sub">Exact total, before signing</p>
         </div>
 
