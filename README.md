@@ -27,7 +27,8 @@ This repo stays surgical: design docs live in [`nearpay-brain`](../nearpay-brain
 nearpay-site/
 ├── astro.config.mjs     one project, two sites: NP_SITE=web → dist/web, NP_SITE=docs → dist/docs
 ├── src/
-│   ├── routes/web/      marketing: home, payments, billing, pricing, support, privacy, terms, 404
+│   ├── routes/web/      marketing: home (incl. pricing), support, privacy, terms, 404; [moved] forwards the old
+│   │                    /payments, /billing, /pricing URLs to home sections
 │   ├── routes/docs/     docs: home, guides ([...slug]), api/, errors/, webhooks/events, search, 404
 │   ├── content/docs/    hand-written guides (Markdown)
 │   ├── lib/spec.ts      build-time model of @nearpay-money/spec (OpenAPI + error catalogue) → API reference,
@@ -35,7 +36,8 @@ nearpay-site/
 │   ├── components/, layouts/, styles/site.css   on top of @nearpay-internal/ui tokens + CSS
 │   ├── lib/hero.ts      home hero: the kit's ConvergenceHero rendered to static HTML at build time
 │   ├── lib/convergence.ts  hero animation schedule (dependency-free, shared with the browser module)
-│   └── scripts/         client modules: docs.ts (copy buttons + search, 1.5 KB gz), hero.ts (hero animation, < 1 KB gz)
+│   └── scripts/         client modules: docs.ts (copy buttons + search, 1.5 KB gz), hero.ts (hero animation, < 1 KB gz),
+│                        menu.ts (closes the marketing mobile menu after a section link / on Escape)
 ├── scripts/             check-dist (CSP/a11y/coverage gate), serve (preview with prod headers), screenshots
 └── test/                unit (Vitest) and e2e (Playwright + axe, CSP-violation guard)
 ```
@@ -53,9 +55,10 @@ Links to other NearPay surfaces default to production and can be overridden at b
 `NP_WEB_URL`, `NP_DOCS_URL`, `NP_DASHBOARD_URL`, `NP_API_URL`.
 
 **CSP:** every page satisfies `default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'`
-(also emitted as a meta tag). Nothing is inlined. The marketing site's only JavaScript is the home hero animation, an
-external module (`src/scripts/hero.ts`) that starts SMIL animations on the build-time markup; it never runs under
-`prefers-reduced-motion: reduce`, and the page is complete without it.
+(also emitted as a meta tag). Nothing is inlined. The marketing site's JavaScript is two small external modules: the
+home hero animation (`src/scripts/hero.ts`, starts SMIL animations on the build-time markup; never runs under
+`prefers-reduced-motion: reduce`) and `src/scripts/menu.ts` (closes the mobile menu after a section link is chosen
+or on Escape). Every page is complete without them.
 
 **Brand (design v2, "Convergence"):** favicon.svg/.ico, apple-touch-icon, PWA icons and og-image.png are copied from
 `@nearpay-internal/ui/brand/` into `public/` (git-ignored) when the Astro config loads; `site.webmanifest` is written
@@ -82,6 +85,15 @@ sequence as an animated diagram (`components/web/PaymentFlow.astro`) and a produ
 (`components/web/showcase/`: checkout, payment links, invoices and subscriptions, dashboard, agent payments,
 developers). All mockups are HTML/CSS/SVG with sample data, animated with CSS keyframes only (`styles/showcase.css`,
 home only; transform/opacity, still final frames under `prefers-reduced-motion`); no new JavaScript.
+
+Site cleanup (owner, 2026-11-12): the old Payments, Billing and Pricing pages are gone. The sticky header links to the
+landing sections, in order: How it works (`#how-it-works`), Products (`#products`), Developers (`#developers`),
+Pricing (`#pricing`), then Docs; in-page anchors on the home page (smooth scrolling unless reduced motion, landing
+just under the header), `/#anchor` from other pages (`config/site.ts` `headerNav`). Pricing is a home section
+(`components/web/Pricing.astro`: the indicative Q-BIZ-02 schedule, who covers the fee, network fees, free test mode).
+The hosting config lives in nearpay-deploy, so the old URLs build as tiny noindex forwarding pages
+(`routes/web/[moved].astro`, `<meta http-equiv="refresh">` — not governed by CSP, no script — plus a plain link,
+canonical = the target section).
 
 ## Built with
 

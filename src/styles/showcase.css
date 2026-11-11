@@ -3955,7 +3955,12 @@
   }
 }
 .pricing__note {
+  max-width: 100%;
+  height: auto;
+  min-height: 24px;
   margin-top: 20px;
+  padding-block: 3px;
+  white-space: normal;
 }
 
 /* Rate panel: the landing's soft multi-colour wash on the subtle canvas (as the flow panel), one column per rate. */

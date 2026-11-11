@@ -1,19 +1,33 @@
 import { spawn } from "node:child_process";
 import { join } from "node:path";
 import { chromium } from "@playwright/test";
+
 const out = process.argv[2] ?? "/home/claude/shots/site-cleanup";
 const WEB = "http://127.0.0.1:4430";
-const server = spawn(process.execPath, [join(import.meta.dirname, "serve.mjs"), "--web", "4430", "--docs", "4431"], { stdio: "ignore" });
+const server = spawn(process.execPath, [join(import.meta.dirname, "serve.mjs"), "--web", "4430", "--docs", "4431"], {
+  stdio: "ignore",
+});
 await new Promise((r) => setTimeout(r, 800));
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1243/chrome-linux64/chrome" });
-const settle = (page) => page.evaluate(() => { for (const a of document.getAnimations()) { try { a.pause(); a.currentTime = 9000; } catch {} } });
+const settle = (page) =>
+  page.evaluate(() => {
+    for (const a of document.getAnimations()) {
+      try {
+        a.pause();
+        a.currentTime = 9000;
+      } catch {}
+    }
+  });
 try {
   for (const width of [1440, 390]) {
     const page = await browser.newPage({ viewport: { width, height: width === 390 ? 844 : 900 } });
     await page.goto(`${WEB}/`, { waitUntil: "networkidle" });
     await settle(page);
     await page.screenshot({ path: join(out, `landing-full-${width}.png`), fullPage: true });
-    const box = await page.locator("#pricing").evaluate((el) => { const r = el.getBoundingClientRect(); return { x: 0, y: r.top + window.scrollY, width: window.innerWidth, height: r.height }; });
+    const box = await page.locator("#pricing").evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      return { x: 0, y: r.top + window.scrollY, width: window.innerWidth, height: r.height };
+    });
     await page.screenshot({ path: join(out, `pricing-${width}.png`), fullPage: true, clip: box });
     if (width === 1440) {
       await page.evaluate(() => window.scrollTo(0, 0));

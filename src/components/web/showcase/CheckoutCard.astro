@@ -1,11 +1,11 @@
 ---
+import { markSvg } from "@nearpay-internal/ui/brand";
 /**
  * Showcase card a: checkout on a merchant's site. A fictional game studio's product page in a browser frame;
  * the cursor clicks "Pay with crypto", the NearPay hosted checkout opens (approved Checkout-proposed design:
  * navy order side, network and token pickers, total), a token is picked, then "Paid". One 14 s CSS loop.
  */
 import { links } from "../../../config/site";
-import { markSvg } from "@nearpay-internal/ui/brand";
 import { money, USD, USDC } from "../../../lib/money";
 import { ETH } from "../../../lib/showcase";
 import Icon from "../../Icon.astro";
