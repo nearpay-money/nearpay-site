@@ -114,12 +114,12 @@ const N: Record<string, ErrorNote> = {
   },
   destination_not_active: {
     fix: [
-      "Use an active settlement destination. New or changed destinations become active after their cooling-off period and approval.",
+      "Use an active settlement destination (payout wallet). A live payout wallet becomes active as soon as its ownership signature checks out, and its second approval when your account has two or more owners or admins.",
     ],
   },
   account_not_live: {
     fix: [
-      "Live mode needs approved business details and an active live settlement destination. The dashboard’s setup checklist shows what is missing; test mode works meanwhile.",
+      "Live mode needs saved business details and an active live payout wallet. There is no NearPay review: live mode turns on as soon as both are in place. The dashboard’s setup checklist shows what is missing; test mode works meanwhile.",
     ],
   },
   amount_below_destination_minimum: {

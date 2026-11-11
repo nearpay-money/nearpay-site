@@ -26,7 +26,7 @@ An invoice is only ever marked `paid` by a payment that settled. There is no "ma
 - An **active settlement destination** that accepts the invoice's currency. Finalizing checks it.
 - A secret key, or a restricted key with `invoices.write` (and `products.write` to create products and prices).
 
-> **Test mode.** Use an `sk_test_…` key while you build. Test invoices are paid in the [sandbox](/test-mode): no real funds move, and the hosted page shows **Simulate payment**. Test-mode emails, when enabled, carry a test-mode banner and a `[test]` subject tag — open the `hosted_invoice_url` directly to test paying.
+> **Test mode.** Invoices created with a test key are paid in the sandbox: no real funds move, and the hosted page shows **Simulate payment**. Test-mode emails, when enabled, carry a test-mode banner and a `[test]` subject tag. Open the `hosted_invoice_url` directly to test paying. See [Test mode and live mode](/test-mode).
 
 ## Create an invoice in the dashboard
 

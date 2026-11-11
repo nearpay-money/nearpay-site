@@ -25,7 +25,7 @@ curl -X POST https://api.nearpay.money/v1/checkout/sessions \
   }'
 ```
 
-`allowed_origins` takes `https://host[:port]` origins (up to 10); test mode also accepts `http://localhost`. Without it the API answers [`allowed_origins_required`](/errors/allowed_origins_required).
+`allowed_origins` takes `https://host[:port]` origins (up to 10). Without it the API answers [`allowed_origins_required`](/errors/allowed_origins_required).
 
 Send `id` and `client_secret` to your page. The client secret only authorises the payer routes of that one session; never send a secret key to a browser.
 
@@ -41,7 +41,7 @@ With the script tag:
 
 ```js
 // checkout.js
-const checkout = NearPay("pk_test_…").mountCheckout({
+const checkout = NearPay("pk_live_…").mountCheckout({
   sessionId,
   clientSecret,
   element: "#pay",
@@ -57,12 +57,14 @@ const checkout = NearPay("pk_test_…").mountCheckout({
 Or from npm with `@nearpay-money/js`, or React with `@nearpay-money/react`:
 
 ```tsx
-<NearPayProvider publishableKey="pk_test_…">
+<NearPayProvider publishableKey="pk_live_…">
   <NearPayCheckout sessionId={id} clientSecret={clientSecret} onComplete={onComplete} />
 </NearPayProvider>;
 ```
 
-`NearPay()` takes a **publishable** key (`pk_…`) and refuses secret and restricted keys. The loader accepts messages only from the checkout origin and only from its own iframe.
+`NearPay()` takes a **publishable** key (`pk_live_…`, from **Developers → API keys**) and refuses secret and restricted keys. Publishable keys are safe to ship to the browser. The loader accepts messages only from the checkout origin and only from its own iframe.
+
+> **Test mode.** Use your `pk_test_…` key with sessions created by a `sk_test_…` key. Test sessions also accept `http://localhost` in `allowed_origins`, and the checkout shows **Simulate payment** instead of asking a wallet to sign. See [Test mode and live mode](/test-mode).
 
 ### Appearance
 

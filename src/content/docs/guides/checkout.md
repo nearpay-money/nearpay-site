@@ -59,6 +59,8 @@ Sessions accept payments for `expires_in` seconds (300–86 400, default 3 600),
 
 The business name shown is the legal name you declared for your account ("Business details declared by the merchant").
 
+> **Test mode.** With a test key, checkout shows a **Test mode — no real funds** banner and a **Simulate payment** button instead of asking a wallet to sign, and the amount's last two digits pick a [sandbox scenario](/test-mode#sandbox-scenarios). See [Test mode and live mode](/test-mode).
+
 ## After the payment
 
 Listen for `payment_intent.succeeded` (or `checkout.session.completed`) on a [webhook endpoint](/webhooks) and fulfil the order there. The redirect to `success_url` is a convenience for the customer, not a confirmation.

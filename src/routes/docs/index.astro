@@ -8,7 +8,7 @@ const start = [
   {
     icon: "arrow-right",
     title: "Get started",
-    body: "Test keys, your first checkout session and a webhook in ten minutes.",
+    body: "Your first live payment: payout wallet, secret key, checkout session and webhook.",
     href: "/get-started",
   },
   {
@@ -25,8 +25,8 @@ const start = [
   },
   {
     icon: "clock",
-    title: "Test mode",
-    body: "A deterministic sandbox: pick an outcome with the amount’s last two digits.",
+    title: "Test mode and live mode",
+    body: "Build against a sandbox with simulated payments, then switch keys to go live.",
     href: "/test-mode",
   },
   {
@@ -96,8 +96,12 @@ const session = await nearpay.checkout.sessions.create({
       <li>Your server creates a checkout session with the price and your settlement destination.</li>
       <li>The customer picks a token and network they already hold, and pays from their wallet (or sends to a deposit address checked by an independent co-signature).</li>
       <li>NEAR Intents routes the payment and it settles directly to your destination — never to a NearPay account.</li>
-      <li>NearPay verifies settlement evidence on chain, then marks the payment succeeded and sends <code>payment_intent.succeeded</code>.</li>
+      <li>NearPay confirms the payment on one block of its chain, verifies the settlement evidence, then marks the payment succeeded and sends <code>payment_intent.succeeded</code>.</li>
     </ol>
+    <p>
+      The key in <code>NEARPAY_SECRET_KEY</code> decides the mode: <code>sk_live_…</code> takes real payments, and
+      <code>sk_test_…</code> runs the same code with simulated payments. See <a href="/test-mode">Test mode and live mode</a>.
+    </p>
     <p>Looking for every endpoint? Open the <a href="/api">API reference</a>.</p>
   </div>
 </DocsLayout>

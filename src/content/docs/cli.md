@@ -6,7 +6,9 @@ slug: cli
 eyebrow: Webhooks
 ---
 
-The NearPay CLI is the fastest way to build a webhook handler: it streams your account's events as they happen and forwards each one to `localhost`, signed like a webhook delivery. It works in **test mode only**.
+The NearPay CLI is the fastest way to build a webhook handler: it streams your account's events as they happen and forwards each one to `localhost`, signed like a webhook delivery.
+
+> **Test mode.** The CLI works with test keys only, on test-mode events. In live mode, events reach your server through [webhook endpoints](/webhooks). See [Test mode and live mode](/test-mode).
 
 ## Install
 

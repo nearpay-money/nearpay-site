@@ -41,7 +41,9 @@ Merchant tools use the API key you configure — use a restricted key (`rk_…`)
 }
 ```
 
-The keys, the agent's signer, the spending limits and the allowed merchants are set in the server's configuration — see the `@nearpay-money/mcp` README for the options. Start with test keys: in test mode every payment runs in the sandbox and no real funds move.
+The keys, the agent's signer, the spending limits and the allowed merchants are set in the server's configuration — see the `@nearpay-money/mcp` README for the options. With live keys and a funded agent wallet, payments move real funds.
+
+> **Test mode.** Configure test keys while you set up an agent: every payment then runs in the sandbox and no real funds move. See [Test mode and live mode](/test-mode).
 
 ## Charge agents with x402
 
@@ -124,8 +126,10 @@ Every payer path enforces limits on the agent's side, before anything is signed:
 - **Recipients** — `allowedPayTo`: only these merchant accounts can be paid.
 - **Budget** — the MCP server's payer tools also keep a running total per asset over the session, so many small payments can't add up past what you allowed.
 
-A payment over a limit fails with an error instead of being paid; the agent never silently pays more. Give agents their own wallet with only the funds they need, and use test keys while you develop.
+A payment over a limit fails with an error instead of being paid; the agent never silently pays more. Give agents their own wallet with only the funds they need.
 
-## Test mode
+## Track agent payments
 
-With test keys, MCP tools, x402 and agent checkout all run against the sandbox: signatures are checked for real, balances and settlement are simulated, and nothing touches mainnet. Agent payments appear in the dashboard under **Agent payments** and send `agent_payment.settled` or `agent_payment.failed`.
+Agent payments appear in the dashboard under **Agent payments** and send `agent_payment.settled` or `agent_payment.failed`.
+
+> **Test mode.** With test keys, MCP tools, x402 and agent checkout all run against the sandbox: signatures are checked for real, balances and settlement are simulated, and nothing touches mainnet. See [Test mode and live mode](/test-mode).
