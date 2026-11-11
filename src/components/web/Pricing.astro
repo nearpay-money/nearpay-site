@@ -37,11 +37,11 @@ const bearers = [
               <h3 class="pr-rate__name">{rule.name}</h3>
               <p class="pr-rate__fee">
                 <span class="pr-rate__pct">{percent(rule.bps)}</span>
-                {rule.minFeeUsdMicros !== undefined && (
-                  <span class="pr-rate__min">minimum {minFee(rule.minFeeUsdMicros)}</span>
-                )}
               </p>
               <p class="pr-rate__when">{rule.when}</p>
+              {rule.minFeeUsdMicros !== undefined && (
+                <p class="pr-rate__min">Minimum fee {minFee(rule.minFeeUsdMicros)}</p>
+              )}
               {rule.route ? (
                 <p class="pr-route">
                   <span class="np-sr-only">For example: {rule.example}.</span>
@@ -54,7 +54,7 @@ const bearers = [
                 </p>
               ) : (
                 <p class="pr-route">
-                  <span class="pr-route__chip pr-route__chip--text">{rule.example}</span>
+                  <span class="pr-route__text">{rule.example}.</span>
                 </p>
               )}
             </li>

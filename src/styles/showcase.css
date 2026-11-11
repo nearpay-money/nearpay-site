@@ -3907,21 +3907,22 @@
 /* ========================================================================================== */
 /* Header anchors: land each section's heading ~32-40 px under the sticky header (not its top padding). */
 /* ========================================================================================== */
-.web-main .flow,
-.web-main .showcase {
+/* Id selectors: they must beat site.css's generic `.web-main [id]` whatever order the two files load in. */
+#how-it-works.flow,
+#products.showcase {
   scroll-margin-top: calc(var(--web-header-h) - 72px + 32px);
 }
-.web-main .pricing {
+#pricing.pricing {
   scroll-margin-top: calc(var(--web-header-h) - 24px + 32px);
 }
 @media (min-width: 960px) {
-  .web-main .flow {
+  #how-it-works.flow {
     scroll-margin-top: calc(var(--web-header-h) - 112px + 40px);
   }
-  .web-main .showcase {
+  #products.showcase {
     scroll-margin-top: calc(var(--web-header-h) - 96px + 40px);
   }
-  .web-main .pricing {
+  #pricing.pricing {
     scroll-margin-top: calc(var(--web-header-h) - 16px + 40px);
   }
 }
@@ -3982,6 +3983,7 @@
   grid-template-areas:
     "fee name"
     "fee when"
+    "fee min"
     "fee route";
   align-content: start;
   column-gap: 16px;
@@ -3996,7 +3998,7 @@
   }
   .pr-rate {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "fee" "name" "when" "route";
+    grid-template-areas: "fee" "name" "when" "min" "route";
     padding: 28px;
   }
   .pr-rate + .pr-rate {
@@ -4029,8 +4031,6 @@
 }
 .pr-rate__fee {
   grid-area: fee;
-  display: flex;
-  flex-direction: column;
   margin: 0;
 }
 @media (min-width: 768px) {
@@ -4054,11 +4054,12 @@
   }
 }
 .pr-rate__min {
-  margin-top: 6px;
-  color: var(--np-color-text-secondary);
-  font-size: 13px;
-  font-weight: var(--np-weight-medium);
-  line-height: 16px;
+  grid-area: min;
+  margin: 8px 0 0;
+  color: var(--np-color-text);
+  font-size: 14px;
+  font-weight: var(--np-weight-semibold);
+  line-height: 20px;
 }
 .pr-rate__when {
   grid-area: when;
@@ -4090,8 +4091,11 @@
   line-height: 18px;
   white-space: nowrap;
 }
-.pr-route__chip--text {
-  white-space: normal;
+.pr-route__text {
+  margin: 0;
+  color: var(--np-color-text-tertiary);
+  font-size: 13px;
+  line-height: 18px;
 }
 .pr-route__line {
   width: 2px;
