@@ -47,11 +47,11 @@ Store it on your server as the environment variable `NEARPAY_SECRET_KEY`. Never 
 
 The key's prefix tells you what it is and which mode it works in:
 
-| Prefix                  | Key                                                   | Use it in              |
-| ----------------------- | ----------------------------------------------------- | ---------------------- |
-| `sk_live_` / `sk_test_` | Secret key: full access                               | Your server only       |
-| `rk_live_` / `rk_test_` | Restricted key: only the scopes you choose            | A service that needs a few operations |
-| `pk_live_` / `pk_test_` | Publishable key: mounts [embedded checkout](/checkout/embedded) | The browser            |
+| Prefix                  | Key                                                             | Use it in                             |
+| ----------------------- | --------------------------------------------------------------- | ------------------------------------- |
+| `sk_live_` / `sk_test_` | Secret key: full access                                         | Your server only                      |
+| `rk_live_` / `rk_test_` | Restricted key: only the scopes you choose                      | A service that needs a few operations |
+| `pk_live_` / `pk_test_` | Publishable key: mounts [embedded checkout](/checkout/embedded) | The browser                           |
 
 `_live_` keys move real money. `_test_` keys work on test data with simulated payments. Your code reads the key from `NEARPAY_SECRET_KEY`, so it stays the same in both modes.
 

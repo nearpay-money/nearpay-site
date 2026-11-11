@@ -82,6 +82,44 @@ test.describe("docs", () => {
     ).toBeVisible();
   });
 
+  test("live-first quickstart: live keys in the main flow, test mode in signposted callouts", async ({ page }) => {
+    await page.goto(`${DOCS}/get-started`);
+    const main = page.locator("main");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Accept your first live payment");
+    for (const name of [
+      "2. Add your payout wallet",
+      "3. Get your secret key",
+      "7. Go-live checklist",
+      "Try it first in test mode",
+    ]) {
+      await expect(main.getByRole("heading", { level: 2, name })).toBeVisible();
+    }
+    await expect(main.locator("pre").filter({ hasText: "process.env.NEARPAY_SECRET_KEY" }).first()).toBeVisible();
+    await expect(main.locator("pre").filter({ hasText: /sk_(test|live)_/ })).toHaveCount(0);
+    await expect(main).not.toContainText(/cool(ing)?[- ]off/i);
+    const callout = main.locator("blockquote", { hasText: "Test mode." }).first();
+    await expect(callout.getByRole("link", { name: "Test mode and live mode" })).toHaveAttribute("href", "/test-mode");
+    for (const path of [
+      "/checkout",
+      "/refunds",
+      "/webhooks",
+      "/cli",
+      "/settlement-destinations",
+      "/billing/subscriptions",
+    ]) {
+      await page.goto(`${DOCS}${path}`);
+      await expect(
+        page
+          .locator("main blockquote", { hasText: "Test mode." })
+          .getByRole("link", { name: "Test mode and live mode" }),
+        path,
+      ).toHaveAttribute("href", "/test-mode");
+    }
+    await page.goto(`${DOCS}/test-mode`);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Test mode and live mode");
+    await expect(page.getByRole("region", { name: /^Table: , Live mode, Test mode$/ })).toBeVisible();
+  });
+
   test("Stage 3 reference: PDF bytes, the event stream frames, the invoice-secret header", async ({ page }) => {
     await page.goto(`${DOCS}/api/invoices`);
     const pdf = page.locator("#getInvoicePdf");

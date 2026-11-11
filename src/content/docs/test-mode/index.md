@@ -15,27 +15,27 @@ You build and test in test mode, then switch to live mode by changing your keys.
 
 ## Live and test at a glance
 
-|                    | Live mode                                                         | Test mode                                                                |
-| ------------------ | ----------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| Money              | Real funds settle to your payout wallet                           | Simulated. No real funds move                                            |
-| Keys               | `sk_live_…`, `pk_live_…`, `rk_live_…`                             | `sk_test_…`, `pk_test_…`, `rk_test_…`                                    |
-| Objects            | `livemode: true`                                                  | `livemode: false`                                                        |
-| Available          | After you save your business details and a payout wallet is active | Right after sign-up                                                      |
-| Payout wallets     | Active once you sign the ownership check                          | Active immediately, no signature                                         |
-| Payments           | Customers pay from their wallets. Confirmed on one block of the chain | The sandbox simulates chains, routing and settlement                     |
-| Checkout           | Asks the customer's wallet to sign                                | Shows a **Test mode — no real funds** banner and a **Simulate payment** button |
-| Webhook endpoints  | Public `https` URL on port 443                                    | `http` also allowed                                                      |
-| Test helpers, CLI  | Not available                                                     | [Test helpers](#simulate-payments) and [`nearpay listen` / `trigger`](/cli) |
-| Rate limit per key | 100 requests per second                                           | 25 requests per second                                                   |
+|                    | Live mode                                                             | Test mode                                                                      |
+| ------------------ | --------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Money              | Real funds settle to your payout wallet                               | Simulated. No real funds move                                                  |
+| Keys               | `sk_live_…`, `pk_live_…`, `rk_live_…`                                 | `sk_test_…`, `pk_test_…`, `rk_test_…`                                          |
+| Objects            | `livemode: true`                                                      | `livemode: false`                                                              |
+| Available          | After you save your business details and a payout wallet is active    | Right after sign-up                                                            |
+| Payout wallets     | Active once you sign the ownership check                              | Active immediately, no signature                                               |
+| Payments           | Customers pay from their wallets. Confirmed on one block of the chain | The sandbox simulates chains, routing and settlement                           |
+| Checkout           | Asks the customer's wallet to sign                                    | Shows a **Test mode — no real funds** banner and a **Simulate payment** button |
+| Webhook endpoints  | Public `https` URL on port 443                                        | `http` also allowed                                                            |
+| Test helpers, CLI  | Not available                                                         | [Test helpers](#simulate-payments) and [`nearpay listen` / `trigger`](/cli)    |
+| Rate limit per key | 100 requests per second                                               | 25 requests per second                                                         |
 
 ## How the mode is chosen
 
 **The API key decides the mode.** A request made with a live key reads and writes live objects; a request made with a test key reads and writes test objects. There is no mode parameter to set.
 
-| Prefix                  | Key                                                    | Where it goes                         |
-| ----------------------- | ------------------------------------------------------ | ------------------------------------- |
-| `sk_live_` / `sk_test_` | Secret key: full access to your account                | Your server only                      |
-| `rk_live_` / `rk_test_` | Restricted key: only the scopes you choose             | A service that needs a few operations |
+| Prefix                  | Key                                                             | Where it goes                         |
+| ----------------------- | --------------------------------------------------------------- | ------------------------------------- |
+| `sk_live_` / `sk_test_` | Secret key: full access to your account                         | Your server only                      |
+| `rk_live_` / `rk_test_` | Restricted key: only the scopes you choose                      | A service that needs a few operations |
 | `pk_live_` / `pk_test_` | Publishable key: mounts [embedded checkout](/checkout/embedded) | The browser                           |
 
 Keep the key in an environment variable and the same code runs in either mode:
