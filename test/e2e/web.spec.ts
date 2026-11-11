@@ -136,7 +136,7 @@ test.describe("marketing site", () => {
     // Contrast is checked on held frames rather than at a random moment: a frame caught mid cross-fade (two
     // labels at half opacity) is not a state anyone reads. Each frame below has every card mid-story with its
     // labels fully shown (Sent invoice, Confirming row, token picker, 402…); reduced motion covers the end state.
-    for (const ms of [2000, 6000, 9500]) {
+    for (const ms of [2000, 6000, 9000]) {
       await page.evaluate((t) => {
         for (const a of document.getAnimations()) {
           a.pause();
