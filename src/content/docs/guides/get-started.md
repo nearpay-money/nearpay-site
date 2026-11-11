@@ -8,6 +8,8 @@ eyebrow: Start here
 
 This guide takes you from a new account to a confirmed test payment. Everything here runs in **test mode**: it uses the sandbox rail, so no real funds move.
 
+Using a coding agent? [Integrate with an AI agent](/build-with-ai) gives you a prompt that does these steps for you.
+
 ## 1. Create an account and get test keys
 
 1. Sign up in the [dashboard](https://dashboard.nearpay.money/signup) with a passkey.
