@@ -100,6 +100,4 @@ Each leg has a `deadline`. If it passes before you send, call `POST /v1/refunds/
 
 `POST /v1/refunds/{id}/cancel` works while the refund is `requires_action` and nothing was sent for the current leg.
 
-## Test mode
-
-Instead of signing, call `POST /v1/test_helpers/refunds/{id}/simulate_deposit` to stand in for your wallet's transfer. The refund amount's last two digits choose a [sandbox scenario](/test-mode#refund-scenarios).
+> **Test mode.** Test refunds aren't signed in a wallet. Call `POST /v1/test_helpers/refunds/{id}/simulate_deposit` to stand in for your transfer; the refund amount's last two digits choose a [sandbox scenario](/test-mode#refund-scenarios). See [Test mode and live mode](/test-mode).

@@ -97,6 +97,4 @@ Agents without a NEAR Intents balance can pay from another chain — for example
 
 Agent payments appear as `AgentPayment` objects (`GET /v1/agent_payments`) and send `agent_payment.settled` or `agent_payment.failed`. Verify failures carry an `invalidReason` such as `insufficient_funds`, `requirement_expired` or `amount_mismatch`.
 
-## Test mode
-
-With a test key, requirements, verification and settlement run against the sandbox Intents simulator: signatures are checked for real, balances are simulated and nothing touches mainnet.
+> **Test mode.** With a test key, requirements, verification and settlement run against the sandbox Intents simulator: signatures are checked for real, balances are simulated and nothing touches mainnet. See [Test mode and live mode](/test-mode).

@@ -22,7 +22,9 @@ curl -X POST https://api.nearpay.money/v1/payment_links \
   }'
 ```
 
-The response is a [`PaymentLink`](/api/payment-links#object) with its public `url`.
+The response is a [`PaymentLink`](/api/payment-links#object) with its public `url`. Share it anywhere: every payment through it settles to your payout wallet.
+
+> **Test mode.** Links created with a test key open test checkouts with **Simulate payment**, and their price's last two digits pick a [sandbox scenario](/test-mode#sandbox-scenarios). Create your live links again in live mode. See [Test mode and live mode](/test-mode).
 
 ## Options
 

@@ -124,6 +124,4 @@ With `at_period_end: true` the subscription stays active until `current_period_e
 
 Grant access on `invoice.paid` for the subscription's `latest_invoice`, and revoke it on `customer.subscription.deleted` (or when the status becomes `unpaid`).
 
-## Test mode
-
-Test subscriptions renew on the real clock, and their invoices are paid in the sandbox. Try the lifecycle events locally with the CLI: `nearpay trigger customer.subscription.created`, `customer.subscription.updated` and `customer.subscription.deleted`. Renewal reminders and overdue invoices can't be triggered yet — there is no test helper to move a subscription's clock forward.
+> **Test mode.** Test subscriptions renew on the real clock, and their invoices are paid in the sandbox. To skip ahead, [`POST /v1/test_helpers/subscriptions/{id}/advance_clock`](/api/test-helpers) moves a test subscription's billing clock to its next `renewal_upcoming`, `renewal` or `overdue` point. The CLI triggers `customer.subscription.created`, `updated` and `deleted`. See [Test mode and live mode](/test-mode).
