@@ -1,35 +1,44 @@
 import { expect, expectAccessible, test, WEB } from "./harness";
 
 test.describe("marketing site", () => {
-  test("home matches the design v2 artboard copy and structure", async ({ page }) => {
+  test("home: landing v3 copy, header and structure", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`${WEB}/`);
-    await expect(page).toHaveTitle("NearPay — Get paid from any chain. Settle where you choose.");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Get paid from any chain. Settle where you choose.",
-    );
+    await expect(page).toHaveTitle("NearPay — Accept crypto payments. Hassle-free.");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Accept crypto payments. Hassle-free.");
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /any token on any blockchain/);
     const nav = page.getByRole("navigation", { name: "Main" }).first();
     for (const label of ["Checkout", "Payment links", "Subscriptions", "Agent payments", "Docs"]) {
       await expect(nav.getByRole("link", { name: label })).toBeVisible();
     }
-    const header = page.locator(".web-header");
-    await expect(header.getByRole("link", { name: "Sign in" })).toHaveAttribute(
-      "href",
-      /dashboard\.nearpay\.money\/signin$/,
-    );
-    const ctas = page.locator("a", { hasText: "Start accepting payments" });
-    await expect(ctas).toHaveCount(3); // header pill, hero, mobile menu (closed disclosure)
-    for (const cta of await ctas.all()) await expect(cta).toHaveAttribute("href", /dashboard\.nearpay\.money\/signup$/);
-    await expect(page.getByRole("link", { name: "See a live checkout" })).toHaveAttribute(
-      "href",
-      /docs\.nearpay\.money\/get-started$/,
-    );
+    // Header (owner 2026-11-11): two rectangular buttons, no pill CTA and no plain-text Sign in link.
+    const actions = page.locator(".web-header__actions");
+    await expect(actions.getByRole("link")).toHaveCount(2);
+    const signin = actions.getByRole("link", { name: "Sign in" });
+    await expect(signin).toHaveClass(/np-button--secondary/);
+    await expect(signin).toHaveAttribute("href", /dashboard\.nearpay\.money\/signin$/);
+    const contact = actions.getByRole("link", { name: "Contact team" });
+    await expect(contact).toHaveClass(/np-button--primary/);
+    await expect(contact).toHaveAttribute("href", "/support");
+    await expect(contact.locator("svg")).toHaveCount(1); // chevron
+    expect(await contact.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgb(91, 91, 214)");
+    expect(await signin.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgb(255, 255, 255)");
+    await expect(page.locator("a", { hasText: "Start accepting payments" })).toHaveCount(0);
+    await expect(page.locator("a", { hasText: "See a live checkout" })).toHaveCount(0);
+
+    // Hero
     await expect(page.locator(".hero__lede")).toHaveText(
-      "Customers pay with any token on any chain. It lands in your own wallet — NearPay never holds the funds.",
+      "Customers pay however they like: any token, any blockchain. You get paid exactly how you like, in your own wallet.",
     );
-    await expect(page.getByText("No sign-up review")).toHaveCount(0); // note line removed (owner feedback)
-    // Calm hero: the tagline sits on exactly two lines at 1440, the panel is no wider than 512 px and the
-    // whole section fits the first screen with the chain strip peeking in.
+    const heroActions = page.locator(".hero__actions a");
+    await expect(heroActions).toHaveCount(2);
+    await expect(heroActions.nth(0)).toHaveText("Get started");
+    await expect(heroActions.nth(0)).toHaveClass(/np-button--primary/);
+    await expect(heroActions.nth(0)).toHaveAttribute("href", /docs\.nearpay\.money\/get-started$/);
+    await expect(heroActions.nth(1)).toHaveText("Sign up");
+    await expect(heroActions.nth(1)).toHaveClass(/np-button--secondary/);
+    await expect(heroActions.nth(1)).toHaveAttribute("href", /dashboard\.nearpay\.money\/signup$/);
+    // Calm hero: two lines at 1440, panel ≤ 512 px, the section fits the first screen with the chain strip peeking in.
     const title = await page.locator(".hero__title").evaluate((el) => {
       const cs = getComputedStyle(el);
       return { height: el.getBoundingClientRect().height, line: Number.parseFloat(cs.lineHeight) };
@@ -39,6 +48,7 @@ test.describe("marketing site", () => {
     expect(panelBox?.width ?? 0).toBeLessThanOrEqual(512);
     expect((panelBox?.y ?? 0) + (panelBox?.height ?? 0)).toBeLessThan(900);
     expect((await page.locator(".chain-strip").boundingBox())?.y ?? 900).toBeLessThan(900 - 48);
+    await expect(page.locator(".hero-aurora")).toHaveAttribute("aria-hidden", "true");
 
     // Hero panel: the kit's ConvergenceHero (chain chips, settlement card, text alternative).
     const hero = page.locator(".np-convergence");
@@ -58,18 +68,57 @@ test.describe("marketing site", () => {
     for (const chain of ["NEAR", "Ethereum", "Base", "Arbitrum", "Solana", "Bitcoin", "Polygon", "BNB Chain"]) {
       await expect(page.locator(".chain-strip__list li", { hasText: new RegExp(`^${chain}$`) })).toBeVisible();
     }
+
+    // Payment flow diagram: decorative drawing + the three steps as real content.
+    const flow = page.locator(".flow");
+    await expect(flow.locator(".flow-diagram")).toHaveAttribute("aria-hidden", "true");
+    await expect(flow.locator(".np-sr-only")).toContainText("payment_intent.succeeded");
+    await expect(flow.locator(".flow-steps > li")).toHaveCount(3);
+    for (const text of ["ETH", "SOL", "USDT", "Arbitrum", "Solana", "BNB Chain", "+49.00 USDC", "on Base", "1 block"]) {
+      await expect(flow.locator(".flow-diagram")).toContainText(text);
+    }
+    await expect(flow.locator(".fl-route__svg--h path")).toHaveCount(6);
+
     for (const h of [
       "A payment, from wallet to wallet, in seconds.",
       "The customer pays their way",
-      "NEAR Intents routes it",
+      "Routed on-chain, never held",
       "You’re paid, with proof",
+      "Every way to get paid in crypto.",
+      "Checkout on your site",
+      "Payment links",
+      "Invoices and subscriptions",
+      "A dashboard for every payment",
+      "Agent payments",
       "One API call to a hosted checkout.",
       "We never hold your money",
       "Every payment is checked",
       "Live in minutes",
     ]) {
-      await expect(page.getByRole("heading", { name: h })).toBeVisible();
+      await expect(page.getByRole("heading", { name: h, exact: true })).toBeVisible();
     }
+    // Showcase cards: decorative stages with a text alternative each, no raster images.
+    const cards = page.locator(".sc-card");
+    await expect(cards).toHaveCount(6);
+    const stages = page.locator(".sc-stage");
+    await expect(stages).toHaveCount(5);
+    for (const stage of await stages.all()) await expect(stage).toHaveAttribute("aria-hidden", "true");
+    for (const c of await page.locator(".sc-card:not(.sc-card--dev)").all()) {
+      await expect(c.locator(":scope > .np-sr-only")).toHaveText(/^Animated example: .+/);
+    }
+    await expect(page.locator(".showcase img")).toHaveCount(0);
+    await expect(page.locator(".sc-card--checkout .mk")).toContainText("Pay with crypto");
+    await expect(page.locator(".sc-card--checkout .mk")).toContainText("Payout address verified for Pebblequest");
+    await expect(page.locator(".sc-card--billing .mk")).toContainText("$1,500.00");
+    await expect(page.locator(".sc-card--dashboard .mk")).toContainText("Recent payments");
+    await expect(page.locator(".sc-card--links .mk")).toContainText("pay.nearpay.money/l/");
+    await expect(page.locator(".sc-card--agents .mk")).toContainText("402");
+    await expect(page.locator(".sc-card--agents .mk")).toContainText("Paid to the API owner’s wallet");
+    await expect(flow.locator(".fl-quote")).toContainText("= 0.01408 ETH");
+    const log = page.locator(".evlog__list");
+    for (const e of ["checkout.session.completed", "payment_intent.succeeded"]) await expect(log).toContainText(e);
+    await expect(log).toContainText("200 OK");
+
     await expect(page.locator(".code-panel")).toContainText("nearpay.checkout.sessions.create");
     await expect(page.getByRole("link", { name: "Read the quickstart" })).toHaveAttribute("href", /\/get-started$/);
     await expect(page.getByRole("link", { name: "Explore the API" })).toHaveAttribute(
@@ -83,6 +132,107 @@ test.describe("marketing site", () => {
     const text = ((await page.locator("main").textContent()) ?? "").toLowerCase();
     expect(text).not.toContain("verified business");
     expect(text).not.toContain("one settlement out");
+    expect(text).not.toContain("settled by nearpay");
+    // Contrast is checked on held frames rather than at a random moment: a frame caught mid cross-fade (two
+    // labels at half opacity) is not a state anyone reads. Each frame below has every card mid-story with its
+    // labels fully shown (Sent invoice, Confirming row, token picker, 402…); reduced motion covers the end state.
+    for (const ms of [2000, 6000, 9000]) {
+      await page.evaluate((t) => {
+        for (const a of document.getAnimations()) {
+          a.pause();
+          a.currentTime = t;
+        }
+      }, ms);
+      await expectAccessible(page);
+    }
+  });
+
+  test("buttons: one rectangular system, no pills, no arrows in labels", async ({ page }) => {
+    for (const path of ["/", "/payments", "/billing", "/pricing", "/404"]) {
+      test.info().annotations.push({ type: "allow-404" });
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.goto(`${WEB}${path}`);
+      const buttons = page.locator(".np-button");
+      expect(await buttons.count()).toBeGreaterThan(0);
+      for (const b of await buttons.all()) {
+        const { radius, text } = await b.evaluate((el) => ({
+          radius: getComputedStyle(el).borderTopLeftRadius,
+          text: el.textContent ?? "",
+        }));
+        expect(radius, `${path}: ${text}`).toBe("8px");
+        expect(text).not.toContain("→");
+      }
+    }
+  });
+
+  test("header nav links change colour on hover and focus, never underline", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(`${WEB}/`);
+    const link = page.locator(".web-nav__link", { hasText: "Payment links" });
+    const before = await link.evaluate((el) => getComputedStyle(el).color);
+    expect(await link.evaluate((el) => getComputedStyle(el).transitionProperty)).toContain("color");
+    await link.hover();
+    await page.waitForTimeout(400);
+    const hovered = await link.evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return { color: cs.color, line: cs.textDecorationLine };
+    });
+    expect(hovered.color).not.toBe(before);
+    expect(hovered.color).toBe("rgb(91, 91, 214)");
+    expect(hovered.line).toBe("none");
+    await page.mouse.move(0, 400);
+    await link.focus();
+    await page.keyboard.press("Shift+Tab");
+    await page.keyboard.press("Tab");
+    await page.waitForTimeout(400);
+    expect(await link.evaluate((el) => getComputedStyle(el).color)).toBe("rgb(91, 91, 214)");
+  });
+
+  test("showcase and flow animate with CSS only, without layout shift", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(`${WEB}/`);
+    const running = await page.evaluate(
+      () =>
+        document
+          .getAnimations()
+          .filter((a) => (a.effect as KeyframeEffect | null)?.target?.closest?.(".showcase, .flow")).length,
+    );
+    expect(running).toBeGreaterThan(40);
+    const heights = () =>
+      page.$$eval(".sc-stage, .flow-panel", (els) => els.map((e) => Math.round(e.getBoundingClientRect().height)));
+    const first = await heights();
+    await page.waitForTimeout(2500);
+    expect(await heights()).toEqual(first);
+    // Only the hero module ships as script; no script anywhere else on the page.
+    await expect(page.locator(".showcase script, .flow script")).toHaveCount(0);
+  });
+
+  test("reduced motion: showcase and flow are still, on their final frames", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(`${WEB}/`);
+    const running = await page.evaluate(() =>
+      document
+        .getAnimations()
+        // keyframe animations only (colour transitions on hover are fine under reduced motion)
+        .filter((a): a is CSSAnimation => a instanceof CSSAnimation)
+        .filter((a) => (a.effect as KeyframeEffect | null)?.target?.closest?.(".showcase, .flow, .hero-aurora"))
+        .map((a) => a.animationName),
+    );
+    expect(running).toEqual([]);
+    const opacity = (sel: string) =>
+      page
+        .locator(sel)
+        .first()
+        .evaluate((el) => getComputedStyle(el).opacity);
+    expect(await opacity(".mkc-success")).toBe("1"); // checkout: paid
+    expect(await opacity(".mki-st2")).toBe("1"); // invoice: Paid
+    expect(await opacity(".mki-st0")).toBe("0");
+    expect(await opacity(".mkl-toast")).toBe("1"); // link: paid
+    expect(await opacity(".mka-l6")).toBe("1"); // agent: 200 OK
+    expect(await opacity(".fl-received")).toBe("1"); // flow: merchant paid
+    expect(await opacity(".fl-wait")).toBe("0");
+    expect(await opacity(".mk-cursor")).toBe("0");
     await expectAccessible(page);
   });
 
@@ -96,13 +246,24 @@ test.describe("marketing site", () => {
     }
     const hero = page.locator(".np-convergence");
     await expect(hero).toHaveAttribute("data-motion", "on");
-    // 600 ms after load a dot starts its 1.5 s trip: mid-way exactly one dot is visible.
-    await page.waitForTimeout(1200);
-    const visible = await page.$$eval(
-      ".np-convergence__dot",
-      (dots) => dots.filter((d) => Number(getComputedStyle(d).opacity) > 0.5).length,
-    );
-    expect(visible).toBe(1);
+    // 600 ms after the module starts a dot makes its 1.5 s trip, one payment every 2.4 s: a dot shows up, and
+    // never more than one at a time. (Polled rather than sampled at a fixed time: the home page is heavier since
+    // landing v3, so the checks above can take long enough on a busy machine to miss a fixed 1.2 s window.)
+    const counts: number[] = [];
+    await expect
+      .poll(
+        async () => {
+          const n = await page.$$eval(
+            ".np-convergence__dot",
+            (dots) => dots.filter((d) => Number(getComputedStyle(d).opacity) > 0.5).length,
+          );
+          counts.push(n);
+          return n;
+        },
+        { timeout: 5_000, intervals: [50] },
+      )
+      .toBe(1);
+    expect(Math.max(...counts)).toBeLessThanOrEqual(1);
     // No layout shift: the panel keeps its fixed 600 × 520 ratio (site-level crop of the kit's 600 × 560 drawing).
     const box = await hero.boundingBox();
     expect(Math.abs((box?.width ?? 0) / (box?.height ?? 1) - 600 / 520)).toBeLessThan(0.01);
@@ -157,6 +318,9 @@ test.describe("marketing site", () => {
   });
 
   test("mobile: menu is a keyboard-operable disclosure, no horizontal scroll", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 780 });
+    await page.goto(`${WEB}/`);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(`${WEB}/`);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
@@ -168,8 +332,9 @@ test.describe("marketing site", () => {
     await menu.focus();
     await page.keyboard.press("Enter");
     const menuPanel = page.locator(".web-menu__panel");
-    await expect(menuPanel.getByRole("link", { name: "Sign in" })).toBeVisible();
-    await expect(menuPanel.getByRole("link", { name: "Start accepting payments" })).toBeVisible();
+    await expect(menuPanel.getByRole("link", { name: "Sign in" })).toHaveClass(/np-button--secondary/);
+    await expect(menuPanel.getByRole("link", { name: "Contact team" })).toHaveAttribute("href", "/support");
+    await expect(menuPanel.getByRole("link", { name: "Contact team" })).toBeVisible();
     await expect(menuPanel.getByRole("link", { name: "Pricing" })).toBeVisible();
     await menuPanel.getByRole("link", { name: "Pricing" }).click();
     await expect(page).toHaveURL(`${WEB}/pricing`);

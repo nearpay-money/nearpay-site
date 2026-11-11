@@ -14,6 +14,16 @@
   /* Hairlines on the marketing page (artboard). */
   --site-rule: #e5eaf0;
   --site-focus: 3px solid var(--np-violet);
+  /* Buttons and the nav hover (owner, 2026-11-11: Stripe-like rectangular buttons, indigo primary).
+     White on #5B5BD6 5.4:1, on #4A4AC4 6.9:1; #3B3BA8 on white 8.6:1. */
+  --site-indigo: #5b5bd6;
+  --site-indigo-hover: #4a4ac4;
+  --site-indigo-pressed: #3f3fb3;
+  --site-indigo-ink: #3b3ba8;
+  --site-indigo-wash: #f3f3fe;
+  /* Warm accents for the multi-colour gradients (decorative only: never text). */
+  --site-apricot: #ffb25b;
+  --site-rose: #f27ba4;
 }
 html {
   scroll-padding-top: var(--site-scroll-offset, 24px);
@@ -63,6 +73,50 @@ svg {
 }
 .np-button:hover {
   text-decoration: none;
+}
+/* One button system for both sites (owner, 2026-11-11): rectangular, 8 px radius, no pills.
+   Sizes on the marketing site: 40 px (header), 44 px (default), 48 px (--lg). Primary = solid indigo,
+   secondary = white with an outline and indigo text; on navy bands the kit's mint / on-navy fills. */
+.np-button,
+.np-button--pill,
+.np-button--pill.np-button--sm {
+  border-radius: 8px;
+}
+.np-button--primary {
+  --np-button-bg: var(--site-indigo);
+  --np-button-fg: var(--np-white);
+  --np-button-bg-hover: var(--site-indigo-hover);
+  --np-button-bg-active: var(--site-indigo-pressed);
+}
+.web .np-button {
+  gap: 6px;
+  min-height: 44px;
+  padding-inline: 18px;
+  font-size: 15px;
+  font-weight: var(--np-weight-semibold);
+  line-height: 20px;
+  letter-spacing: -0.005em;
+}
+.web .np-button--lg {
+  min-height: 48px;
+  padding-inline: 22px;
+  font-size: 16px;
+}
+.web .np-button--secondary {
+  --np-button-bg: var(--np-white);
+  --np-button-fg: var(--site-indigo-ink);
+  --np-button-border: var(--np-border-outline);
+  --np-button-bg-hover: var(--site-indigo-wash);
+  --np-button-bg-active: #e8e8fc;
+  --np-button-border-hover: #a9a9e8;
+}
+.np-button__chevron {
+  flex: none;
+  margin-right: -4px;
+  transition: transform var(--np-duration-base) var(--np-ease);
+}
+.np-button:hover .np-button__chevron {
+  transform: translateX(2px);
 }
 .eyebrow {
   margin: 0;
@@ -175,6 +229,7 @@ svg {
   list-style: none;
 }
 .web-nav__link {
+  position: relative;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
@@ -183,30 +238,39 @@ svg {
   font-weight: var(--np-weight-medium);
   line-height: 20px;
   text-decoration: none;
+  transition: color 180ms var(--np-ease);
 }
-.web-nav__link:hover {
-  color: var(--np-color-text);
-  text-decoration: underline;
-  text-underline-offset: 6px;
+/* Hover and focus change the colour only (owner): never an underline. */
+.web-nav__link:hover,
+.web-nav__link:focus-visible,
+.web-menu__list a:not(.np-button):hover {
+  color: var(--site-indigo);
+  text-decoration: none;
 }
+/* Current page: a short bar under the label (not a text underline). */
 .web-nav__link[aria-current="page"] {
   color: var(--np-color-text);
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 6px;
+}
+.web-nav__link[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6px;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
 }
 .web-header__actions {
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
-.web-header__signin {
-  padding: 0 6px;
+.web-header__actions .np-button {
+  min-height: 40px;
+  padding-inline: 16px;
 }
-.web-header__cta.np-button {
-  min-height: 44px;
-  padding-inline: 18px;
-  font-size: 15px;
-  font-weight: var(--np-weight-semibold);
+.web-header__actions .np-button--primary {
+  box-shadow: 0 1px 2px rgb(18 38 63 / 0.16);
 }
 /* Mobile menu: a native disclosure (no script). */
 .web-menu {
@@ -266,12 +330,22 @@ svg {
   font-size: var(--np-text-body);
   font-weight: var(--np-weight-medium);
   text-decoration: none;
+  transition: color 180ms var(--np-ease);
 }
 .web-menu__list a[aria-current="page"] {
   color: var(--np-color-accent-text);
 }
 .web-menu__cta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
   margin-top: var(--np-space-6);
+}
+.web-menu__cta .np-button {
+  min-height: 48px;
+}
+.web-menu > summary {
+  background: var(--np-color-surface);
 }
 
 /* ========================================================================================== */
@@ -286,6 +360,9 @@ svg {
    vertically centred; the section plus the peeking chain strip fit a 1440 × 900 / 1280 × 800 first screen.
    Spacing on the 8 px grid. */
 .hero {
+  position: relative;
+  /* The aurora bleeds to the viewport edge and up behind the header; clip sideways only. */
+  overflow-x: clip;
   padding: var(--np-space-8) 0 var(--np-space-12);
 }
 @media (min-width: 1024px) {
@@ -314,9 +391,86 @@ svg {
   min-width: 0;
 }
 .hero__visual {
+  position: relative;
   width: 100%;
   max-width: 512px;
   min-width: 0;
+}
+.hero__visual .np-convergence {
+  z-index: 1;
+  box-shadow: 0 40px 80px -32px rgb(18 38 63 / 0.55);
+}
+
+/* Hero aurora (owner, 2026-11-11: a multi-colour feel, NearPay's own): brand teal, mint and violet with two
+   warm accents (apricot, rose) drifting slowly behind the Convergence panel. Two soft layers of radial
+   gradients that fade to transparent inside their own box (no mask, no clipping), moved with transform only;
+   the colour stays clear of the nav and the hero copy, and the header buttons carry their own fills.
+   Static under prefers-reduced-motion. */
+.hero-aurora {
+  position: absolute;
+  z-index: 0;
+  inset: -64px calc(-1 * var(--site-gutter, 20px)) -72px;
+  pointer-events: none;
+}
+@media (min-width: 1024px) {
+  .hero-aurora {
+    inset: -220px -320px -96px -170px;
+  }
+}
+.hero-aurora__layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.hero-aurora__layer--a {
+  background:
+    radial-gradient(30% 28% at 30% 70%, rgb(142 240 211 / 0.95), rgb(142 240 211 / 0)),
+    radial-gradient(24% 18% at 56% 78%, rgb(0 163 140 / 0.5), rgb(0 163 140 / 0)),
+    radial-gradient(30% 40% at 84% 38%, rgb(91 91 214 / 0.75), rgb(91 91 214 / 0));
+}
+.hero-aurora__layer--b {
+  background:
+    radial-gradient(26% 26% at 60% 22%, rgb(242 123 164 / 0.6), rgb(242 123 164 / 0)),
+    radial-gradient(24% 24% at 82% 78%, rgb(255 178 91 / 0.75), rgb(255 178 91 / 0)),
+    radial-gradient(26% 26% at 42% 38%, rgb(180 180 255 / 0.8), rgb(180 180 255 / 0));
+}
+/* Deep brand teal (#007A68 / #00A38C) sweeping under the panel's top edge, so the wash reads as NearPay
+   rather than pastel. Behind the navy panel only: no text sits on it. */
+.hero-aurora__layer--c {
+  background:
+    radial-gradient(22% 20% at 70% 30%, rgb(0 122 104 / 0.55), rgb(0 122 104 / 0)),
+    radial-gradient(20% 22% at 46% 60%, rgb(0 163 140 / 0.45), rgb(0 163 140 / 0)),
+    radial-gradient(18% 16% at 90% 58%, rgb(91 91 214 / 0.55), rgb(91 91 214 / 0));
+  mix-blend-mode: multiply;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-aurora__layer--a {
+    animation: aurora-a 18s ease-in-out infinite alternate;
+  }
+  .hero-aurora__layer--b {
+    animation: aurora-b 26s ease-in-out infinite alternate;
+  }
+  .hero-aurora__layer--c {
+    animation: aurora-c 14s ease-in-out infinite alternate;
+  }
+}
+@keyframes aurora-c {
+  from {
+    transform: translate(-3%, 2%) rotate(0deg);
+  }
+  to {
+    transform: translate(4%, -3%) rotate(14deg) scale(1.08);
+  }
+}
+@keyframes aurora-a {
+  to {
+    transform: translate(-4%, 5%) scale(1.06);
+  }
+}
+@keyframes aurora-b {
+  to {
+    transform: translate(5%, -3%) rotate(-12deg) scale(0.96);
+  }
 }
 /* Each sentence of the tagline on its own line; the size follows the column (cqi) so the longer line
    (~10.8 em) always fits: 55 px in the 600 px desktop column, 40 px on phones (each line then balances). */
@@ -332,7 +486,8 @@ svg {
   text-wrap: balance;
 }
 .hero__lede {
-  max-width: 480px;
+  max-width: 500px;
+  text-wrap: pretty;
   margin-top: var(--np-space-5);
   color: var(--np-color-text-secondary);
   font-size: 17px;
@@ -358,12 +513,6 @@ svg {
   .hero__actions {
     margin-top: var(--np-space-10);
   }
-}
-.hero__actions .np-button--lg {
-  min-height: 48px;
-  padding-inline: 24px;
-  font-size: 16px;
-  font-weight: var(--np-weight-semibold);
 }
 @media (max-width: 479.98px) {
   .hero__actions .np-button {
@@ -510,8 +659,10 @@ svg {
   }
 }
 
-/* Chain strip */
+/* Chain strip (above the hero aurora, which may drift to the section edge) */
 .chain-strip {
+  position: relative;
+  z-index: 1;
   border-top: 1px solid var(--site-rule);
   border-bottom: 1px solid var(--site-rule);
   background: #f5f8fb;
@@ -549,150 +700,7 @@ svg {
   }
 }
 
-/* "A payment, from wallet to wallet, in seconds." */
-.sequence {
-  padding: 72px 0 var(--np-space-6);
-}
-@media (min-width: 960px) {
-  .sequence {
-    padding: 112px 0 40px;
-  }
-}
-.sequence__title {
-  max-width: 640px;
-}
-.sequence__steps {
-  display: grid;
-  gap: var(--np-space-8);
-  margin-top: var(--np-space-10);
-  list-style: none;
-}
-@media (min-width: 768px) {
-  .sequence__steps {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 32px;
-    margin-top: 56px;
-  }
-}
-.sequence__step {
-  padding-top: 22px;
-  border-top: 2px solid var(--np-color-text);
-}
-.sequence__index {
-  color: var(--np-color-accent-text);
-  font-size: 15px;
-  font-weight: var(--np-weight-semibold);
-  line-height: 20px;
-}
-.sequence__step-title {
-  margin-top: 10px;
-  font-size: 22px;
-  line-height: 1.25;
-  letter-spacing: -0.02em;
-}
-.sequence__body {
-  margin-top: 10px;
-  color: var(--np-color-text-secondary);
-  font-size: var(--np-text-body);
-  line-height: 1.6;
-}
-
-/* Developers */
-.developers {
-  padding: 72px 0;
-}
-@media (min-width: 960px) {
-  .developers {
-    padding: 96px 0;
-  }
-}
-.developers__grid {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 40px 56px;
-}
-.developers__copy {
-  flex: 1 1 380px;
-  min-width: 0;
-}
-.developers__lede {
-  max-width: 460px;
-  margin-top: 20px;
-  color: var(--np-color-text-secondary);
-  font-size: var(--np-text-body);
-  line-height: 1.6;
-}
-@media (min-width: 768px) {
-  .developers__lede {
-    font-size: var(--np-text-h4);
-  }
-}
-.developers__event {
-  padding: 2px 6px;
-  border-radius: 6px;
-  background: #eef2f6;
-  color: var(--np-color-text);
-  font-family: var(--np-font-mono);
-  font-size: 0.89em;
-  overflow-wrap: anywhere;
-}
-.developers__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--np-space-2) 22px;
-  margin-top: 28px;
-  list-style: none;
-  font-size: var(--np-text-body);
-  font-weight: var(--np-weight-semibold);
-}
-.developers__links a {
-  display: inline-block;
-  padding: 2px 0;
-  color: var(--np-color-accent-text);
-}
-.developers__links a:hover {
-  color: var(--np-color-accent-hover);
-}
-.code-panel {
-  flex: 1 1 560px;
-  min-width: 0;
-  margin: 0;
-}
-.code-panel__pre {
-  margin: 0;
-  padding: var(--np-space-6);
-  overflow-x: auto;
-  border-radius: 22px;
-  background: var(--np-ink-deep);
-  color: #d6e2ee;
-  font-family: var(--np-font-mono);
-  font-size: 13px;
-  line-height: 1.75;
-  tab-size: 2;
-}
-@media (min-width: 768px) {
-  .code-panel__pre {
-    padding: 28px 30px;
-    font-size: 15px;
-  }
-}
-.code-panel__pre code {
-  font-family: inherit;
-}
-/* Code colours on #0F2136, all ≥ 4.5:1 (comment 5.9, keyword 9.6, number 12.9, string 12.6). */
-.cp-comment {
-  color: #7f95ad;
-}
-.cp-kw {
-  color: var(--np-violet-on-navy);
-}
-.cp-num {
-  color: var(--np-mint);
-}
-.cp-str {
-  color: #ffd58a;
-}
+/* Payment flow diagram and product showcase: styles/showcase.css (home only). */
 
 /* Non-custodial band (navy) */
 .promise-band {

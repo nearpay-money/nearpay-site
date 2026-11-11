@@ -1,8 +1,8 @@
 ---
 /**
- * Marketing page shell, design v2 (Main artboard): header (Convergence logo, product nav, Sign in, navy pill
- * "Start accepting payments"), main, footer. Below 1100 px the nav, Sign in and the CTA move into a native
- * <details> disclosure (no script).
+ * Marketing page shell, design v2 (Main artboard): header (Convergence logo, product nav, and two rectangular
+ * buttons, owner 2026-11-11: "Sign in" white with indigo text, "Contact team" solid indigo with a chevron),
+ * main, footer. Below 1100 px the nav and both buttons move into a native <details> disclosure (no script).
  */
 import Icon from "../components/Icon.astro";
 import Logo from "../components/Logo.astro";
@@ -50,8 +50,10 @@ const footer = [
         </ul>
       </nav>
       <div class="web-header__actions web-header__wide">
-        <a class="web-nav__link web-header__signin" href={links.signin}>Sign in</a>
-        <a class="np-button np-button--navy np-button--pill web-header__cta" href={links.signup}>Start accepting payments</a>
+        <a class="np-button np-button--secondary" href={links.signin}>Sign in</a>
+        <a class="np-button np-button--primary" href="/support">
+          Contact team<Icon name="chevron-right" size={16} class="np-button__chevron" />
+        </a>
       </div>
       <details class="web-menu web-header__narrow">
         <summary aria-label="Menu">
@@ -70,9 +72,11 @@ const footer = [
               ))
             }
             <li><a href="/pricing" aria-current={current === "pricing" ? "page" : undefined}>Pricing</a></li>
-            <li><a href={links.signin}>Sign in</a></li>
             <li class="web-menu__cta">
-              <a class="np-button np-button--navy np-button--pill np-button--full" href={links.signup}>Start accepting payments</a>
+              <a class="np-button np-button--secondary" href={links.signin}>Sign in</a>
+              <a class="np-button np-button--primary" href="/support">
+                Contact team<Icon name="chevron-right" size={16} class="np-button__chevron" />
+              </a>
             </li>
           </ul>
         </nav>

@@ -76,6 +76,13 @@ Design v2 (owner-approved 2026-11-11): home from the Main artboard (Convergence 
 strip, payment sequence, developer section, non-custodial band); every other page restyled on `@nearpay-internal/ui`
 0.5.0 tokens and Instrument Sans with the same header and footer.
 
+Landing v3 (owner, 2026-11-11): new hero copy and buttons, a multi-colour aurora behind the hero panel, header
+"Sign in" / "Contact team" buttons and one rectangular button system (8 px radius) on both sites, the payment
+sequence as an animated diagram (`components/web/PaymentFlow.astro`) and a product showcase bento
+(`components/web/showcase/`: checkout, payment links, invoices and subscriptions, dashboard, agent payments,
+developers). All mockups are HTML/CSS/SVG with sample data, animated with CSS keyframes only (`styles/showcase.css`,
+home only; transform/opacity, still final frames under `prefers-reduced-motion`); no new JavaScript.
+
 ## Built with
 
 Libraries are listed here as they are added (hackathon rule Q-005): Astro 5 (static output), `@astrojs/prism` (class-based code highlighting), `yaml`, `@nearpay-money/spec`, `@nearpay-internal/ui` (tokens, Instrument Sans, component CSS, brand files, ConvergenceHero), `zod` (spec peer); development: TypeScript, `@astrojs/check`, Biome, Vitest, Playwright, `@axe-core/playwright`, React and react-dom (build-time only: peer of the ui package for `formatMoney`, and server rendering of the hero; never shipped to the browser). Code and documentation are written with AI assistance (Claude) under human direction and review.

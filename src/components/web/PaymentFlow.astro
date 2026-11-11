@@ -1,0 +1,153 @@
+---
+/**
+ * Home: "A payment, from wallet to wallet, in seconds." as an animated diagram (owner, 2026-11-11), replacing
+ * the three text steps. Customer wallet → NearPay checkout quote → NEAR Intents routes (drawn in the
+ * Convergence curve language: three routes converging on one settlement dot) → the merchant's wallet → a
+ * signed `payment_intent.succeeded` webhook, with a running seconds counter. The source token cycles
+ * through three chains; the merchant always receives USDC on Base (the asset and chain they chose).
+ *
+ * Pure CSS keyframes (styles/showcase.css): moving dots are nested transform layers whose X (linear) and
+ * Y (the curve's own cubic-bezier) translations trace the SVG routes exactly, so everything scales with the
+ * layout. The drawing is aria-hidden; the steps below it are the real content, plus a text alternative.
+ * Under prefers-reduced-motion it shows the finished first payment.
+ */
+import { markSvg } from "@nearpay-internal/ui/brand";
+import { FLOW_PAYMENTS } from "../../lib/showcase";
+import Icon from "../Icon.astro";
+
+const mark = markSvg({ variant: "light", size: 16, xmlns: false, className: "fl-mark" });
+const tenths = Array.from({ length: 50 }, (_, i) => i % 10);
+const routes = ["M0 20C45 20 55 50 100 50", "M0 50H100", "M0 80C45 80 55 50 100 50"];
+const routesV = ["M20 0C20 45 50 55 50 100", "M50 0V100", "M80 0C80 45 50 55 50 100"];
+const steps = [
+  {
+    title: "The customer pays their way",
+    body: "Any token on any chain, from the wallet they already use, with the exact total shown before they sign.",
+  },
+  {
+    title: "Routed on-chain, never held",
+    body: "NEAR Intents swaps and delivers it straight to your wallet. NearPay never takes custody.",
+  },
+  {
+    title: "You’re paid, with proof",
+    body: "Confirmed in one block on its own chain, then a signed webhook tells your server.",
+  },
+];
+const alt = `Animated diagram: a customer pays ${FLOW_PAYMENTS.map((p) => `${p.pays} on ${p.chain}`).join(", then ")}. Each time the NearPay checkout quotes $49.00 as an exact amount of that token, NEAR Intents routes the payment on-chain without NearPay holding it, the merchant's wallet receives 49.00 USDC on Base, confirmed in 1 block, and the merchant's server gets a signed payment_intent.succeeded webhook, answered 200 OK, about five seconds after the customer paid.`;
+---
+<section class="flow" aria-labelledby="flow-title">
+  <div class="site-container">
+    <h2 id="flow-title" class="section-title flow__title">A payment, from wallet to wallet, in seconds.</h2>
+    <div class="flow-panel">
+      <div class="flow-diagram" aria-hidden="true">
+        <p class="fl-timer">
+          <Icon name="clock" size={16} />
+          <span class="fl-timer__value">
+            <span class="fl-col"><span class="fl-strip fl-strip--units">{[0, 1, 2, 3, 4].map((d) => <span>{d}</span>)}</span></span>.<span class="fl-col"><span class="fl-strip fl-strip--tenths">{tenths.map((d) => <span>{d}</span>)}</span></span><span class="fl-timer__unit">s</span>
+          </span>
+        </p>
+
+        <div class="fl-node fl-node--wallet">
+          <p class="fl-node__label"><Icon name="wallet" size={16} />Customer wallet</p>
+          <div class="fl-swap">
+            {
+              FLOW_PAYMENTS.map((p, i) => (
+                <div class={`fl-layer fl-layer--p${i}`}>
+                  <span class={`fl-token fl-token--${p.token.toLowerCase()}`}>{p.token.slice(0, 1)}</span>
+                  <span class="fl-layer__text">
+                    <span class="fl-amount">{p.pays}</span>
+                    <span class="fl-sub">on {p.chain}</span>
+                  </span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="fl-link fl-link--a">
+          <span class="fl-link__line"></span>
+          <span class="fl-mover fl-mover--a"><span class="fl-dot"></span></span>
+        </div>
+
+        <div class="fl-node fl-node--quote">
+          <span class="fl-node__ring"></span>
+          <p class="fl-node__label"><Fragment set:html={mark} />NearPay checkout</p>
+          <p class="fl-amount fl-amount--lg">$49.00</p>
+          <p class="fl-quote">
+            {
+              FLOW_PAYMENTS.map((p, i) => (
+                <span class={`fl-layer fl-layer--p${i}`}>= {p.pays}</span>
+              ))
+            }
+          </p>
+          <p class="fl-sub">Exact total, before signing</p>
+        </div>
+
+        <div class="fl-route">
+          <span class="fl-route__tag fl-route__tag--top">NEAR Intents</span>
+          <svg class="fl-route__svg fl-route__svg--h" viewBox="0 0 100 100" preserveAspectRatio="none">
+            {routes.map((d) => <path class="fl-route__base" d={d} />)}
+            {routes.map((d, i) => <path class={`fl-route__hi fl-route__hi--${i}`} d={d} />)}
+          </svg>
+          <svg class="fl-route__svg fl-route__svg--v" viewBox="0 0 100 100" preserveAspectRatio="none">
+            {routesV.map((d) => <path class="fl-route__base" d={d} />)}
+            {routesV.map((d, i) => <path class={`fl-route__hi fl-route__hi--${i}`} d={d} />)}
+          </svg>
+          {
+            [0, 1, 2].map((i) => (
+              <span class={`fl-rm fl-rm--${i}`}>
+                <span class="fl-rm__x">
+                  <span class="fl-rm__y">
+                    <span class="fl-dot fl-dot--route" />
+                  </span>
+                </span>
+              </span>
+            ))
+          }
+          <span class="fl-route__end"><span class="fl-route__pulse"></span></span>
+          <span class="fl-route__tag fl-route__tag--bottom">Never custodied</span>
+        </div>
+
+        <div class="fl-node fl-node--merchant">
+          <p class="fl-node__label"><Icon name="wallet" size={16} />Your wallet</p>
+          <p class="fl-amount fl-amount--lg fl-recv">
+            <span class="fl-wait">Waiting for payment</span>
+            <span class="fl-received">+49.00 USDC</span>
+          </p>
+          <p class="fl-sub">on Base</p>
+          <p class="fl-chip fl-chip--ok fl-confirmed"><Icon name="check" size={14} />1 block</p>
+        </div>
+
+        <div class="fl-link fl-link--b">
+          <span class="fl-link__line fl-link__line--dashed"></span>
+          <span class="fl-mover fl-mover--b"><span class="fl-dot"></span></span>
+        </div>
+
+        <div class="fl-node fl-node--server">
+          <p class="fl-node__label"><Icon name="terminal" size={16} />Your server</p>
+          <p class="fl-code fl-code--first">POST /webhooks</p>
+          <p class="fl-code fl-code--event fl-recv">
+            <span class="fl-wait">Listening for events</span>
+            <span class="fl-event">payment_intent.<wbr />succeeded</span>
+          </p>
+          <p class="fl-chips fl-event">
+            <span class="fl-chip fl-chip--ok">200 OK</span>
+            <span class="fl-chip">Signed</span>
+          </p>
+        </div>
+      </div>
+      <p class="np-sr-only">{alt}</p>
+      <ol class="flow-steps">
+        {
+          steps.map((s, i) => (
+            <li class={`flow-step flow-step--${i + 1}`}>
+              <span class="flow-step__n" aria-hidden="true">{i + 1}</span>
+              <h3 class="flow-step__title">{s.title}</h3>
+              <p class="flow-step__body">{s.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>

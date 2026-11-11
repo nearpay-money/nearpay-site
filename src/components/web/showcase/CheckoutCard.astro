@@ -1,0 +1,142 @@
+---
+/**
+ * Showcase card a: checkout on a merchant's site. A fictional game studio's product page in a browser frame;
+ * the cursor clicks "Pay with crypto", the NearPay hosted checkout opens (approved Checkout-proposed design:
+ * navy order side, network and token pickers, total), a token is picked, then "Paid". One 14 s CSS loop.
+ */
+import { markSvg } from "@nearpay-internal/ui/brand";
+import { money, USD, USDC } from "../../../lib/money";
+import { ETH } from "../../../lib/showcase";
+import Icon from "../../Icon.astro";
+import Merchant from "./Merchant.astro";
+import ShowcaseCard from "./ShowcaseCard.astro";
+
+const price = money(2400n, USD);
+const send = money(6_921_000_000_000_000n, ETH);
+const fee = money(2_100_000_000_000n, ETH);
+const receives = money(24_000_000n, USDC);
+const markLight = markSvg({ variant: "light", size: 14, xmlns: false });
+const markOnDark = markSvg({ variant: "dark", size: 16, xmlns: false });
+const tokens = [
+  { sym: "USDC", bal: "12.50", cls: "usdc" },
+  { sym: "ETH", bal: "0.412", cls: "eth" },
+  { sym: "ARB", bal: "38.20", cls: "arb" },
+];
+---
+<ShowcaseCard
+  id="checkout"
+  title="Checkout on your site"
+  body="Add a Pay with crypto button. Customers pick any token on any chain, see the exact total, and pay from their own wallet."
+  link={{ href: "/payments#checkout", label: "Explore Checkout" }}
+  alt={`Animated example: on a fictional game studio's product page, a customer clicks Pay with crypto for a ${price} Founder's pack. The NearPay checkout opens, they choose ETH on Arbitrum, pay ${send}, and see a Paid confirmation; the merchant receives ${receives}.`}
+>
+  <div class="mkc-browser">
+    <div class="mkc-bar">
+      <span class="mkc-dots"><i></i><i></i><i></i></span>
+      <span class="mkc-url"><Icon name="shield-check" size={12} />pebblequest.example/founders-pack</span>
+    </div>
+    <div class="mkc-page">
+      <div class="mkc-nav">
+        <span class="mkc-brand"><Merchant size={20} />Pebblequest</span>
+        <span class="mkc-navlinks"><span>Games</span><span>Shop</span><span>Community</span></span>
+        <span class="mkc-avatar"></span>
+      </div>
+      <div class="mkc-product">
+        <div class="mkc-art">
+          <svg class="mkc-art__gem" viewBox="0 0 120 120" focusable="false">
+            <path d="M60 10l38 26-14 58H36L22 36z" fill="#fff" fill-opacity=".9" />
+            <path d="M60 10l38 26H22z" fill="#fff" />
+            <path d="M22 36h76L60 110z" fill="#12263F" fill-opacity=".14" />
+            <path d="M60 36v74M22 36l38 74 38-74" fill="none" stroke="#12263F" stroke-opacity=".25" stroke-width="2" />
+          </svg>
+          <span class="mkc-art__tag">Season 1</span>
+        </div>
+        <div class="mkc-info">
+          <p class="mkc-kicker">Shards of Dawn</p>
+          <p class="mkc-title">Founder’s pack</p>
+          <p class="mkc-desc">Three heroes, 1,200 gems and the founder’s banner.</p>
+          <p class="mkc-price">{price}</p>
+          <span class="mkc-paybtn"><Fragment set:html={markOnDark} />Pay with crypto</span>
+          <p class="mkc-note">Any token, any chain</p>
+        </div>
+      </div>
+    </div>
+    <div class="mkc-scrim"></div>
+    <div class="mkc-modal">
+      <div class="mkc-order">
+        <p class="mkc-merchant">
+          <span class="mkc-merchant__logo"><Merchant size={18} /></span>
+          <span><b>Pebblequest</b><small>pebblequest.example</small></span>
+        </p>
+        <p class="mkc-o-label">Founder’s pack</p>
+        <p class="mkc-o-amount">{price}</p>
+        <div class="mkc-o-rows">
+          <p><span>Founder’s pack</span><span>{price}</span></p>
+          <p><span>Payment fees</span><span>Included</span></p>
+          <p class="mkc-o-total">
+            <span>You send</span>
+            <span class="mkc-swap">
+              <span class="mkc-s0">Pick a token</span>
+              <span class="mkc-s1">{send}</span>
+            </span>
+          </p>
+        </div>
+        <div class="mkc-route">
+          <p>How your payment travels</p>
+          <p class="mkc-route__row">
+            <span class="mkc-chip">ETH on Arbitrum</span>
+            <svg viewBox="0 0 8 14" focusable="false"><path d="M4 1v9" stroke="#8EF0D3" stroke-width="1.5" stroke-dasharray="2.5 2.5" /><path d="M1 8.5l3 3 3-3" fill="none" stroke="#8EF0D3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            <span class="mkc-chip">Pebblequest</span>
+          </p>
+        </div>
+      </div>
+      <div class="mkc-pay">
+        <p class="mkc-verified"><Icon name="shield-check" size={12} />Payout address verified for Pebblequest</p>
+        <p class="mkc-h">Pay with</p>
+        <div class="mkc-pickers">
+          <span class="mkc-picker">
+            <span class="mkc-tok mkc-tok--arb">A</span>
+            <span class="mkc-picker__text"><small>Network</small><b>Arbitrum</b></span>
+            <Icon name="chevron-down" size={12} />
+          </span>
+          <span class="mkc-picker mkc-picker--token">
+            <span class="mkc-swap mkc-swap--picker">
+              <span class="mkc-s0"><span class="mkc-tok mkc-tok--empty"></span><span class="mkc-picker__text"><small>Token</small><b>Choose</b></span></span>
+              <span class="mkc-s1"><span class="mkc-tok mkc-tok--eth">E</span><span class="mkc-picker__text"><small>Token</small><b>ETH <em>0.412</em></b></span></span>
+            </span>
+            <Icon name="chevron-down" size={12} />
+            <span class="mkc-picker__sel"></span>
+          </span>
+        </div>
+        <div class="mkc-list">
+          {
+            tokens.map((t) => (
+              <span class={`mkc-list__row mkc-list__row--${t.cls}`}>
+                <span class={`mkc-tok mkc-tok--${t.cls}`}>{t.sym.slice(0, 1)}</span>
+                <b>{t.sym}</b>
+                <em>{t.bal}</em>
+              </span>
+            ))
+          }
+        </div>
+        <div class="mkc-summary">
+          <p><span>Merchant receives</span><span>{receives}</span></p>
+          <p><span>Network fee</span><span>about {fee}</span></p>
+        </div>
+        <span class="mkc-paybig">
+          <span class="mkc-pb0">Choose a token</span>
+          <span class="mkc-pb1">Pay {send}</span>
+          <span class="mkc-pb2"><span class="mkc-spin"></span>Confirming</span>
+        </span>
+        <p class="mkc-foot"><Fragment set:html={markLight} />Powered by NearPay</p>
+        <div class="mkc-success">
+          <span class="mkc-check"><Icon name="check" size={28} /></span>
+          <p class="mkc-success__title">Paid</p>
+          <p class="mkc-success__body">{price} sent to Pebblequest</p>
+          <p class="mkc-success__meta">Confirmed in 1 block</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="mk-cursor"><svg viewBox="0 0 20 20" width="20" height="20" focusable="false"><path d="M3 2l13 7.5-6 1.4L7.2 17z" fill="#fff" stroke="#12263F" stroke-width="1.5" stroke-linejoin="round" /></svg></span>
+</ShowcaseCard>

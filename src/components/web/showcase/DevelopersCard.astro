@@ -1,0 +1,70 @@
+---
+/**
+ * Showcase card e: developers (the design v2 developer section, folded into the showcase). Copy and links,
+ * the checkout-session snippet as real, selectable code, and an event log that streams the webhook
+ * deliveries of one payment (checkout.session.completed, payment_intent.succeeded, each 200 OK).
+ * The log is decorative (aria-hidden) with a text alternative. One 10 s CSS loop.
+ */
+import { links } from "../../../config/site";
+
+// Code panel: static, class-based highlighting (no style="" — CSP).
+const c = (cls: string, text: string) => `<span class="cp-${cls}">${text}</span>`;
+const snippet = [
+  c("comment", "// Create a checkout session"),
+  `${c("kw", "const")} session = ${c("kw", "await")} nearpay.checkout.sessions.create({`,
+  `  amount: ${c("num", "4900")}, currency: ${c("str", "&quot;usd&quot;")},`,
+  `  description: ${c("str", "&quot;Acme Pro&quot;")},`,
+  `  success_url: ${c("str", "&quot;https://acme.example/thanks&quot;")},`,
+  "});",
+  "",
+  c("comment", "// Send the customer to the hosted checkout"),
+  "res.redirect(session.url);",
+].join("\n");
+const events = [
+  { t: "14:12:03", name: "POST /v1/checkout/sessions", res: "200", kind: "api" },
+  { t: "14:12:41", name: "payment_intent.processing", res: "200 OK", kind: "hook" },
+  { t: "14:12:45", name: "payment_intent.succeeded", res: "200 OK", kind: "hook" },
+  { t: "14:12:45", name: "checkout.session.completed", res: "200 OK", kind: "hook" },
+];
+---
+<article class="sc-card sc-card--dev" aria-labelledby="dev-title">
+  <div class="sc-dev__copy">
+    <h3 id="dev-title" class="sc-dev__title">One API call to a hosted checkout.</h3>
+    <p class="sc-dev__lede">
+      Create a checkout session, send your customer to the URL, and listen for
+      <code class="sc-dev__event">payment_intent.succeeded</code>. Node SDK, a drop-in button, and an agent kit
+      for paid APIs.
+    </p>
+    <ul class="sc-dev__links">
+      <li><a href={links.docsGetStarted}>Read the quickstart</a></li>
+      <li><a href={links.docsApi}>Explore the API</a></li>
+    </ul>
+  </div>
+  <div class="sc-dev__term">
+    <figure class="code-panel" aria-labelledby="code-panel-caption">
+      <figcaption id="code-panel-caption" class="code-panel__bar">
+        <span class="code-panel__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        server.ts<span class="np-sr-only">: create a checkout session with the Node SDK</span>
+      </figcaption>
+      <pre class="code-panel__pre" tabindex="0"><code set:html={snippet} /></pre>
+    </figure>
+    <div class="evlog">
+      <p class="evlog__head" aria-hidden="true"><span class="evlog__live"></span>Events<span class="evlog__mode">Test mode</span></p>
+      <ol class="evlog__list" aria-hidden="true">
+        {
+          events.map((e, i) => (
+            <li class={`evlog__row evlog__row--${i}`}>
+              <span class="evlog__t">{e.t}</span>
+              <span class="evlog__name">{e.name}</span>
+              <span class={`evlog__res evlog__res--${e.kind}`}>{e.res}</span>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="np-sr-only">
+        Example event log: the checkout session is created (200), then webhooks payment_intent.processing,
+        payment_intent.succeeded and checkout.session.completed are each delivered and answered 200 OK.
+      </p>
+    </div>
+  </div>
+</article>

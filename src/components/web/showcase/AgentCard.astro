@@ -1,0 +1,40 @@
+---
+/**
+ * Showcase card f: agent payments (x402). An AI agent calls a paid API, gets 402 Payment Required, pays from
+ * its NEAR Intents account, retries with the payment and gets 200 OK. One 10 s CSS loop.
+ */
+import Icon from "../../Icon.astro";
+import ShowcaseCard from "./ShowcaseCard.astro";
+---
+<ShowcaseCard
+  id="agents"
+  title="Agent payments"
+  body="Charge AI agents per request. Your API answers 402 Payment Required, the agent pays from its wallet, and the request goes through."
+  link={{ href: "/payments#agents", label: "Explore agent payments" }}
+  alt="Animated example: an AI agent requests a report from a fictional paid API, receives 402 Payment Required for 0.01 USDC, signs the payment from its NEAR Intents account straight to the API owner’s wallet, retries and receives 200 OK with the report. Its wallet goes from 0.84 to 0.83 USDC."
+>
+  <div class="mka-term">
+    <div class="mka-head">
+      <span class="mka-agent">
+        <svg viewBox="0 0 24 24" width="16" height="16" focusable="false" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><rect x="4.5" y="7.5" width="15" height="11" rx="3" /><path d="M12 7.5V4.5M9.5 12.5h.01M14.5 12.5h.01M2.5 12v2.5M21.5 12v2.5" /></svg>
+        Research agent
+      </span>
+      <span class="mka-bal">
+        Wallet
+        <span class="mka-swap"><span class="mka-b0">0.84 USDC</span><span class="mka-b1">0.83 USDC</span></span>
+      </span>
+    </div>
+    <div class="mka-body">
+      <p class="mka-req mka-l1"><span class="mka-m">GET</span>/v1/reports/gas-weekly</p>
+      <p class="mka-res mka-l2"><span class="mka-code mka-code--402">402</span>Payment Required<span class="mka-price">0.01 USDC</span></p>
+      <div class="mka-pay mka-l3">
+        <p><Icon name="wallet" size={14} />Signing 0.01 USDC from NEAR Intents</p>
+        <span class="mka-bar"><i></i></span>
+        <p class="mka-paid"><Icon name="check" size={14} />Paid to the API owner’s wallet</p>
+      </div>
+      <p class="mka-req mka-l4"><span class="mka-m">GET</span>/v1/reports/gas-weekly<span class="mka-hdr">PAYMENT-SIGNATURE</span></p>
+      <p class="mka-res mka-l5"><span class="mka-code mka-code--200">200</span>OK</p>
+      <p class="mka-json mka-l6">{"{ \"report\": \"gas-weekly\", \"rows\": 168 }"}</p>
+    </div>
+  </div>
+</ShowcaseCard>
