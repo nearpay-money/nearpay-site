@@ -1,0 +1,38 @@
+---
+/**
+ * One product showcase card on the home page: title, short description and link (real content), then a
+ * live-looking product mockup on a coloured stage. The mockup is decorative (aria-hidden) and drawn on a
+ * fixed-size canvas in CSS px that styles/showcase.css scales to the stage width, so it stays crisp and
+ * never shifts layout; `alt` is its text alternative for screen readers.
+ */
+import Icon from "../../Icon.astro";
+
+interface Props {
+  id: string;
+  title: string;
+  body: string;
+  alt: string;
+  link?: { href: string; label: string };
+}
+const { id, title, body, alt, link } = Astro.props;
+---
+<article class={`sc-card sc-card--${id}`} aria-labelledby={`sc-${id}-title`}>
+  <div class="sc-card__copy">
+    <h3 id={`sc-${id}-title`} class="sc-card__title">{title}</h3>
+    <p class="sc-card__body">{body}</p>
+    {
+      link && (
+        <a class="sc-card__link" href={link.href}>
+          {link.label}
+          <Icon name="chevron-right" size={16} class="sc-card__chevron" />
+        </a>
+      )
+    }
+  </div>
+  <div class={`sc-stage sc-stage--${id}`} aria-hidden="true">
+    <div class={`mk mk--${id}`}>
+      <slot />
+    </div>
+  </div>
+  <p class="np-sr-only">{alt}</p>
+</article>

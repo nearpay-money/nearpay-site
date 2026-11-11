@@ -1,0 +1,28 @@
+---
+/**
+ * A figure that counts up like an odometer: every digit is a column of 0–9 (three turns) that rolls into
+ * place with a transform. The resting position is the final figure, so under prefers-reduced-motion (no
+ * animation) it simply reads correctly. Purely decorative: used inside aria-hidden mockups.
+ */
+import { odometer } from "../../../lib/showcase";
+
+interface Props {
+  value: string;
+  class?: string;
+}
+const { value, class: className } = Astro.props;
+const strip = Array.from({ length: 30 }, (_, i) => i % 10).join("\n");
+---
+<span class:list={["od", className]}>
+  {
+    odometer(value).map((p) =>
+      p.kind === "char" ? (
+        <span class="od-ch">{p.char}</span>
+      ) : (
+        <span class="od-col">
+          <span class={`od-strip od-d${p.digit} od-c${p.cycles}`}>{strip}</span>
+        </span>
+      ),
+    )
+  }
+</span>

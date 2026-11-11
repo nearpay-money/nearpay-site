@@ -1,0 +1,59 @@
+---
+/**
+ * Showcase card b: invoices and subscriptions. An invoice moves Draft → Sent → Paid (paid in SOL, settled as
+ * USDC), then a subscription renews. One 12 s CSS loop.
+ */
+import { money, USD } from "../../../lib/money";
+import Icon from "../../Icon.astro";
+import ShowcaseCard from "./ShowcaseCard.astro";
+
+const lines = [
+  { label: "Server hosting, November", amount: money(120_000n, USD) },
+  { label: "Priority support", amount: money(30_000n, USD) },
+];
+const total = money(150_000n, USD);
+const plan = money(2_900n, USD);
+---
+<ShowcaseCard
+  id="billing"
+  title="Invoices and subscriptions"
+  body="Email an invoice or bill on a schedule. Customers pay in the token they hold; you’re paid in the asset you chose."
+  link={{ href: "/billing", label: "Explore billing" }}
+  alt={`Animated example: invoice INV-0042 for ${total} to a fictional customer goes from Draft to Sent to Paid, paid with SOL on Solana, then a ${plan} monthly Pro plan subscription renews.`}
+>
+  <div class="mki-invoice">
+    <div class="mki-head">
+      <p class="mki-title">Invoice <span>INV-0042</span></p>
+      <span class="mki-status">
+        <span class="mk-pill mk-pill--neutral mki-st0">Draft</span>
+        <span class="mk-pill mk-pill--info mki-st1">Sent</span>
+        <span class="mk-pill mk-pill--ok mki-st2">Paid</span>
+      </span>
+    </div>
+    <div class="mki-meta">
+      <p><span>Billed to</span><b>Nova Arcade Ltd.</b></p>
+      <p><span>Due</span><b>30 Nov 2026</b></p>
+    </div>
+    <div class="mki-lines">
+      {lines.map((l) => <p><span>{l.label}</span><span>{l.amount}</span></p>)}
+      <p class="mki-total"><span>Total due</span><span>{total}</span></p>
+    </div>
+    <div class="mki-foot">
+      <span class="mki-f0"><span class="mki-send">Send invoice</span></span>
+      <span class="mki-f1"><Icon name="bell" size={14} />Emailed to ap@nova-arcade.example</span>
+      <span class="mki-f2"><Icon name="check" size={14} />Paid with SOL on Solana, settled as USDC</span>
+    </div>
+  </div>
+  <div class="mki-sub">
+    <span class="mki-sub__icon"><Icon name="refresh" size={16} /></span>
+    <span class="mki-sub__text">
+      <b>Pro plan</b>
+      <span class="mki-sub__when">
+        <span class="mki-w0">Renews on 1 Dec</span>
+        <span class="mki-w1">Renewed, next on 1 Jan</span>
+      </span>
+    </span>
+    <span class="mki-sub__amt">{plan}<small>/month</small></span>
+    <span class="mki-sub__bar"><i></i></span>
+  </div>
+</ShowcaseCard>

@@ -1,31 +1,22 @@
 ---
 /**
- * Marketing home — design v2 Main artboard (owner-approved 2026-11-11): hero with the ConvergenceHero panel,
- * chain strip, the three-step payment sequence, developer section with a code panel, the non-custodial band.
+ * Marketing home — design v2 (owner-approved 2026-11-11) with the landing v3 changes (owner, 2026-11-11):
+ * hero with the new headline, Get started / Sign up and a multi-colour aurora behind the ConvergenceHero
+ * panel; chain strip; the payment flow as an animated diagram; the product showcase (bento of animated
+ * product cards, the developer section folded in); the non-custodial band.
  */
 import ConvergencePanel from "../../components/web/ConvergencePanel.astro";
+import PaymentFlow from "../../components/web/PaymentFlow.astro";
+import Showcase from "../../components/web/showcase/Showcase.astro";
 import { links, TAGLINE } from "../../config/site";
 import WebLayout from "../../layouts/WebLayout.astro";
+import "../../styles/showcase.css";
 
-// Hero copy (owner feedback 2026-11-11: two-line headline = TAGLINE split at its full stop; one short lede).
+// Hero copy (owner, 2026-11-11): two-line headline = TAGLINE split at its full stop; one short lede.
 const heroLines = TAGLINE.split(/(?<=\.)\s+/);
 const HERO_LEDE =
-  "Customers pay with any token on any chain. It lands in your own wallet — NearPay never holds the funds.";
+  "Customers pay however they like: any token, any blockchain. You get paid exactly how you like, in your own wallet.";
 const chains = ["NEAR", "Ethereum", "Base", "Arbitrum", "Solana", "Bitcoin", "Polygon", "BNB Chain"];
-const steps = [
-  {
-    title: "The customer pays their way",
-    body: "Any supported token on any supported chain. The checkout shows only what their wallet holds, and the exact total before they sign.",
-  },
-  {
-    title: "NEAR Intents routes it",
-    body: "The swap and the delivery happen on-chain, straight to your payout wallet. NearPay never takes custody.",
-  },
-  {
-    title: "You’re paid, with proof",
-    body: "We confirm the delivery on its own chain, then send a signed webhook with the transaction link.",
-  },
-];
 const promises = [
   {
     title: "We never hold your money",
@@ -40,23 +31,10 @@ const promises = [
     body: "Sign up, add your business details and a payout wallet, and take real payments the same day.",
   },
 ];
-// Code panel (artboard): static, class-based highlighting (no style="" — CSP).
-const c = (cls: string, text: string) => `<span class="cp-${cls}">${text}</span>`;
-const snippet = [
-  c("comment", "// Create a checkout session"),
-  `${c("kw", "const")} session = ${c("kw", "await")} nearpay.checkout.sessions.create({`,
-  `  amount: ${c("num", "4900")}, currency: ${c("str", "&quot;usd&quot;")},`,
-  `  description: ${c("str", "&quot;Acme Pro&quot;")},`,
-  `  success_url: ${c("str", "&quot;https://acme.example/thanks&quot;")},`,
-  "});",
-  "",
-  c("comment", "// Send the customer to the hosted checkout"),
-  "res.redirect(session.url);",
-].join("\n");
 ---
 <WebLayout
   title={`NearPay — ${TAGLINE}`}
-  description="Accept crypto payments from any major chain and settle on the chain you choose, straight to your own wallet. Non-custodial payments on NEAR Intents."
+  description="Customers pay with any token on any blockchain; you get paid in the asset and on the chain you choose, straight to your own wallet. Non-custodial crypto payments on NEAR Intents."
 >
   <section class="hero" aria-labelledby="hero-title">
     <div class="site-container hero__grid">
@@ -66,11 +44,15 @@ const snippet = [
         </h1>
         <p class="hero__lede">{HERO_LEDE}</p>
         <div class="hero__actions">
-          <a class="np-button np-button--lg np-button--pill" href={links.signup}>Start accepting payments</a>
-          <a class="np-button np-button--secondary np-button--lg np-button--pill" href={links.docsGetStarted}>See a live checkout</a>
+          <a class="np-button np-button--primary np-button--lg" href={links.docsGetStarted}>Get started</a>
+          <a class="np-button np-button--secondary np-button--lg" href={links.signup}>Sign up</a>
         </div>
       </div>
       <div class="hero__visual">
+        <div class="hero-aurora" aria-hidden="true">
+          <span class="hero-aurora__layer hero-aurora__layer--a"></span>
+          <span class="hero-aurora__layer hero-aurora__layer--b"></span>
+        </div>
         <ConvergencePanel />
       </div>
     </div>
@@ -85,43 +67,9 @@ const snippet = [
     </div>
   </section>
 
-  <section class="sequence" aria-labelledby="steps-title">
-    <div class="site-container">
-      <h2 id="steps-title" class="section-title sequence__title">A payment, from wallet to wallet, in seconds.</h2>
-      <ol class="sequence__steps">
-        {
-          steps.map((s, i) => (
-            <li class="sequence__step">
-              <p class="sequence__index">Step {i + 1}</p>
-              <h3 class="sequence__step-title">{s.title}</h3>
-              <p class="sequence__body">{s.body}</p>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
-  </section>
+  <PaymentFlow />
 
-  <section class="developers" aria-labelledby="dev-title">
-    <div class="site-container developers__grid">
-      <div class="developers__copy">
-        <h2 id="dev-title" class="section-title section-title--md">One API call to a hosted checkout.</h2>
-        <p class="developers__lede">
-          Create a checkout session, send your customer to the URL, and listen for
-          <code class="developers__event">payment_intent.succeeded</code>. Node SDK, a drop-in button, and an agent
-          kit for paid APIs.
-        </p>
-        <ul class="developers__links">
-          <li><a href={links.docsGetStarted}>Read the quickstart</a></li>
-          <li><a href={links.docsApi}>Explore the API</a></li>
-        </ul>
-      </div>
-      <figure class="code-panel" aria-labelledby="code-panel-caption">
-        <figcaption id="code-panel-caption" class="np-sr-only">Example: create a checkout session with the Node SDK</figcaption>
-        <pre class="code-panel__pre" tabindex="0"><code set:html={snippet} /></pre>
-      </figure>
-    </div>
-  </section>
+  <Showcase />
 
   <section class="promise-band" aria-label="Why NearPay">
     <div class="site-container">

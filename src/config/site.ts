@@ -29,8 +29,8 @@ export const links = {
   terms: `${urls.web}/terms`,
 } as const;
 
-/** Positioning line (owner, design v2): payments from any chain, settled on the chain you choose. */
-export const TAGLINE = "Get paid from any chain. Settle where you choose.";
+/** Positioning line (owner, 2026-11-11): the home headline, page titles and meta. */
+export const TAGLINE = "Accept crypto payments. Hassle-free.";
 export const BRAND_COLOR = "#12263F";
 
 /** Content-Security-Policy every page is built to satisfy (also served as an HTTP header by nearpay-deploy). */

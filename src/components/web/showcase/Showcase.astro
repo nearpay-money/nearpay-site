@@ -1,0 +1,32 @@
+---
+/**
+ * Home: product showcase (owner, 2026-11-11). Big rounded cards in a bento grid, each with a title and a
+ * live-looking animated product UI built in HTML/CSS/SVG with sample data (styles/showcase.css).
+ * Desktop: a six-column grid (4 + 2, 2 + 4, 2 + 4); tablet: two columns; phones: one.
+ */
+import AgentCard from "./AgentCard.astro";
+import CheckoutCard from "./CheckoutCard.astro";
+import DashboardCard from "./DashboardCard.astro";
+import DevelopersCard from "./DevelopersCard.astro";
+import InvoiceCard from "./InvoiceCard.astro";
+import LinksCard from "./LinksCard.astro";
+---
+<section class="showcase" aria-labelledby="showcase-title">
+  <div class="site-container">
+    <div class="showcase__head">
+      <h2 id="showcase-title" class="section-title">Every way to get paid in crypto.</h2>
+      <p class="showcase__lede">
+        Checkout, payment links, invoices, subscriptions and paid APIs. Each payment settles straight to your
+        wallet, in the asset and on the chain you chose.
+      </p>
+    </div>
+    <div class="bento">
+      <CheckoutCard />
+      <LinksCard />
+      <InvoiceCard />
+      <DashboardCard />
+      <AgentCard />
+      <DevelopersCard />
+    </div>
+  </div>
+</section>

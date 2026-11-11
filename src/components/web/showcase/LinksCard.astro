@@ -1,0 +1,53 @@
+---
+/**
+ * Showcase card d: payment links. A link and QR card is copied, shared in a chat, scanned and paid.
+ * The QR pattern is decorative (lib/showcase.ts: it encodes nothing). One 12 s CSS loop.
+ */
+import { money, USD } from "../../../lib/money";
+import { qrPath } from "../../../lib/showcase";
+import Icon from "../../Icon.astro";
+import Merchant from "./Merchant.astro";
+import ShowcaseCard from "./ShowcaseCard.astro";
+
+const price = money(2400n, USD);
+const url = "pay.nearpay.money/l/plink_7Fq2";
+const qr = qrPath(2026, 25);
+---
+<ShowcaseCard
+  id="links"
+  title="Payment links"
+  body="Create a link or QR code in seconds and share it anywhere: a chat, an email, a post or a printed sign. No code needed."
+  link={{ href: "/payments#links", label: "Explore payment links" }}
+  alt={`Animated example: a ${price} payment link with a QR code is copied, shared in a chat message, scanned, and paid with USDT on BNB Chain.`}
+>
+  <div class="mkl-card">
+    <div class="mkl-prod">
+      <span class="mkl-thumb"><Merchant size={22} /></span>
+      <span class="mkl-prod__text"><b>Founder’s pack</b><small>Pebblequest</small></span>
+      <b class="mkl-price">{price}</b>
+    </div>
+    <div class="mkl-linkrow">
+      <span class="mkl-url"><Icon name="external" size={13} />{url}</span>
+      <span class="mkl-copy">
+        <span class="mkl-c0"><Icon name="copy" size={13} />Copy</span>
+        <span class="mkl-c1"><Icon name="check" size={13} />Copied</span>
+      </span>
+    </div>
+    <div class="mkl-qrrow">
+      <span class="mkl-qr">
+        <svg viewBox="-2 -2 29 29" focusable="false"><path d={qr} fill="#12263F" fill-rule="evenodd" /></svg>
+        <span class="mkl-scan"></span>
+      </span>
+      <span class="mkl-qrtext"><b>Scan to pay</b><small>Any token, any chain. Settles as USDC on Base.</small></span>
+    </div>
+  </div>
+  <div class="mkl-bubble">
+    <p>Founder’s pack is live. Grab it here:</p>
+    <p class="mkl-bubble__link">{url}</p>
+  </div>
+  <div class="mkl-toast">
+    <span class="mkl-toast__icon"><Icon name="check" size={14} /></span>
+    <span class="mkl-toast__text"><b>Payment received</b><small>{price} with USDT on BNB Chain</small></span>
+    <span class="mk-pill mk-pill--ok">Paid</span>
+  </div>
+</ShowcaseCard>

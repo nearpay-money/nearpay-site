@@ -1,0 +1,123 @@
+---
+/**
+ * Showcase card c: the merchant dashboard (approved Dashboard-proposed look: navy sidebar, KPI cards,
+ * volume chart, recent payments). KPIs count up, the chart grows, new payments slide in as Confirming and
+ * turn Paid. One 12 s CSS loop.
+ */
+import { markSvg } from "@nearpay-internal/ui/brand";
+import { money, USD } from "../../../lib/money";
+import Merchant from "./Merchant.astro";
+import Odometer from "./Odometer.astro";
+import ShowcaseCard from "./ShowcaseCard.astro";
+
+const mark = markSvg({ variant: "dark", size: 18, xmlns: false });
+const volume = money(1_248_000n, USD);
+const nav = ["Home", "Payments", "Payment links", "Subscriptions", "Customers", "Agent payments", "Payout wallets"];
+// Newest first: the first two slide in during the loop (Confirming → Paid).
+const rows = [
+  { amount: money(12_900n, USD), via: "SOL on Solana", time: "14:12", status: "live" },
+  { amount: money(2_400n, USD), via: "ETH on Arbitrum", time: "14:09", status: "live" },
+  { amount: money(4_900n, USD), via: "USDC on Base", time: "14:02", status: "paid" },
+  { amount: money(8_600n, USD), via: "USDT on BNB Chain", time: "13:47", status: "paid" },
+  { amount: money(1_500n, USD), via: "Not chosen", time: "13:30", status: "open" },
+  { amount: money(24_900n, USD), via: "BTC", time: "12:58", status: "paid" },
+];
+// Stacked bars per day (Base, Solana, other), in chart units.
+const bars = [
+  [42, 0, 30],
+  [70, 26, 0],
+  [100, 50, 40],
+  [110, 36, 0],
+  [96, 0, 22],
+  [64, 30, 0],
+  [80, 24, 18],
+];
+const days = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"]; // 5–11 Nov 2026
+---
+<ShowcaseCard
+  id="dashboard"
+  title="A dashboard for every payment"
+  body="Watch payments confirm, see which chains your customers pay from, and track volume in the currency you settle in."
+  alt={`Animated example: a fictional merchant's NearPay dashboard. Settled volume counts up to ${volume}, 214 successful payments, a median of 4 seconds to paid; a weekly volume chart grows, and two new payments appear as Confirming, then turn Paid.`}
+>
+  <div class="mkd-app">
+    <aside class="mkd-side">
+      <p class="mkd-logo"><Fragment set:html={mark} />NearPay</p>
+      <p class="mkd-ws"><span class="mkd-ws__logo"><Merchant size={14} /></span>Pebblequest</p>
+      <ul class="mkd-nav">{nav.map((n, i) => <li class:list={{ "is-current": i === 0 }}>{n}</li>)}</ul>
+    </aside>
+    <div class="mkd-main">
+      <div class="mkd-top">
+        <div>
+          <p class="mkd-h">Good morning, Pebblequest</p>
+          <p class="mkd-subh">Last 7 days, in USD. Funds settle straight to your payout wallet.</p>
+        </div>
+        <span class="mkd-mode"><b>Live</b><span>Test</span></span>
+      </div>
+      <div class="mkd-kpis">
+        <div class="mkd-kpi">
+          <p class="mkd-kpi__l">Settled volume</p>
+          <p class="mkd-kpi__v"><Odometer value={volume} /></p>
+          <p class="mkd-kpi__d mkd-kpi__d--up">Up from {money(931_000n, USD)} last week</p>
+        </div>
+        <div class="mkd-kpi">
+          <p class="mkd-kpi__l">Successful payments</p>
+          <p class="mkd-kpi__v"><Odometer value="214" /></p>
+          <p class="mkd-kpi__d">of 231 started</p>
+        </div>
+        <div class="mkd-kpi">
+          <p class="mkd-kpi__l">Median time to paid</p>
+          <p class="mkd-kpi__v"><Odometer value="4 s" /></p>
+          <p class="mkd-kpi__d">from the customer’s deposit</p>
+        </div>
+      </div>
+      <div class="mkd-row">
+        <section class="mkd-panel mkd-table">
+          <p class="mkd-panel__h">Recent payments</p>
+          <p class="mkd-thead"><span>Amount</span><span>Status</span><span>Paid with</span><span>Time</span></p>
+          <div class="mkd-clip">
+            <div class="mkd-rows">
+              {
+                rows.map((r, i) => (
+                  <p class={`mkd-tr mkd-tr--${i}`}>
+                    <span class="mkd-amt">{r.amount}</span>
+                    <span class="mkd-st">
+                      {r.status === "live" ? (
+                        <>
+                          <span class="mk-pill mk-pill--info mkd-pc">Confirming</span>
+                          <span class="mk-pill mk-pill--ok mkd-pp">Paid</span>
+                        </>
+                      ) : r.status === "paid" ? (
+                        <span class="mk-pill mk-pill--ok">Paid</span>
+                      ) : (
+                        <span class="mk-pill mk-pill--neutral">Not paid</span>
+                      )}
+                    </span>
+                    <span class="mkd-via">{r.via}</span>
+                    <span class="mkd-time">{r.time}</span>
+                  </p>
+                ))
+              }
+            </div>
+          </div>
+        </section>
+        <section class="mkd-panel mkd-chart">
+          <p class="mkd-panel__h">Volume by source chain</p>
+          <p class="mkd-legend"><span class="mkd-lg mkd-lg--base">Base</span><span class="mkd-lg mkd-lg--sol">Solana</span><span class="mkd-lg mkd-lg--other">Other</span></p>
+          <div class="mkd-bars">
+            {
+              bars.map((b, i) => (
+                <span class={`mkd-bar mkd-bar--${i}`}>
+                  {b[2] ? <i class={`mkd-seg mkd-seg--other mkd-h${b[2]}`} /> : null}
+                  {b[1] ? <i class={`mkd-seg mkd-seg--sol mkd-h${b[1]}`} /> : null}
+                  <i class={`mkd-seg mkd-seg--base mkd-h${b[0]}`} />
+                </span>
+              ))
+            }
+          </div>
+          <p class="mkd-days">{days.map((d) => <span>{d}</span>)}</p>
+        </section>
+      </div>
+    </div>
+  </div>
+</ShowcaseCard>
