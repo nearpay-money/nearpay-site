@@ -1,6 +1,11 @@
 # nearpay-site
 
-> Public static sites from one Astro project: developer documentation (guides, API reference generated from nearpay-spec, webhooks, test mode, agents, error pages) and the marketing site (product, pricing, legal pages).
+The two public static sites, built from one Astro project: the developer documentation (guides, an API reference generated from `nearpay-spec`, webhooks, test mode, agents, error pages) and the marketing site (product, pricing, legal pages).
+
+Part of [NearPay](https://github.com/nearpay-money/nearpay) — start there for the live demo, the architecture diagram and the full "do X, see Y" walkthrough.
+
+- **Where it sits:** served as static files at https://nearpay.money (`dist/web`) and https://docs.nearpay.money (`dist/docs`). At build time it reads `@nearpay-money/spec` for the API reference, error pages and event types; at run time it calls nothing.
+- **Status:** both sites are live. NearPay runs on NEAR mainnet as a closed beta.
 
 |                                       |                                                                 |
 | ------------------------------------- | --------------------------------------------------------------- |
@@ -15,11 +20,11 @@ Replaces `nearpay-docs` and `nearpay-web` (ADR-0019).
 
 ## Documentation
 
-This repo stays surgical: design docs live in [`nearpay-brain`](../nearpay-brain/README.md), not here.
+Design docs live in [`nearpay-brain`](https://github.com/nearpay-money/nearpay-brain), not here.
 
-- `nearpay-brain/lld/sdks-and-tools.md` §4–§5 — **low-level design (dev-ready; implement from this)**
-- `nearpay-brain/decisions/ADR-0019-site-repo.md` — why docs and marketing share this repo
-- `nearpay-brain/roadmap/development-plan.md` — stage and step this repo is built in
+- [`lld/sdks-and-tools.md`](https://github.com/nearpay-money/nearpay-brain/blob/main/lld/sdks-and-tools.md) §4–§5 — low-level design this repo is implemented from
+- [`decisions/ADR-0019-site-repo.md`](https://github.com/nearpay-money/nearpay-brain/blob/main/decisions/ADR-0019-site-repo.md) — why docs and marketing share this repo
+- [`roadmap/development-plan.md`](https://github.com/nearpay-money/nearpay-brain/blob/main/roadmap/development-plan.md) — stage and step this repo is built in
 
 ## Layout
 
@@ -41,6 +46,19 @@ nearpay-site/
 ├── scripts/             check-dist (CSP/a11y/coverage gate), serve (preview with prod headers), screenshots
 └── test/                unit (Vitest) and e2e (Playwright + axe, CSP-violation guard)
 ```
+
+## Verify this repo
+
+Needs Node 22 (`.nvmrc`), pnpm 9 and, for step 4, Google Chrome. No Docker. `.npmrc` points the `@nearpay-money` and `@nearpay-internal` scopes at a local package registry, so start that first.
+
+1. Start the local registry (no Docker, Node 22 only):
+   `git clone https://github.com/nearpay-money/nearpay-deploy ../nearpay-deploy && ../nearpay-deploy/scripts/registry.sh start`
+   → `curl http://127.0.0.1:4873/-/ping` answers `{}`.
+2. `pnpm install --frozen-lockfile` → ends with `Done in …`, no registry errors.
+3. `pnpm test` (unit tests of the spec model, search and the dist checks, money formatting, the hero and the showcase data) → `Test Files  6 passed (6)`, `Tests  32 passed (32)`.
+4. `pnpm verify` (the full gate: `astro check` and `tsc`, lint, unit tests with the coverage gate, build of both sites with `scripts/check-dist.mjs`, then Playwright with axe against the built sites served with the production CSP header) → exits 0; the Playwright list ends with `58 passed` (about 2 minutes). The browser is the system Chrome at `/usr/bin/google-chrome`; set `NP_CHROME_PATH` to another path if needed. Known flake: in one of our three runs the mobile-menu test failed once on an axe colour-contrast check of an animated mockup and passed when re-run (`pnpm e2e`).
+
+To see the result without building: open https://docs.nearpay.money and https://nearpay.money.
 
 ## Commands
 
@@ -95,6 +113,12 @@ The hosting config lives in nearpay-deploy, so the old URLs build as tiny noinde
 (`routes/web/[moved].astro`, `<meta http-equiv="refresh">` — not governed by CSP, no script — plus a plain link,
 canonical = the target section).
 
+Docs are live-first (2026-11-12): "Get started" walks through a first live payment (payout wallet, secret key, checkout session, webhook); "Test mode and live mode" is the single page that explains the difference. Current pins (`package.json`): `@nearpay-money/spec` 0.5.0, `@nearpay-internal/ui` 0.5.0.
+
 ## Built with
 
-Libraries are listed here as they are added (hackathon rule Q-005): Astro 5 (static output), `@astrojs/prism` (class-based code highlighting), `yaml`, `@nearpay-money/spec`, `@nearpay-internal/ui` (tokens, Instrument Sans, component CSS, brand files, ConvergenceHero), `zod` (spec peer); development: TypeScript, `@astrojs/check`, Biome, Vitest, Playwright, `@axe-core/playwright`, React and react-dom (build-time only: peer of the ui package for `formatMoney`, and server rendering of the hero; never shipped to the browser). Code and documentation are written with AI assistance (Claude) under human direction and review.
+- Runtime (build time; the output is static): Astro 5, `@astrojs/prism` (class-based code highlighting), `yaml`, `@nearpay-money/spec`, `@nearpay-internal/ui` (tokens, Instrument Sans, component CSS, brand files, ConvergenceHero), `zod` (spec peer).
+- Development: TypeScript, `@astrojs/check`, Biome, Vitest, Playwright, `@axe-core/playwright`, React and react-dom (build time only: peer of the ui package and server rendering of the hero; never shipped to the browser).
+- Licence: Apache-2.0 (`LICENSE`).
+
+Code and documentation are written with AI assistance (Claude) under human direction and review. Built for the NEAR Hackathon (Nov 2026).
