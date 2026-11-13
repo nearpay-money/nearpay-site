@@ -2,12 +2,12 @@
 import { spawn } from "node:child_process";
 // Full-page screenshots of the main screens at 1440 and 390 px for design review, plus a viewport frame of
 // the home hero mid-animation (a payment dot on its route: 600 ms start delay + ~half of its 1.5 s trip).
-//   node scripts/screenshots.mjs [outDir]   (default /home/claude/shots/site; needs a built dist/)
+//   node scripts/screenshots.mjs [outDir]   (default ./screenshots; needs a built dist/)
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { chromium } from "@playwright/test";
 
-const out = process.argv[2] ?? "/home/claude/shots/site";
+const out = process.argv[2] ?? "screenshots";
 mkdirSync(out, { recursive: true });
 const WEB = "http://127.0.0.1:4410";
 const DOCS = "http://127.0.0.1:4411";
