@@ -335,6 +335,8 @@ test.describe("marketing site", () => {
   });
 
   test("mobile: menu is a keyboard-operable disclosure, no horizontal scroll", async ({ page }) => {
+    // The animated product mock-ups fade text in and out; the contrast check must not catch a frame in between.
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.setViewportSize({ width: 360, height: 780 });
     await page.goto(`${WEB}/`);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
