@@ -1,7 +1,7 @@
 ---
 
 title: Payment intents
-description: The record of one payment, from creation to verified settlement — and how to find payments with list filters.
+description: The record of one payment, from creation to verified settlement, and how to find payments with list filters.
 slug: payment-intents
 eyebrow: Accept payments
 ---

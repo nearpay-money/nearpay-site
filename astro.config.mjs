@@ -71,6 +71,9 @@ const brandAssets = {
       const publicDir = fileURLToPath(new URL("./public/", import.meta.url));
       mkdirSync(publicDir, { recursive: true });
       for (const file of BRAND_FILES) copyFileSync(join(brandDir, file), join(publicDir, file));
+      // The link-preview image carries the tagline as text. The kit's copy still shows the tagline from before
+      // 2026-11-11, so this site ships its own (brand/og-image.png) until the kit's is redrawn.
+      copyFileSync(fileURLToPath(new URL("./brand/og-image.png", import.meta.url)), join(publicDir, "og-image.png"));
       const manifest = {
         name: SITE === "docs" ? "NearPay Docs" : "NearPay",
         short_name: "NearPay",

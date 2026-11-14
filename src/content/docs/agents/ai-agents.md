@@ -1,7 +1,7 @@
 ---
 
 title: Let AI agents pay
-description: Give AI agents NearPay tools over MCP, charge them per request with x402 — also from other chains — and let them pay checkout sessions and hosted invoices within spending limits you set.
+description: Give AI agents NearPay tools over MCP, charge them per request with x402 (also from other chains), and let them pay checkout sessions and hosted invoices within spending limits you set.
 slug: agents/ai-agents
 eyebrow: Agents
 ---
