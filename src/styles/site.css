@@ -201,7 +201,7 @@ svg {
 .web {
   background: var(--np-color-surface);
 }
-/* Sticky (owner, 2026-11-12: the nav jumps to landing sections). Frosted white, so the hero aurora still tints
+/* Sticky (owner, 2026-11-12: the nav jumps to landing sections). Frosted white, so the page still tints
    it at the top of the page and scrolled content stays legible underneath; a hairline shadow marks its edge. */
 .web-header {
   position: sticky;
@@ -358,8 +358,6 @@ svg {
    Spacing on the 8 px grid. */
 .hero {
   position: relative;
-  /* The aurora bleeds to the viewport edge and up behind the header; clip sideways only. */
-  overflow-x: clip;
   padding: var(--np-space-8) 0 var(--np-space-12);
 }
 @media (min-width: 1024px) {
@@ -398,77 +396,6 @@ svg {
   box-shadow: 0 40px 80px -32px rgb(18 38 63 / 0.55);
 }
 
-/* Hero aurora (owner, 2026-11-11: a multi-colour feel, NearPay's own): brand teal, mint and violet with two
-   warm accents (apricot, rose) drifting slowly behind the Convergence panel. Two soft layers of radial
-   gradients that fade to transparent inside their own box (no mask, no clipping), moved with transform only;
-   the colour stays clear of the nav and the hero copy, and the header buttons carry their own fills.
-   Static under prefers-reduced-motion. */
-.hero-aurora {
-  position: absolute;
-  z-index: 0;
-  inset: -64px calc(-1 * var(--site-gutter, 20px)) -72px;
-  pointer-events: none;
-}
-@media (min-width: 1024px) {
-  .hero-aurora {
-    inset: -220px -320px -96px -170px;
-  }
-}
-.hero-aurora__layer {
-  position: absolute;
-  inset: 0;
-  will-change: transform;
-}
-.hero-aurora__layer--a {
-  background:
-    radial-gradient(30% 28% at 30% 70%, rgb(142 240 211 / 0.95), rgb(142 240 211 / 0)),
-    radial-gradient(24% 18% at 56% 78%, rgb(0 163 140 / 0.5), rgb(0 163 140 / 0)),
-    radial-gradient(30% 40% at 84% 38%, rgb(91 91 214 / 0.75), rgb(91 91 214 / 0));
-}
-.hero-aurora__layer--b {
-  background:
-    radial-gradient(26% 26% at 60% 22%, rgb(242 123 164 / 0.6), rgb(242 123 164 / 0)),
-    radial-gradient(24% 24% at 82% 78%, rgb(255 178 91 / 0.75), rgb(255 178 91 / 0)),
-    radial-gradient(26% 26% at 42% 38%, rgb(180 180 255 / 0.8), rgb(180 180 255 / 0));
-}
-/* Deep brand teal (#007A68 / #00A38C) sweeping under the panel's top edge, so the wash reads as NearPay
-   rather than pastel. Behind the navy panel only: no text sits on it. */
-.hero-aurora__layer--c {
-  background:
-    radial-gradient(22% 20% at 70% 30%, rgb(0 122 104 / 0.55), rgb(0 122 104 / 0)),
-    radial-gradient(20% 22% at 46% 60%, rgb(0 163 140 / 0.45), rgb(0 163 140 / 0)),
-    radial-gradient(18% 16% at 90% 58%, rgb(91 91 214 / 0.55), rgb(91 91 214 / 0));
-  mix-blend-mode: multiply;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .hero-aurora__layer--a {
-    animation: aurora-a 18s ease-in-out infinite alternate;
-  }
-  .hero-aurora__layer--b {
-    animation: aurora-b 26s ease-in-out infinite alternate;
-  }
-  .hero-aurora__layer--c {
-    animation: aurora-c 14s ease-in-out infinite alternate;
-  }
-}
-@keyframes aurora-c {
-  from {
-    transform: translate(-3%, 2%) rotate(0deg);
-  }
-  to {
-    transform: translate(4%, -3%) rotate(14deg) scale(1.08);
-  }
-}
-@keyframes aurora-a {
-  to {
-    transform: translate(-4%, 5%) scale(1.06);
-  }
-}
-@keyframes aurora-b {
-  to {
-    transform: translate(5%, -3%) rotate(-12deg) scale(0.96);
-  }
-}
 /* Each sentence of the tagline on its own line; the size follows the column (cqi) so the longer line
    (~10.8 em) always fits: 55 px in the 600 px desktop column, 40 px on phones (each line then balances). */
 .hero__title {
@@ -656,7 +583,7 @@ svg {
   }
 }
 
-/* Chain strip (above the hero aurora, which may drift to the section edge) */
+/* Chain strip */
 .chain-strip {
   position: relative;
   z-index: 1;

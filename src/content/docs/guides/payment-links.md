@@ -1,7 +1,7 @@
 ---
 
 title: Payment links
-description: A reusable URL that opens a new checkout for each customer. Share it anywhere — no code needed.
+description: A reusable URL that opens a new checkout for each customer. Share it anywhere. No code needed.
 slug: checkout/payment-links
 eyebrow: Accept payments
 ---

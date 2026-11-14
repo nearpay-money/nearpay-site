@@ -31,7 +31,7 @@ const path = Astro.url.pathname.replace(/\.html$/, "").replace(/\/index$/, "") |
 const { prev, next } = neighbours(path);
 const tocItems = toc.filter((t) => t.depth === 2 || t.depth === 3);
 ---
-<Base title={path === "/" ? "NearPay Docs" : `${title} — NearPay Docs`} description={description} bodyClass="docs" noindex={noindex}>
+<Base title={path === "/" ? "NearPay Docs" : `${title} | NearPay Docs`} description={description} bodyClass="docs" noindex={noindex}>
   <header class="docs-header">
     <div class="docs-header__bar">
       <div class="docs-header__brand">

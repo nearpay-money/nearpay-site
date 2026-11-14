@@ -1,8 +1,8 @@
 ---
 /**
  * Marketing home — design v2 (owner-approved 2026-11-11) with the landing v3 changes (owner, 2026-11-11):
- * hero with the new headline, Get started / Sign up and a multi-colour aurora behind the ConvergenceHero
- * panel; chain strip; the payment flow as an animated diagram; the product showcase (bento of animated
+ * hero with the new headline, Get started / Sign up and the ConvergenceHero panel on a plain background (the
+ * multi-colour aurora behind it was removed, owner 2026-11-14); chain strip; the payment flow as an animated diagram; the product showcase (bento of animated
  * product cards, the developer section folded in); pricing (owner, 2026-11-12); the non-custodial band.
  * Header anchors: #how-it-works (flow), #products (showcase), #developers (developer card), #pricing.
  */
@@ -35,7 +35,7 @@ const promises = [
 ];
 ---
 <WebLayout
-  title={`NearPay — ${TAGLINE}`}
+  title={`NearPay | ${TAGLINE}`}
   description="Customers pay with any token on any blockchain; you get paid in the asset and on the chain you choose, straight to your own wallet. Non-custodial crypto payments on NEAR Intents."
 >
   <section class="hero" aria-labelledby="hero-title">
@@ -51,11 +51,6 @@ const promises = [
         </div>
       </div>
       <div class="hero__visual">
-        <div class="hero-aurora" aria-hidden="true">
-          <span class="hero-aurora__layer hero-aurora__layer--a"></span>
-          <span class="hero-aurora__layer hero-aurora__layer--b"></span>
-          <span class="hero-aurora__layer hero-aurora__layer--c"></span>
-        </div>
         <ConvergencePanel />
       </div>
     </div>

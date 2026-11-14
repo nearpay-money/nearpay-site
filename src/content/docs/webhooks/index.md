@@ -1,7 +1,7 @@
 ---
 
 title: Receive webhooks
-description: Signed HTTPS events for payments, refunds, reviews and your account — with retries, secret rotation and resend.
+description: Signed HTTPS events for payments, refunds, reviews and your account, with retries, secret rotation and resend.
 slug: webhooks
 eyebrow: Webhooks
 ---

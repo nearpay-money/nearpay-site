@@ -4,7 +4,7 @@ test.describe("marketing site", () => {
   test("home: landing v3 copy, header and structure", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`${WEB}/`);
-    await expect(page).toHaveTitle("NearPay — Accept crypto payments. Hassle-free.");
+    await expect(page).toHaveTitle("NearPay | Accept crypto payments. Hassle-free.");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Accept crypto payments. Hassle-free.");
     await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /any token on any blockchain/);
     // Header nav (owner, 2026-11-12): exactly these links, in order; sections are in-page anchors here.
@@ -57,7 +57,8 @@ test.describe("marketing site", () => {
     expect(panelBox?.width ?? 0).toBeLessThanOrEqual(512);
     expect((panelBox?.y ?? 0) + (panelBox?.height ?? 0)).toBeLessThan(900);
     expect((await page.locator(".chain-strip").boundingBox())?.y ?? 900).toBeLessThan(900 - 48);
-    await expect(page.locator(".hero-aurora")).toHaveAttribute("aria-hidden", "true");
+    // The hero has no colour wash behind the panel (owner, 2026-11-14): plain background at every width.
+    await expect(page.locator(".hero-aurora")).toHaveCount(0);
 
     // Hero panel: the kit's ConvergenceHero (chain chips, settlement card, text alternative).
     const hero = page.locator(".np-convergence");
@@ -233,7 +234,7 @@ test.describe("marketing site", () => {
         .getAnimations()
         // keyframe animations only (colour transitions on hover are fine under reduced motion)
         .filter((a): a is CSSAnimation => a instanceof CSSAnimation)
-        .filter((a) => (a.effect as KeyframeEffect | null)?.target?.closest?.(".showcase, .flow, .hero-aurora"))
+        .filter((a) => (a.effect as KeyframeEffect | null)?.target?.closest?.(".showcase, .flow"))
         .map((a) => a.animationName),
     );
     expect(running).toEqual([]);

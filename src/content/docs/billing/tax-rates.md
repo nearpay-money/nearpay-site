@@ -1,7 +1,7 @@
 ---
 
 title: Tax rates
-description: Add sales tax or VAT to invoices and subscriptions with manual tax rates — inclusive or exclusive, computed per line in integer units with half-up rounding.
+description: Add sales tax or VAT to invoices and subscriptions with manual tax rates, inclusive or exclusive, computed per line in integer units with half-up rounding.
 slug: billing/tax-rates
 eyebrow: Billing
 ---
